@@ -1,0 +1,109 @@
+{
+  "milestone": "3.6",
+  "title": "Messages Enhancement",
+  "problem": "Direct messaging is a core social feature. The messages system needs conversation list, chat interface, and message management.",
+  "success_metrics": [
+    "Users can see conversation list",
+    "Users can send and receive messages",
+    "Conversation view shows message history",
+    "Messages have timestamps and read status",
+    "Users can start new conversations"
+  ],
+  "non_goals": [
+    "Real-time messaging (WebSockets) (Phase 4)",
+    "Group messaging (Phase 4)",
+    "Message reactions (Phase 4)",
+    "Voice/video calls (Phase 4)"
+  ],
+  "items": [
+    {
+      "id": "3.6.1",
+      "title": "Conversation Model & Service",
+      "type": "feature",
+      "description": "Define conversation and message models with service.",
+      "acceptance_criteria": [
+        "Conversation interface with id, participants, lastMessage, unreadCount, updatedAt",
+        "Message interface with id, senderId, content, timestamp, read",
+        "MessageService with methods: getConversations, getMessages, sendMessage, markAsRead",
+        "Signal-based conversations state",
+        "Mock data for development"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.6.2",
+      "title": "Conversation List Component",
+      "type": "feature",
+      "description": "Create conversation list sidebar showing all chats.",
+      "acceptance_criteria": [
+        "List of conversations ordered by most recent",
+        "Participant avatar and name",
+        "Last message preview (truncated)",
+        "Unread count badge",
+        "Timestamp of last message",
+        "Click to open conversation",
+        "New conversation button",
+        "Search conversations"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.6.3",
+      "title": "Chat Interface Component",
+      "type": "feature",
+      "description": "Build the chat view with message history and input.",
+      "acceptance_criteria": [
+        "Header with participant info",
+        "Message list (bubble style)",
+        "Own messages right-aligned, others left",
+        "Timestamp on messages",
+        "Read indicators (placeholder)",
+        "Typing indicator (placeholder)",
+        "Scroll to bottom on new message",
+        "Load more history on scroll up"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.6.4",
+      "title": "Message Input Component",
+      "type": "feature",
+      "description": "Create message input with send functionality.",
+      "acceptance_criteria": [
+        "Text input field",
+        "Send button (disabled when empty)",
+        "Enter key to send",
+        "Auto-resize textarea",
+        "Emoji picker (placeholder)",
+        "File attachment (placeholder)",
+        "Typing indicator trigger"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.6.5",
+      "title": "New Conversation Flow",
+      "type": "feature",
+      "description": "Implement starting new conversations with users.",
+      "acceptance_criteria": [
+        "'New message' button",
+        "User search/select dialog",
+        "Search users by name/username",
+        "Select user to start conversation",
+        "Prevent duplicate conversations",
+        "Navigate to new conversation"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/models/conversation.model.ts",
+    "src/app/shared/models/message.model.ts",
+    "src/app/shared/services/message.service.ts",
+    "src/app/pages/messages/messages.component.ts",
+    "src/app/shared/components/conversation-list/conversation-list.component.ts",
+    "src/app/shared/components/chat-interface/chat-interface.component.ts",
+    "src/app/shared/components/message-input/message-input.component.ts"
+  ],
+  "affected_dependencies": []
+}

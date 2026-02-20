@@ -1,0 +1,88 @@
+@if (currentImage()) {
+  <div class="lightbox-overlay" (click)="close()">
+    <!-- Close Button -->
+    <button class="close-btn" (click)="close()" title="Close (Esc)">
+      <lucide-angular [img]="closeIcon"></lucide-angular>
+    </button>
+
+    <!-- Main Image Container -->
+    <div class="lightbox-content" (click)="stopPropagation($event)">
+      <!-- Previous Button -->
+      @if (hasMultiple) {
+        <button class="nav-btn prev-btn" (click)="previous()" title="Previous (←)">
+          <lucide-angular [img]="leftIcon"></lucide-angular>
+        </button>
+      }
+
+      <!-- Image -->
+      <div class="image-wrapper">
+        <img 
+          [src]="currentImage()?.url" 
+          [alt]="currentImage()?.alt || 'Post image'"
+          class="lightbox-image"
+          [style.transform]="getImageTransform()"
+          (click)="stopPropagation($event)"
+        />
+      </div>
+
+      <!-- Next Button -->
+      @if (hasMultiple) {
+        <button class="nav-btn next-btn" (click)="next()" title="Next (→)">
+          <lucide-angular [img]="rightIcon"></lucide-angular>
+        </button>
+      }
+    </div>
+
+    <!-- Bottom Controls -->
+    <div class="lightbox-controls">
+      <!-- Image Info -->
+      @if (currentImage()?.author) {
+        <div class="image-info">
+          <span>Photo by &#64;{{ currentImage()?.author }}</span>
+        </div>
+      }
+
+      <!-- Controls -->
+      <div class="control-buttons">
+        <button class="control-btn" (click)="zoomOut()" title="Zoom Out (-)">
+          <lucide-angular [img]="zoomOutIcon"></lucide-angular>
+        </button>
+        <span class="zoom-level">{{ (zoom * 100).toFixed(0) }}%</span>
+        <button class="control-btn" (click)="zoomIn()" title="Zoom In (+)">
+          <lucide-angular [img]="zoomInIcon"></lucide-angular>
+        </button>
+        <button class="control-btn" (click)="resetZoom()" title="Reset Zoom (0)">
+          <lucide-angular [img]="maximizeIcon"></lucide-angular>
+        </button>
+        <button class="control-btn" (click)="toggleFullscreen()" title="Fullscreen">
+          <lucide-angular [img]="maximizeIcon"></lucide-angular>
+        </button>
+        <button class="control-btn" (click)="download()" title="Download">
+          <lucide-angular [img]="downloadIcon"></lucide-angular>
+        </button>
+      </div>
+
+      <!-- Image Counter -->
+      @if (hasMultiple) {
+        <div class="image-counter">
+          {{ currentIndex + 1 }} / {{ totalImages }}
+        </div>
+      }
+    </div>
+
+    <!-- Thumbnail Strip -->
+    @if (hasMultiple) {
+      <div class="thumbnail-strip">
+        @for (image of images; track image.url; let i = $index) {
+          <button 
+            class="thumbnail" 
+            [class.active]="currentIndex === i"
+            (click)="goToIndex(i)"
+          >
+            <img [src]="image.url" [alt]="image.alt || 'Thumbnail'" />
+          </button>
+        }
+      </div>
+    }
+  </div>
+}

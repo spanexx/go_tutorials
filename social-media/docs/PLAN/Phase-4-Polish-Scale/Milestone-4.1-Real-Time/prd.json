@@ -1,0 +1,104 @@
+{
+  "milestone": "4.1",
+  "title": "Real-Time Features (WebSockets)",
+  "problem": "Users expect real-time updates for notifications, messages, and activity feeds. WebSocket integration provides instant communication without polling.",
+  "success_metrics": [
+    "Notifications arrive in real-time",
+    "Messages appear instantly in conversations",
+    "Activity feed updates live",
+    "Online presence indicators work",
+    "Typing indicators show in real-time"
+  ],
+  "non_goals": [
+    "Video/audio calling (Phase 5)",
+    "Screen sharing (Phase 5)",
+    "File transfer via WebSockets (Phase 5)"
+  ],
+  "items": [
+    {
+      "id": "4.1.1",
+      "title": "WebSocket Service",
+      "type": "feature",
+      "description": "Create WebSocket connection service with reconnection logic.",
+      "acceptance_criteria": [
+        "WebSocketService with connection management",
+        "Automatic reconnection on disconnect",
+        "Connection state tracking",
+        "Authentication token in connection",
+        "Heartbeat/ping-pong for keepalive",
+        "Error handling and fallback to polling"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.1.2",
+      "title": "Real-Time Notifications",
+      "type": "feature",
+      "description": "Implement real-time notification delivery via WebSockets.",
+      "acceptance_criteria": [
+        "Subscribe to notification channel on connect",
+        "New notifications appear instantly",
+        "Unread count updates in real-time",
+        "Header badge updates without refresh",
+        "Sound notification (optional toggle)",
+        "Toast notification for new items"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.1.3",
+      "title": "Real-Time Messaging",
+      "type": "feature",
+      "description": "Enable instant message delivery in conversations.",
+      "acceptance_criteria": [
+        "Subscribe to conversation channels",
+        "Messages appear instantly on send",
+        "Typing indicators broadcast and display",
+        "Read receipts update in real-time",
+        "Message status (sent, delivered, read)",
+        "Handle offline/online transitions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.1.4",
+      "title": "Online Presence",
+      "type": "feature",
+      "description": "Show user online/offline status.",
+      "acceptance_criteria": [
+        "Track user online status",
+        "Show online indicator on avatars",
+        "'Active now' or 'Last seen' text",
+        "Update presence on tab focus/blur",
+        "Handle multiple device connections",
+        "Privacy setting to hide status (placeholder)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.1.5",
+      "title": "Real-Time Activity Feed",
+      "type": "feature",
+      "description": "Update activity feed in real-time with new interactions.",
+      "acceptance_criteria": [
+        "Subscribe to activity channel",
+        "New activities appear at top instantly",
+        "Smooth animation for new items",
+        "Mark as read functionality works",
+        "Load more still functions correctly"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/services/websocket.service.ts",
+    "src/app/shared/services/notification.service.ts",
+    "src/app/shared/services/message.service.ts",
+    "src/app/shared/components/header/header.component.ts",
+    "src/app/pages/messages/messages.component.ts",
+    "src/app/pages/notifications/notifications.component.ts"
+  ],
+  "affected_dependencies": [
+    "WebSocket API"
+  ]
+}

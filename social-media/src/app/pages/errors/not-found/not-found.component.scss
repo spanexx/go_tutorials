@@ -1,0 +1,198 @@
+.not-found-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.3) 100%);
+
+  .not-found-content {
+    text-align: center;
+    max-width: 500px;
+
+    .error-code {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 8rem;
+      font-weight: 900;
+      line-height: 1;
+
+      .code-4 {
+        color: hsl(var(--accent));
+        animation: float 3s ease-in-out infinite;
+
+        &:nth-child(3) {
+          animation-delay: 0.5s;
+        }
+      }
+
+      .code-0 {
+        color: hsl(var(--muted-foreground) / 0.5);
+        animation: float 3s ease-in-out infinite;
+        animation-delay: 0.25s;
+      }
+    }
+
+    .error-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 1.5rem;
+      background: hsl(var(--accent) / 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      lucide-angular {
+        width: 40px;
+        height: 40px;
+        color: hsl(var(--accent));
+      }
+    }
+
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: hsl(var(--foreground));
+      margin-bottom: 0.75rem;
+    }
+
+    .error-message {
+      font-size: 1rem;
+      color: hsl(var(--muted-foreground));
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2.5rem;
+
+      .btn-secondary,
+      .btn-primary {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: calc(var(--radius) - 0.25rem);
+        font-size: 0.95rem;
+        font-weight: 500;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        lucide-angular {
+          width: 18px;
+          height: 18px;
+        }
+      }
+
+      .btn-secondary {
+        background: transparent;
+        border: 1px solid hsl(var(--border));
+        color: hsl(var(--foreground));
+
+        &:hover {
+          background: hsl(var(--muted));
+          border-color: hsl(var(--muted));
+        }
+      }
+
+      .btn-primary {
+        background: hsl(var(--accent));
+        border: none;
+        color: hsl(var(--accent-foreground));
+
+        &:hover {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+      }
+    }
+
+    .help-section {
+      padding-top: 2rem;
+      border-top: 1px solid hsl(var(--border));
+
+      h3 {
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: hsl(var(--foreground));
+        margin-bottom: 1rem;
+      }
+
+      .help-links {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        li {
+          a {
+            color: hsl(var(--accent));
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.15s ease;
+
+            &:hover {
+              color: hsl(var(--accent) / 0.8);
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .not-found-container {
+    padding: 1rem;
+
+    .not-found-content {
+      .error-code {
+        font-size: 5rem;
+      }
+
+      .error-icon {
+        width: 60px;
+        height: 60px;
+
+        lucide-angular {
+          width: 30px;
+          height: 30px;
+        }
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      .error-actions {
+        flex-direction: column;
+
+        .btn-secondary,
+        .btn-primary {
+          width: 100%;
+          justify-content: center;
+        }
+      }
+    }
+  }
+}

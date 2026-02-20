@@ -1,0 +1,108 @@
+{
+  "milestone": "3.3",
+  "title": "Search & Explore",
+  "problem": "Content discovery is essential for user engagement. Users need to find posts, users, and topics of interest through effective search and exploration features.",
+  "success_metrics": [
+    "Search returns relevant results across posts, users, and hashtags",
+    "Search suggestions appear as user types",
+    "Explore page shows trending and suggested content",
+    "Search history is saved",
+    "Results are filterable by type"
+  ],
+  "non_goals": [
+    "Advanced search filters (date, location) (Phase 4)",
+    "Search analytics (Phase 4)",
+    "Elasticsearch integration (Phase 4)"
+  ],
+  "items": [
+    {
+      "id": "3.3.1",
+      "title": "Search Service",
+      "type": "feature",
+      "description": "Create comprehensive search service with indexing.",
+      "acceptance_criteria": [
+        "SearchService with methods: searchPosts, searchUsers, searchHashtags, searchAll",
+        "Search result interface with type, item, relevance score",
+        "Local search index from existing data",
+        "Debounced search input (300ms)",
+        "Minimum query length (2 characters)",
+        "Maximum results per type (20)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.3.2",
+      "title": "Search Input Component",
+      "type": "feature",
+      "description": "Enhance header search with autocomplete and suggestions.",
+      "acceptance_criteria": [
+        "Search input with icon in header",
+        "Dropdown with search suggestions",
+        "Recent searches list",
+        "Clear search button",
+        "Keyboard navigation (arrow keys, enter)",
+        "Click suggestion to search",
+        "Loading indicator during search"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.3.3",
+      "title": "Search Results Page",
+      "type": "feature",
+      "description": "Create dedicated search results page with filtering.",
+      "acceptance_criteria": [
+        "Route: /search?q=query",
+        "Tabs: All, Posts, Users, Hashtags",
+        "All tab shows mixed results by relevance",
+        "Posts tab with post cards",
+        "Users tab with user list",
+        "Hashtags tab with hashtag tiles",
+        "Filter by time (optional)",
+        "Sort options (relevance, recent)",
+        "Empty state when no results"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.3.4",
+      "title": "Explore Page Enhancement",
+      "type": "feature",
+      "description": "Enhance explore page with trending content and discovery features.",
+      "acceptance_criteria": [
+        "Trending section with posts",
+        "Suggested users to follow",
+        "Popular hashtags section",
+        "Featured content carousel",
+        "Category filtering (optional)",
+        "Infinite scroll for content",
+        "Refresh button"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.3.5",
+      "title": "Search History",
+      "type": "feature",
+      "description": "Implement search history with localStorage persistence.",
+      "acceptance_criteria": [
+        "Save recent searches to localStorage",
+        "Show recent searches in dropdown",
+        "Clear individual history items",
+        "Clear all history option",
+        "Maximum 10 recent searches",
+        "Click recent search to re-run",
+        "Delete individual items with X button"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/services/search.service.ts",
+    "src/app/shared/components/search-input/search-input.component.ts",
+    "src/app/pages/explore/explore.component.ts",
+    "src/app/pages/search-results/search-results.component.ts",
+    "src/app/shared/components/header/header.component.ts"
+  ],
+  "affected_dependencies": []
+}

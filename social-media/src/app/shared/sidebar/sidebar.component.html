@@ -1,0 +1,30 @@
+<aside class="sidebar">
+  <nav class="sidebar-nav">
+    <a
+      *ngFor="let item of menuItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-item"
+      (click)="setActive(item.route)"
+    >
+      <lucide-icon [img]="item.icon" class="nav-icon"></lucide-icon>
+      <span class="nav-label">{{ item.label }}</span>
+    </a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <button class="compose-btn">
+      <lucide-icon [img]="zapIcon" class="btn-icon"></lucide-icon>
+      <span class="btn-label">New Post</span>
+    </button>
+    
+    <div class="keyboard-hints">
+      <div class="hint-row">
+        <span>Press <kbd>?</kbd> for shortcuts</span>
+      </div>
+      <div class="hint-row">
+        <span><kbd>⌘</kbd> <kbd>K</kbd> to search</span>
+      </div>
+    </div>
+  </div>
+</aside>

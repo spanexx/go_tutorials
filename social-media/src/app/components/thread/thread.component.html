@@ -1,0 +1,106 @@
+<article class="thread" [class.is-reply]="isReply" [class.depth]="depth">
+  <div class="thread-content">
+    <div class="thread-header">
+      <div class="author-info">
+        <img [src]="post.author.avatar" [alt]="post.author.name" class="author-avatar" />
+        <div class="author-details">
+          <p class="author-name" appUserProfile [appUserProfile]="post.author.username">{{ post.author.name }}</p>
+          <p class="author-handle" appUserProfile [appUserProfile]="post.author.username">&#64;{{ post.author.username }}</p>
+        </div>
+      </div>
+      <div class="thread-meta">
+        <span class="timestamp">{{ post.timestamp }}</span>
+        <button class="more-btn">
+          <lucide-icon [img]="moreIcon"></lucide-icon>
+        </button>
+      </div>
+    </div>
+
+    <p class="thread-text" [innerHTML]="post.content | postContent"></p>
+
+    <img 
+      *ngIf="post.image" 
+      [src]="post.image" 
+      [alt]="post.content" 
+      class="thread-image"
+      (click)="openImage()"
+    />
+
+    <div class="thread-actions">
+      <div class="action-wrapper">
+        <button
+          class="action-btn"
+          [class.has-reaction]="getUserReaction()"
+          [style.--reaction-color]="getReactionColor()"
+          (mouseenter)="showPicker()"
+          (mouseleave)="hidePicker()"
+        >
+          @if (getReactionEmoji()) {
+            <span class="reaction-emoji">{{ getReactionEmoji() }}</span>
+          } @else {
+            <lucide-icon [img]="heartIcon" [class.fill-icon]="isLiked"></lucide-icon>
+          }
+          <span class="count">{{ getDisplayCount() }}</span>
+        </button>
+        <app-reaction-picker
+          [visible]="showReactionPicker"
+          (reactionSelected)="onReactionSelect($event)"
+          (pickerClosed)="hidePicker()"
+        ></app-reaction-picker>
+      </div>
+      <button class="action-btn" (click)="toggleReplyForm()">
+        <lucide-icon [img]="commentIcon"></lucide-icon>
+        <span class="count">{{ getReplyCount() }}</span>
+      </button>
+      <button class="action-btn" (click)="onShare()">
+        <lucide-icon [img]="shareIcon"></lucide-icon>
+        <span class="count">{{ post.shares }}</span>
+      </button>
+      <button
+        class="action-btn save-btn"
+        [class.active]="isSaved"
+        (click)="toggleSave()"
+      >
+        <lucide-icon [img]="bookmarkIcon" [class.fill-icon]="isSaved"></lucide-icon>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="post.repliesList && post.repliesList.length > 0" class="thread-replies">
+    <div class="reply-line"></div>
+    <app-thread
+      *ngFor="let reply of post.repliesList"
+      [post]="reply"
+      [isReply]="true"
+      [depth]="depth + 1"
+      class="reply-item"
+    ></app-thread>
+  </div>
+
+  <!-- Additional Replies from ReplyService -->
+  @if (getReplies().length > 0) {
+    <div class="thread-replies service-replies">
+      <div class="reply-line"></div>
+      @for (reply of getReplies(); track reply.id) {
+        <div class="reply-item">
+          <app-thread
+            [post]="reply"
+            [isReply]="true"
+            [depth]="depth + 1"
+          ></app-thread>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Reply Form -->
+  @if (showReplyForm) {
+    <div class="reply-form-container">
+      <app-reply-form
+        [postId]="post.id"
+        (replyAdded)="onReplyAdded()"
+        (cancelled)="toggleReplyForm()"
+      ></app-reply-form>
+    </div>
+  }
+</article>

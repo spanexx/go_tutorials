@@ -1,0 +1,127 @@
+{
+  "milestone": "3.5",
+  "title": "Image Uploads & Media",
+  "problem": "Visual content is essential for social media engagement. Users need to upload, display, and interact with images in posts and profiles.",
+  "success_metrics": [
+    "Users can upload images when creating posts",
+    "Images display properly in post cards",
+    "Image lightbox provides full-screen viewing",
+    "Gallery navigation for multiple images",
+    "Image optimization for performance",
+    "Profile avatar upload works"
+  ],
+  "non_goals": [
+    "Video uploads (Phase 4)",
+    "Image filters/editing (Phase 4)",
+    "Advanced image CDN (Phase 4)",
+    "Bulk uploads (Phase 4)"
+  ],
+  "items": [
+    {
+      "id": "3.5.1",
+      "title": "Image Upload Service",
+      "type": "feature",
+      "description": "Create image upload service with validation and processing.",
+      "acceptance_criteria": [
+        "ImageUploadService with methods: uploadImage, validateImage, getImageUrl",
+        "File validation (type: jpg, png, gif, webp; size: max 5MB)",
+        "Image dimensions validation",
+        "Multiple image support (up to 4 per post)",
+        "Progress tracking",
+        "Error handling for failed uploads",
+        "Mock upload for development (base64 or blob URL)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.5.2",
+      "title": "Image Upload Component",
+      "type": "feature",
+      "description": "Create image upload UI for post creation.",
+      "acceptance_criteria": [
+        "Drag and drop zone",
+        "Click to browse files",
+        "Image preview before upload",
+        "Remove image option",
+        "Multiple image support",
+        "Upload progress indicator",
+        "Error messages for invalid files",
+        "Maximum file size warning"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.5.3",
+      "title": "Image Gallery Component",
+      "type": "feature",
+      "description": "Create gallery display for posts with multiple images.",
+      "acceptance_criteria": [
+        "Grid layout for multiple images (2x2, 1+2, etc.)",
+        "Single image full width",
+        "Hover effect on images",
+        "Click to open lightbox",
+        "Image count badge for 3+ images",
+        "Responsive grid adjustment"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.5.4",
+      "title": "Image Lightbox Component",
+      "type": "feature",
+      "description": "Implement full-screen image lightbox with navigation.",
+      "acceptance_criteria": [
+        "Full-screen overlay",
+        "Image centered with max dimensions",
+        "Navigation arrows for multiple images",
+        "Image counter (1 of 4)",
+        "Zoom functionality (click or pinch)",
+        "Download button",
+        "Close button and ESC key",
+        "Swipe gestures for mobile"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.5.5",
+      "title": "Avatar Upload",
+      "type": "feature",
+      "description": "Add avatar upload functionality to profile edit.",
+      "acceptance_criteria": [
+        "Avatar click to upload new image",
+        "Crop to square/circle preview",
+        "File validation (max 2MB)",
+        "Progress indicator",
+        "Preview before save",
+        "Revert option",
+        "Default avatar fallback",
+        "Update in real-time across app"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.5.6",
+      "title": "Media Optimization",
+      "type": "feature",
+      "description": "Implement image optimization for performance.",
+      "acceptance_criteria": [
+        "Resize images to max dimensions",
+        "Compress images for web",
+        "Lazy loading for below-fold images",
+        "Placeholder/blur while loading",
+        "WebP conversion (optional)",
+        "Responsive images (srcset)"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/services/image-upload.service.ts",
+    "src/app/shared/components/image-upload/image-upload.component.ts",
+    "src/app/shared/components/image-gallery/image-gallery.component.ts",
+    "src/app/shared/components/image-lightbox/image-lightbox.component.ts",
+    "src/app/shared/components/create-post/create-post.component.ts",
+    "src/app/pages/profile/profile-edit/profile-edit.component.ts"
+  ],
+  "affected_dependencies": []
+}

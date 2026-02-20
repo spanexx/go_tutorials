@@ -1,0 +1,428 @@
+- generic [ref=e3]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - heading "SocialHub" [level=1] [ref=e8]:
+        - link "SocialHub" [ref=e9] [cursor=pointer]:
+          - /url: /feed
+      - generic [ref=e11]:
+        - textbox "Search posts, people, or hashtags..." [ref=e12]
+        - img [ref=e14]
+      - generic [ref=e17]:
+        - button "Toggle Theme" [ref=e18] [cursor=pointer]:
+          - img [ref=e20]
+        - link "3" [ref=e122] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e124]
+          - generic [ref=e127]: "3"
+        - button "Messages" [ref=e128] [cursor=pointer]:
+          - img [ref=e130]
+        - button "User Avatar" [ref=e133] [cursor=pointer]:
+          - img "User Avatar" [ref=e134]
+          - img [ref=e136]
+  - generic [ref=e23]:
+    - complementary [ref=e25]:
+      - navigation [ref=e26]:
+        - link "Feed" [ref=e27] [cursor=pointer]:
+          - /url: /feed
+          - img [ref=e29]
+          - generic [ref=e32]: Feed
+        - link "Explore" [ref=e33] [cursor=pointer]:
+          - /url: /explore
+          - img [ref=e35]
+          - generic [ref=e38]: Explore
+        - link "Messages" [ref=e39] [cursor=pointer]:
+          - /url: /messages
+          - img [ref=e41]
+          - generic [ref=e44]: Messages
+        - link "Notifications" [ref=e45] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e47]
+          - generic [ref=e50]: Notifications
+        - link "Profile" [ref=e51] [cursor=pointer]:
+          - /url: /profile/1
+          - img [ref=e53]
+          - generic [ref=e56]: Profile
+        - link "Analytics" [ref=e57] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e59]
+          - generic [ref=e61]: Analytics
+        - link "Bookmarks" [ref=e62] [cursor=pointer]:
+          - /url: /bookmarks
+          - img [ref=e64]
+          - generic [ref=e66]: Bookmarks
+        - link "Settings" [ref=e67] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e69]
+          - generic [ref=e72]: Settings
+      - generic [ref=e73]:
+        - button "New Post" [ref=e74] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e78]: New Post
+        - generic [ref=e79]:
+          - generic [ref=e81]:
+            - text: Press
+            - generic [ref=e82]: "?"
+            - text: for shortcuts
+          - generic [ref=e84]:
+            - generic [ref=e85]: ⌘
+            - generic [ref=e86]: K
+            - text: to search
+    - main [ref=e87]:
+      - generic [ref=e139]:
+        - complementary [ref=e140]:
+          - generic [ref=e141]:
+            - heading "Quick Links" [level=3] [ref=e142]
+            - generic [ref=e143] [cursor=pointer]:
+              - img [ref=e145]
+              - generic [ref=e148]: "#WebDevelopment"
+            - generic [ref=e149] [cursor=pointer]:
+              - img [ref=e151]
+              - generic [ref=e154]: "#Angular"
+            - generic [ref=e155] [cursor=pointer]:
+              - img [ref=e157]
+              - generic [ref=e160]: "#TypeScript"
+        - generic [ref=e161]:
+          - generic [ref=e163]:
+            - generic [ref=e297]:
+              - button "1 new post" [ref=e298] [cursor=pointer]:
+                - img [ref=e300]
+                - generic [ref=e302]: 1 new post
+              - button "Dismiss" [ref=e303] [cursor=pointer]:
+                - img [ref=e305]
+            - generic [ref=e164]:
+              - generic [ref=e165]:
+                - img [ref=e311]
+                - generic [ref=e313]: Updated Just now
+              - button "Auto-refresh" [ref=e167] [cursor=pointer]:
+                - generic [ref=e168]: Auto-refresh
+          - generic [ref=e315]:
+            - generic [ref=e316]:
+              - img "User Avatar" [ref=e317]
+              - generic [ref=e318]:
+                - textbox "What's on your mind?" [ref=e319]
+                - generic [ref=e322]: "280"
+            - generic [ref=e323]:
+              - generic [ref=e324]:
+                - generic "Add Image" [ref=e325] [cursor=pointer]:
+                  - img [ref=e327]
+                - button "Add Emoji" [ref=e331] [cursor=pointer]:
+                  - img [ref=e333]
+                - button "Add Location" [disabled]:
+                  - generic:
+                    - img
+              - generic [ref=e336]:
+                - button "Post" [disabled]:
+                  - generic:
+                    - img
+                  - generic: Post
+          - generic [ref=e179]:
+            - article [ref=e338]:
+              - generic [ref=e339]:
+                - generic [ref=e340]:
+                  - generic [ref=e341] [cursor=pointer]:
+                    - img "Sarah Johnson" [ref=e342]
+                    - generic [ref=e343]:
+                      - paragraph [ref=e344]: Sarah Johnson
+                      - paragraph [ref=e345]: "@sarahjohnson"
+                  - generic [ref=e346]:
+                    - generic [ref=e347]: 2h
+                    - button [ref=e348] [cursor=pointer]:
+                      - img [ref=e350]
+                - paragraph [ref=e354]:
+                  - text: Just launched my new portfolio website! Check it out and let me know what you think 🚀 Thanks
+                  - link "@alexchen" [ref=e355] [cursor=pointer]:
+                    - /url: /profile/alexchen
+                  - text: for the design review!
+                  - link "#WebDevelopment" [ref=e356] [cursor=pointer]:
+                    - /url: /hashtag/#WebDevelopment
+                  - link "#Portfolio" [ref=e357] [cursor=pointer]:
+                    - /url: /hashtag/#Portfolio
+                  - link "#Coding" [ref=e358] [cursor=pointer]:
+                    - /url: /hashtag/#Coding
+                - 'img "Just launched my new portfolio website! Check it out and let me know what you think 🚀 Thanks @alexchen for the design review! #WebDevelopment #Portfolio #Coding" [ref=e359] [cursor=pointer]'
+                - generic [ref=e360]:
+                  - button "243" [ref=e362] [cursor=pointer]:
+                    - img [ref=e364]
+                    - generic [ref=e366]: "243"
+                  - button "0" [ref=e367] [cursor=pointer]:
+                    - img [ref=e369]
+                    - generic [ref=e371]: "0"
+                  - button "12" [ref=e372] [cursor=pointer]:
+                    - img [ref=e374]
+                    - generic [ref=e380]: "12"
+                  - button [ref=e381] [cursor=pointer]:
+                    - img [ref=e383]
+              - generic [ref=e385]:
+                - article [ref=e388]:
+                  - generic [ref=e389]:
+                    - generic [ref=e390]:
+                      - generic [ref=e391] [cursor=pointer]:
+                        - img "Alex Chen" [ref=e392]
+                        - generic [ref=e393]:
+                          - paragraph [ref=e394]: Alex Chen
+                          - paragraph [ref=e395]: "@alexchen"
+                      - generic [ref=e396]:
+                        - generic [ref=e397]: 1h
+                        - button [ref=e398] [cursor=pointer]:
+                          - img [ref=e400]
+                    - paragraph [ref=e404]:
+                      - text: This looks amazing! Love the clean design and smooth animations 🔥 Great work
+                      - link "@sarahjohnson" [ref=e405] [cursor=pointer]:
+                        - /url: /profile/sarahjohnson
+                      - text: "!"
+                      - link "#UIDesign" [ref=e406] [cursor=pointer]:
+                        - /url: /hashtag/#UIDesign
+                    - generic [ref=e407]:
+                      - button "42" [ref=e409] [cursor=pointer]:
+                        - img [ref=e411]
+                        - generic [ref=e413]: "42"
+                      - button "0" [ref=e414] [cursor=pointer]:
+                        - img [ref=e416]
+                        - generic [ref=e418]: "0"
+                      - button "0" [ref=e419] [cursor=pointer]:
+                        - img [ref=e421]
+                        - generic [ref=e427]: "0"
+                      - button [ref=e428] [cursor=pointer]:
+                        - img [ref=e430]
+                  - article [ref=e435]:
+                    - generic [ref=e436]:
+                      - generic [ref=e437]:
+                        - generic [ref=e438] [cursor=pointer]:
+                          - img "Sarah Johnson" [ref=e439]
+                          - generic [ref=e440]:
+                            - paragraph [ref=e441]: Sarah Johnson
+                            - paragraph [ref=e442]: "@sarahjohnson"
+                        - generic [ref=e443]:
+                          - generic [ref=e444]: 45m
+                          - button [ref=e445] [cursor=pointer]:
+                            - img [ref=e447]
+                      - paragraph [ref=e451]: Thanks Alex! Really appreciate it ❤️
+                      - generic [ref=e452]:
+                        - button "12" [ref=e454] [cursor=pointer]:
+                          - img [ref=e456]
+                          - generic [ref=e458]: "12"
+                        - button "0" [ref=e459] [cursor=pointer]:
+                          - img [ref=e461]
+                          - generic [ref=e463]: "0"
+                        - button "0" [ref=e464] [cursor=pointer]:
+                          - img [ref=e466]
+                          - generic [ref=e472]: "0"
+                        - button [ref=e473] [cursor=pointer]:
+                          - img [ref=e475]
+                - article [ref=e478]:
+                  - generic [ref=e479]:
+                    - generic [ref=e480]:
+                      - generic [ref=e481] [cursor=pointer]:
+                        - img "Emma Davis" [ref=e482]
+                        - generic [ref=e483]:
+                          - paragraph [ref=e484]: Emma Davis
+                          - paragraph [ref=e485]: "@emmadavis"
+                      - generic [ref=e486]:
+                        - generic [ref=e487]: 30m
+                        - button [ref=e488] [cursor=pointer]:
+                          - img [ref=e490]
+                    - paragraph [ref=e494]:
+                      - text: The color palette is perfect! What framework did you use?
+                      - link "@sarahjohnson" [ref=e495] [cursor=pointer]:
+                        - /url: /profile/sarahjohnson
+                    - generic [ref=e496]:
+                      - button "18" [ref=e498] [cursor=pointer]:
+                        - img [ref=e500]
+                        - generic [ref=e502]: "18"
+                      - button "0" [ref=e503] [cursor=pointer]:
+                        - img [ref=e505]
+                        - generic [ref=e507]: "0"
+                      - button "0" [ref=e508] [cursor=pointer]:
+                        - img [ref=e510]
+                        - generic [ref=e516]: "0"
+                      - button [ref=e517] [cursor=pointer]:
+                        - img [ref=e519]
+            - article [ref=e522]:
+              - generic [ref=e523]:
+                - generic [ref=e524]:
+                  - generic [ref=e525] [cursor=pointer]:
+                    - img "Marcus Williams" [ref=e526]
+                    - generic [ref=e527]:
+                      - paragraph [ref=e528]: Marcus Williams
+                      - paragraph [ref=e529]: "@marcuswilliams"
+                  - generic [ref=e530]:
+                    - generic [ref=e531]: 4h
+                    - button [ref=e532] [cursor=pointer]:
+                      - img [ref=e534]
+                - paragraph [ref=e538]:
+                  - text: "Hot take: TypeScript makes you a better developer, even if you're working on small projects. The type safety catches bugs before they happen. What do you think"
+                  - link "@jakethompson" [ref=e539] [cursor=pointer]:
+                    - /url: /profile/jakethompson
+                  - text: "?"
+                  - link "#TypeScript" [ref=e540] [cursor=pointer]:
+                    - /url: /hashtag/#TypeScript
+                  - link "#JavaScript" [ref=e541] [cursor=pointer]:
+                    - /url: /hashtag/#JavaScript
+                  - link "#WebDevelopment" [ref=e542] [cursor=pointer]:
+                    - /url: /hashtag/#WebDevelopment
+                - generic [ref=e543]:
+                  - button "512" [ref=e545] [cursor=pointer]:
+                    - img [ref=e547]
+                    - generic [ref=e549]: "512"
+                  - button "0" [ref=e550] [cursor=pointer]:
+                    - img [ref=e552]
+                    - generic [ref=e554]: "0"
+                  - button "34" [ref=e555] [cursor=pointer]:
+                    - img [ref=e557]
+                    - generic [ref=e563]: "34"
+                  - button [ref=e564] [cursor=pointer]:
+                    - img [ref=e566]
+              - generic [ref=e568]:
+                - article [ref=e571]:
+                  - generic [ref=e572]:
+                    - generic [ref=e573]:
+                      - generic [ref=e574] [cursor=pointer]:
+                        - img "Lisa Rodriguez" [ref=e575]
+                        - generic [ref=e576]:
+                          - paragraph [ref=e577]: Lisa Rodriguez
+                          - paragraph [ref=e578]: "@lisarodriguez"
+                      - generic [ref=e579]:
+                        - generic [ref=e580]: 3h
+                        - button [ref=e581] [cursor=pointer]:
+                          - img [ref=e583]
+                    - paragraph [ref=e587]:
+                      - text: 100% agree! The initial setup time pays off exponentially
+                      - link "#TypeScript" [ref=e588] [cursor=pointer]:
+                        - /url: /hashtag/#TypeScript
+                    - generic [ref=e589]:
+                      - button "67" [ref=e591] [cursor=pointer]:
+                        - img [ref=e593]
+                        - generic [ref=e595]: "67"
+                      - button "0" [ref=e596] [cursor=pointer]:
+                        - img [ref=e598]
+                        - generic [ref=e600]: "0"
+                      - button "0" [ref=e601] [cursor=pointer]:
+                        - img [ref=e603]
+                        - generic [ref=e609]: "0"
+                      - button [ref=e610] [cursor=pointer]:
+                        - img [ref=e612]
+                - article [ref=e615]:
+                  - generic [ref=e616]:
+                    - generic [ref=e617]:
+                      - generic [ref=e618] [cursor=pointer]:
+                        - img "Jake Thompson" [ref=e619]
+                        - generic [ref=e620]:
+                          - paragraph [ref=e621]: Jake Thompson
+                          - paragraph [ref=e622]: "@jakethompson"
+                      - generic [ref=e623]:
+                        - generic [ref=e624]: 2h
+                        - button [ref=e625] [cursor=pointer]:
+                          - img [ref=e627]
+                    - paragraph [ref=e631]:
+                      - text: Disagree. It adds unnecessary complexity for simple scripts and prototypes.
+                      - link "#JavaScript" [ref=e632] [cursor=pointer]:
+                        - /url: /hashtag/#JavaScript
+                    - generic [ref=e633]:
+                      - button "23" [ref=e635] [cursor=pointer]:
+                        - img [ref=e637]
+                        - generic [ref=e639]: "23"
+                      - button "0" [ref=e640] [cursor=pointer]:
+                        - img [ref=e642]
+                        - generic [ref=e644]: "0"
+                      - button "0" [ref=e645] [cursor=pointer]:
+                        - img [ref=e647]
+                        - generic [ref=e653]: "0"
+                      - button [ref=e654] [cursor=pointer]:
+                        - img [ref=e656]
+                  - article [ref=e661]:
+                    - generic [ref=e662]:
+                      - generic [ref=e663]:
+                        - generic [ref=e664] [cursor=pointer]:
+                          - img "Marcus Williams" [ref=e665]
+                          - generic [ref=e666]:
+                            - paragraph [ref=e667]: Marcus Williams
+                            - paragraph [ref=e668]: "@marcuswilliams"
+                        - generic [ref=e669]:
+                          - generic [ref=e670]: 1h
+                          - button [ref=e671] [cursor=pointer]:
+                            - img [ref=e673]
+                      - paragraph [ref=e677]:
+                        - text: Fair point, but I think the discipline it builds is valuable regardless of project size
+                        - link "#Coding" [ref=e678] [cursor=pointer]:
+                          - /url: /hashtag/#Coding
+                      - generic [ref=e679]:
+                        - button "45" [ref=e681] [cursor=pointer]:
+                          - img [ref=e683]
+                          - generic [ref=e685]: "45"
+                        - button "0" [ref=e686] [cursor=pointer]:
+                          - img [ref=e688]
+                          - generic [ref=e690]: "0"
+                        - button "0" [ref=e691] [cursor=pointer]:
+                          - img [ref=e693]
+                          - generic [ref=e699]: "0"
+                        - button [ref=e700] [cursor=pointer]:
+                          - img [ref=e702]
+            - article [ref=e705]:
+              - generic [ref=e706]:
+                - generic [ref=e707]:
+                  - generic [ref=e708] [cursor=pointer]:
+                    - img "Nina Patel" [ref=e709]
+                    - generic [ref=e710]:
+                      - paragraph [ref=e711]: Nina Patel
+                      - paragraph [ref=e712]: "@ninapatel"
+                  - generic [ref=e713]:
+                    - generic [ref=e714]: 6h
+                    - button [ref=e715] [cursor=pointer]:
+                      - img [ref=e717]
+                - paragraph [ref=e721]:
+                  - text: "Just finished a 30-day coding challenge! Built 30 small projects in 30 days. Here's what I learned: 1. Consistency > Intensity 2. Small wins compound 3. Community support is everything Thank you all for the encouragement! Special thanks to"
+                  - link "@emmadavis" [ref=e722] [cursor=pointer]:
+                    - /url: /profile/emmadavis
+                  - text: and
+                  - link "@michaelchen" [ref=e723] [cursor=pointer]:
+                    - /url: /profile/michaelchen
+                  - text: for the support 🙏
+                  - link "#Coding" [ref=e724] [cursor=pointer]:
+                    - /url: /hashtag/#Coding
+                  - link "#WebDevelopment" [ref=e725] [cursor=pointer]:
+                    - /url: /hashtag/#WebDevelopment
+                  - link "#Challenge" [ref=e726] [cursor=pointer]:
+                    - /url: /hashtag/#Challenge
+                - generic [ref=e727]:
+                  - button "891" [ref=e729] [cursor=pointer]:
+                    - img [ref=e731]
+                    - generic [ref=e733]: "891"
+                  - button "0" [ref=e734] [cursor=pointer]:
+                    - img [ref=e736]
+                    - generic [ref=e738]: "0"
+                  - button "203" [ref=e739] [cursor=pointer]:
+                    - img [ref=e741]
+                    - generic [ref=e747]: "203"
+                  - button [ref=e748] [cursor=pointer]:
+                    - img [ref=e750]
+        - complementary [ref=e263]:
+          - generic [ref=e264]:
+            - heading "Trending Now" [level=3] [ref=e265]
+            - generic [ref=e267] [cursor=pointer]:
+              - paragraph [ref=e268]: Technology • Trending
+              - paragraph [ref=e269]: "#WebDevelopment"
+              - paragraph [ref=e270]: 145K posts
+            - generic [ref=e272] [cursor=pointer]:
+              - paragraph [ref=e273]: Entertainment • Trending
+              - paragraph [ref=e274]: "#AngularJS"
+              - paragraph [ref=e275]: 89K posts
+            - generic [ref=e277] [cursor=pointer]:
+              - paragraph [ref=e278]: Design • Popular
+              - paragraph [ref=e279]: "#UIDesign"
+              - paragraph [ref=e280]: 234K posts
+          - generic [ref=e281]:
+            - heading "Suggestions For You" [level=3] [ref=e282]
+            - generic [ref=e283]:
+              - generic [ref=e284] [cursor=pointer]:
+                - img "User" [ref=e285]
+                - generic [ref=e286]:
+                  - paragraph [ref=e287]: Michael Chen
+                  - paragraph [ref=e288]: "@michaelchen"
+              - button "Follow" [ref=e289] [cursor=pointer]
+            - generic [ref=e290]:
+              - generic [ref=e291] [cursor=pointer]:
+                - img "User" [ref=e292]
+                - generic [ref=e293]:
+                  - paragraph [ref=e294]: Lisa Rodriguez
+                  - paragraph [ref=e295]: "@lisarodriguez"
+              - button "Follow" [ref=e296] [cursor=pointer]

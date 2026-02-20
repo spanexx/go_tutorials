@@ -1,0 +1,102 @@
+<div class="notifications-container">
+  <div class="notifications-header">
+    <div class="header-left">
+      <h1>
+        <lucide-angular [img]="bellIcon" class="header-icon"></lucide-angular>
+        Notifications
+      </h1>
+      @if (unreadCount > 0) {
+        <span class="unread-badge">{{ unreadCount }} unread</span>
+      }
+    </div>
+    @if (unreadCount > 0) {
+      <button class="mark-all-btn" (click)="markAllAsRead()" title="Mark all as read">
+        <lucide-angular [img]="checkAllIcon" class="btn-icon"></lucide-angular>
+        <span>Mark all read</span>
+      </button>
+    }
+  </div>
+
+  <!-- Filter Tabs -->
+  <div class="filter-tabs">
+    @for (filter of filterOptions; track filter.value) {
+      <button
+        class="filter-tab"
+        [class.active]="selectedFilter === filter.value"
+        (click)="selectFilter(filter.value)"
+      >
+        <lucide-angular [img]="filter.icon" class="filter-icon"></lucide-angular>
+        <span class="filter-label">{{ filter.label }}</span>
+        @if (filter.value === 'all' && unreadCount > 0) {
+          <span class="tab-badge">{{ unreadCount }}</span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Notifications List -->
+  <div class="notifications-content">
+    @if (notifications.length > 0) {
+      <div class="notifications-list">
+        @for (notification of notifications; track notification.id) {
+          <div
+            class="notification-item"
+            [class.unread]="!notification.isRead"
+            [class.read]="notification.isRead"
+          >
+            <a [routerLink]="getNotificationRoute(notification)" class="notification-link">
+              <div class="notification-icon-wrapper" [class.type]="notification.type">
+                <lucide-angular [img]="getNotificationIcon(notification.type)" class="notification-icon"></lucide-angular>
+              </div>
+
+              <div class="notification-content">
+                <div class="notification-header">
+                  <img
+                    [src]="notification.user.avatar"
+                    [alt]="notification.user.name"
+                    class="notification-avatar"
+                  />
+                  <div class="notification-text">
+                    <p class="notification-message">
+                      <strong class="user-name">{{ notification.user.name }}</strong>
+                      {{ notification.content }}
+                    </p>
+                    @if (notification.postPreview) {
+                      <p class="post-preview">{{ notification.postPreview }}</p>
+                    }
+                  </div>
+                </div>
+                <p class="notification-time">{{ formatTimeAgo(notification.timestamp) }}</p>
+              </div>
+            </a>
+
+            <div class="notification-actions">
+              @if (!notification.isRead) {
+                <button
+                  class="action-btn read-btn"
+                  (click)="markAsRead(notification.id)"
+                  title="Mark as read"
+                >
+                  <lucide-angular [img]="checkIcon" class="action-icon"></lucide-angular>
+                </button>
+              }
+              <button
+                class="action-btn delete-btn"
+                (click)="deleteNotification(notification.id)"
+                title="Delete"
+              >
+                <lucide-angular [img]="trashIcon" class="action-icon"></lucide-angular>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <lucide-angular [img]="bellIcon" class="empty-icon"></lucide-angular>
+        <h2>No notifications yet</h2>
+        <p>When you get notifications, they'll appear here</p>
+      </div>
+    }
+  </div>
+</div>

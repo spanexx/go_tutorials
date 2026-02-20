@@ -1,0 +1,339 @@
+{
+  "milestone": "4.7",
+  "title": "Go Production Backend",
+  "problem": "The backend services work in development but lack production-ready features such as caching, rate limiting, observability, high availability, and security hardening. Without these capabilities, the system cannot handle production traffic, diagnose issues, or maintain reliability under load. This milestone productionizes all Go backend services.",
+  "success_metrics": [
+    "API response time p95 <200ms with caching",
+    "Rate limiting: 100 requests/minute per user",
+    "99.9% uptime (less than 8.76 hours downtime/year)",
+    "Mean time to detection (MTTD) <5 minutes",
+    "Mean time to recovery (MTTR) <30 minutes",
+    "Zero critical security vulnerabilities",
+    "Horizontal scaling to 3+ instances",
+    "Load test: 10,000 concurrent users"
+  ],
+  "non_goals": [
+    "Kubernetes orchestration - Future phase",
+    "Multi-region deployment - Future phase",
+    "Machine learning recommendations - Future phase",
+    "GraphQL API layer - Future phase",
+    "Edge computing/CloudFlare Workers - Future phase"
+  ],
+  "items": [
+    {
+      "id": "4.7.1",
+      "title": "Redis Caching Layer",
+      "type": "infrastructure",
+      "description": "Implement comprehensive caching strategy with Redis.",
+      "acceptance_criteria": [
+        "internal/cache/cache.go with CacheService",
+        "Cache strategies for user profile, feed, post details, sessions",
+        "Cache-aside pattern with lazy loading",
+        "Cache invalidation on writes",
+        "Redis clusters support (sentinel mode)",
+        "Cache metrics (hit rate, miss rate, eviction)",
+        "Fallback to database on cache failure"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.2",
+      "title": "Rate Limiting Middleware",
+      "type": "infrastructure",
+      "description": "Implement rate limiting to prevent abuse and ensure fair usage.",
+      "acceptance_criteria": [
+        "internal/middleware/ratelimit.go with RateLimiter",
+        "Token bucket or sliding window algorithm",
+        "Limits: API 100/min, Auth 5/min, WebSocket 50/sec",
+        "Redis-based distributed rate limiting",
+        "Rate limit headers (X-RateLimit-Limit, Remaining, Reset)",
+        "429 Too Many Requests response",
+        "Whitelist for internal services"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.3",
+      "title": "Structured Logging Enhancement",
+      "type": "infrastructure",
+      "description": "Implement production-grade structured logging.",
+      "acceptance_criteria": [
+        "internal/logging/logger.go with zerolog or zap",
+        "JSON format for production, console for dev",
+        "Log levels: DEBUG, INFO, WARN, ERROR, FATAL",
+        "Correlation IDs (trace_id, span_id)",
+        "Contextual logging (user_id, request_id, endpoint)",
+        "Log sampling for high-volume endpoints",
+        "PII redaction (emails, tokens, passwords)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.4",
+      "title": "Metrics Collection (Prometheus)",
+      "type": "infrastructure",
+      "description": "Implement metrics collection and exposition.",
+      "acceptance_criteria": [
+        "internal/metrics/prometheus.go with metrics registry",
+        "Metrics: HTTP duration, request count, WebSocket connections, DB queries, cache hit/miss",
+        "/metrics endpoint for Prometheus scraping",
+        "Custom business metrics",
+        "Service-specific dashboards (Grafana)",
+        "Alert rules (Prometheus Alertmanager)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.5",
+      "title": "Distributed Tracing (OpenTelemetry)",
+      "type": "infrastructure",
+      "description": "Implement distributed tracing for request flow visibility.",
+      "acceptance_criteria": [
+        "internal/tracing/tracing.go with OpenTelemetry setup",
+        "Trace context propagation (W3C trace context)",
+        "Spans for HTTP handlers, DB queries, Redis operations, external APIs",
+        "Export to Jaeger or Tempo",
+        "Trace sampling (10% for production)",
+        "Trace ID in log correlation",
+        "Service graph visualization"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.6",
+      "title": "Health Checks & Readiness Probes",
+      "type": "infrastructure",
+      "description": "Implement comprehensive health checking.",
+      "acceptance_criteria": [
+        "GET /healthz for liveness probe",
+        "GET /readyz for readiness probe (checks dependencies)",
+        "Readiness checks: database, redis, config",
+        "Detailed health endpoints",
+        "Kubernetes probe compatible",
+        "Health check interval: 10 seconds"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.7",
+      "title": "Circuit Breaker Pattern",
+      "type": "infrastructure",
+      "description": "Implement circuit breaker for fault tolerance.",
+      "acceptance_criteria": [
+        "internal/resilience/circuit_breaker.go with gobreaker",
+        "Circuit states: Closed, Open, Half-Open",
+        "Failure threshold: 5 failures in 10 seconds",
+        "Recovery timeout: 30 seconds",
+        "Applied to database, Redis, external APIs",
+        "Fallback behavior on open circuit"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.8",
+      "title": "Graceful Shutdown & Drain",
+      "type": "infrastructure",
+      "description": "Implement graceful shutdown for zero-downtime deployments.",
+      "acceptance_criteria": [
+        "SIGTERM and SIGINT handling",
+        "Shutdown sequence: stop accepting, drain, close connections, flush",
+        "WebSocket connection drain notification",
+        "In-flight request completion",
+        "Kubernetes preStop hook",
+        "Max shutdown time: 60 seconds"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.9",
+      "title": "Database Connection Pooling Optimization",
+      "type": "infrastructure",
+      "description": "Optimize database connection pooling for production.",
+      "acceptance_criteria": [
+        "Connection pool: max 100, min idle 10, max lifetime 30min",
+        "Connection health checks",
+        "Leak detection (5 minute timeout)",
+        "Pool metrics (active, idle, waiting)",
+        "Query timeout: 10 seconds",
+        "Retry logic for transient failures"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.10",
+      "title": "API Gateway Setup",
+      "type": "infrastructure",
+      "description": "Set up API Gateway for routing and cross-cutting concerns.",
+      "acceptance_criteria": [
+        "Traefik or Kong configuration",
+        "Routing rules for all services",
+        "Cross-cutting middleware: CORS, Request ID, Rate limiting, Auth",
+        "SSL/TLS termination",
+        "Request/Response logging",
+        "Circuit breaker at gateway level"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.11",
+      "title": "Security Hardening",
+      "type": "security",
+      "description": "Implement production security measures.",
+      "acceptance_criteria": [
+        "HTTPS enforcement (HSTS)",
+        "Security headers (X-Content-Type-Options, X-Frame-Options, CSP)",
+        "SQL injection prevention",
+        "XSS prevention (input sanitization)",
+        "CSRF protection",
+        "JWT security: RS256, key rotation, short-lived tokens",
+        "Dependency vulnerability scanning (gosec, snyk)",
+        "OWASP Top 10 compliance"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.12",
+      "title": "Backup & Recovery Procedures",
+      "type": "infrastructure",
+      "description": "Implement backup and disaster recovery.",
+      "acceptance_criteria": [
+        "PostgreSQL backup script (pg_dump)",
+        "Daily full backups, hourly WAL archiving",
+        "Backup retention: 30 days",
+        "Backup encryption (AES-256)",
+        "Off-site backup storage (S3)",
+        "Recovery procedure documented",
+        "RTO: 4 hours, RPO: 1 hour"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.13",
+      "title": "Docker Production Images",
+      "type": "infrastructure",
+      "description": "Create production-optimized Docker images.",
+      "acceptance_criteria": [
+        "Multi-stage Dockerfile (build + runtime)",
+        "Runtime: distroless or alpine",
+        "Image size <50MB (without dependencies)",
+        "Non-root user (security)",
+        "Read-only filesystem",
+        "Health check in Dockerfile",
+        "Image scanning (trivy, grype)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.14",
+      "title": "CI/CD Pipeline",
+      "type": "infrastructure",
+      "description": "Set up continuous integration and deployment.",
+      "acceptance_criteria": [
+        "GitHub Actions workflow",
+        "Stages: lint, test, security scan, build, docker build, deploy",
+        "Branch protection rules",
+        "Required checks before merge",
+        "Automated changelog generation",
+        "Semantic versioning",
+        "Rollback capability",
+        "Manual approval for production"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.15",
+      "title": "Load Testing & Performance Tuning",
+      "type": "test",
+      "description": "Conduct load testing and optimize performance.",
+      "acceptance_criteria": [
+        "k6 or Vegeta load test scripts",
+        "Scenarios: smoke, load, stress, soak tests",
+        "Performance targets: p95 <200ms, error rate <0.1%, throughput >1000 req/s",
+        "Bottleneck identification",
+        "Optimization report",
+        "Database query optimization",
+        "Connection pool tuning"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.16",
+      "title": "Operations Runbook",
+      "type": "documentation",
+      "description": "Create comprehensive operations documentation.",
+      "acceptance_criteria": [
+        "docs/runbook.md with architecture, deployment, rollback, incident response",
+        "Common troubleshooting guides",
+        "Monitoring dashboard links",
+        "On-call rotation schedule",
+        "Escalation matrix",
+        "Runbook tested in game day"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.17",
+      "title": "Alerting Configuration",
+      "type": "infrastructure",
+      "description": "Set up alerting for critical conditions.",
+      "acceptance_criteria": [
+        "Prometheus Alertmanager rules",
+        "Alerts: service down, high error rate, high latency, low disk, high memory",
+        "Notification channels: Slack, PagerDuty, Email",
+        "Alert suppression and grouping",
+        "On-call rotation support"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.7.18",
+      "title": "Grafana Dashboards",
+      "type": "infrastructure",
+      "description": "Create operational dashboards for monitoring.",
+      "acceptance_criteria": [
+        "Dashboard 1: Service Overview (request rate, error rate, latency)",
+        "Dashboard 2: Infrastructure (CPU, memory, disk)",
+        "Dashboard 3: Business Metrics (posts, notifications, connections)",
+        "Dashboard 4: Database (query performance, cache hit rate)",
+        "Annotations for deployments",
+        "Alert integration"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/internal/cache/cache.go",
+    "backend/internal/middleware/ratelimit.go",
+    "backend/internal/logging/logger.go",
+    "backend/internal/metrics/prometheus.go",
+    "backend/internal/tracing/tracing.go",
+    "backend/internal/resilience/circuit_breaker.go",
+    "backend/internal/config/production.go",
+    "backend/cmd/auth-service/main.go",
+    "backend/cmd/posts-service/main.go",
+    "backend/cmd/realtime-service/main.go",
+    "backend/Dockerfile.production",
+    "backend/docker-compose.production.yml",
+    "backend/.github/workflows/ci.yml",
+    "backend/scripts/backup.sh",
+    "backend/docs/runbook.md",
+    "backend/configs/prometheus.yml",
+    "backend/configs/alertmanager.yml",
+    "backend/configs/grafana/dashboards/",
+    "backend/k6/load_test.js",
+    "traefik/traefik.yml",
+    "traefik/dynamic/"
+  ],
+  "affected_dependencies": [
+    "github.com/prometheus/client_golang",
+    "github.com/redis/go-redis/v9",
+    "github.com/golang-migrate/migrate/v4",
+    "go.opentelemetry.io/otel",
+    "go.opentelemetry.io/otel/exporters/jaeger",
+    "github.com/rs/zerolog",
+    "github.com/sony/gobreaker",
+    "github.com/sethvargo/go-limiter",
+    "github.com/gosec/gosec",
+    "sigs.k8s.io/yaml"
+  ]
+}

@@ -1,0 +1,106 @@
+{
+  "milestone": "4.3",
+  "title": "Accessibility (a11y) Compliance",
+  "problem": "SocialHub must be usable by everyone, including users with disabilities. Full WCAG 2.1 AA compliance ensures the platform is accessible to all users.",
+  "success_metrics": [
+    "WCAG 2.1 AA compliance audit passes",
+    "Screen reader navigation works throughout",
+    "Keyboard-only navigation is possible",
+    "Color contrast meets standards",
+    "Focus indicators are visible",
+    "ARIA labels are properly used"
+  ],
+  "non_goals": [
+    "Full WCAG AAA compliance (Phase 5)",
+    "Sign language support (Phase 5)",
+    "Audio descriptions (Phase 5)"
+  ],
+  "items": [
+    {
+      "id": "4.3.1",
+      "title": "Screen Reader Support",
+      "type": "feature",
+      "description": "Ensure all components work with screen readers.",
+      "acceptance_criteria": [
+        "Proper heading hierarchy (h1-h6)",
+        "Alt text for all images",
+        "ARIA labels on interactive elements",
+        "Live regions for dynamic content",
+        "Skip navigation links",
+        "Form labels associated with inputs",
+        "Error announcements"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.3.2",
+      "title": "Keyboard Navigation",
+      "type": "feature",
+      "description": "Ensure full keyboard accessibility throughout the app.",
+      "acceptance_criteria": [
+        "All interactive elements keyboard accessible",
+        "Visible focus indicators",
+        "Logical tab order",
+        "Escape key closes modals/dropdowns",
+        "Arrow keys navigate lists",
+        "Enter/Space activate buttons",
+        "Trap focus in modals"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.3.3",
+      "title": "Color Contrast & Visual",
+      "type": "feature",
+      "description": "Fix color contrast issues and visual accessibility.",
+      "acceptance_criteria": [
+        "All text meets 4.5:1 contrast ratio (AA)",
+        "Large text meets 3:1 contrast ratio",
+        "Interactive elements have visible focus",
+        "Don't rely on color alone for information",
+        "High contrast mode support",
+        "Reduced motion support (prefers-reduced-motion)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.3.4",
+      "title": "Form Accessibility",
+      "type": "feature",
+      "description": "Ensure forms are fully accessible.",
+      "acceptance_criteria": [
+        "All inputs have labels",
+        "Required fields marked",
+        "Error messages associated with inputs (aria-describedby)",
+        "Error prevention for destructive actions",
+        "Clear validation feedback",
+        "Logical field grouping"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.3.5",
+      "title": "Accessibility Testing",
+      "type": "analysis",
+      "description": "Run comprehensive accessibility audits and fix issues.",
+      "acceptance_criteria": [
+        "Lighthouse accessibility audit > 95",
+        "axe DevTools scan with 0 violations",
+        "Screen reader testing (NVDA, VoiceOver)",
+        "Keyboard-only navigation test",
+        "Color contrast verification",
+        "Document remaining issues"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "All component files",
+    "src/styles.scss (focus styles, reduced motion)",
+    "src/app/shared/components/modal/modal.component.ts",
+    "src/app/shared/components/dropdown/dropdown.component.ts"
+  ],
+  "affected_dependencies": [
+    "axe-core (dev dependency)"
+  ]
+}

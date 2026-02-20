@@ -1,0 +1,99 @@
+- generic [ref=e3]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - heading "SocialHub" [level=1] [ref=e8]:
+        - link "SocialHub" [ref=e9] [cursor=pointer]:
+          - /url: /feed
+      - generic [ref=e11]:
+        - textbox "Search posts, people, or hashtags..." [ref=e12]
+        - img [ref=e14]
+      - generic [ref=e17]:
+        - button "Toggle Theme" [ref=e18] [cursor=pointer]:
+          - img [ref=e20]
+        - link "Sign In" [ref=e22] [cursor=pointer]:
+          - /url: /login
+  - generic [ref=e23]:
+    - complementary [ref=e25]:
+      - navigation [ref=e26]:
+        - link "Feed" [ref=e27] [cursor=pointer]:
+          - /url: /feed
+          - img [ref=e29]
+          - generic [ref=e32]: Feed
+        - link "Explore" [ref=e33] [cursor=pointer]:
+          - /url: /explore
+          - img [ref=e35]
+          - generic [ref=e38]: Explore
+        - link "Messages" [ref=e39] [cursor=pointer]:
+          - /url: /messages
+          - img [ref=e41]
+          - generic [ref=e44]: Messages
+        - link "Notifications" [ref=e45] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e47]
+          - generic [ref=e50]: Notifications
+        - link "Profile" [ref=e51] [cursor=pointer]:
+          - /url: /profile/1
+          - img [ref=e53]
+          - generic [ref=e56]: Profile
+        - link "Analytics" [ref=e57] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e59]
+          - generic [ref=e61]: Analytics
+        - link "Bookmarks" [ref=e62] [cursor=pointer]:
+          - /url: /bookmarks
+          - img [ref=e64]
+          - generic [ref=e66]: Bookmarks
+        - link "Settings" [ref=e67] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e69]
+          - generic [ref=e72]: Settings
+      - generic [ref=e73]:
+        - button "New Post" [ref=e74] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e78]: New Post
+        - generic [ref=e79]:
+          - generic [ref=e81]:
+            - text: Press
+            - generic [ref=e82]: "?"
+            - text: for shortcuts
+          - generic [ref=e84]:
+            - generic [ref=e85]: ⌘
+            - generic [ref=e86]: K
+            - text: to search
+    - main [ref=e87]:
+      - generic [ref=e90]:
+        - generic [ref=e91]:
+          - heading "Welcome back" [level=1] [ref=e92]
+          - paragraph [ref=e93]: Sign in to continue to SocialHub
+        - generic [ref=e94]:
+          - generic [ref=e95]:
+            - generic [ref=e96]: Email
+            - generic [ref=e97]:
+              - generic:
+                - img
+              - textbox "Email" [ref=e98]:
+                - /placeholder: Enter your email
+                - text: test@socialhub.io
+          - generic [ref=e99]:
+            - generic [ref=e100]: Password
+            - generic [ref=e101]:
+              - generic:
+                - img
+              - textbox "Password" [active] [ref=e102]:
+                - /placeholder: Enter your password
+                - text: test123
+              - button [ref=e103] [cursor=pointer]:
+                - img [ref=e105]
+          - generic [ref=e108]:
+            - generic [ref=e109] [cursor=pointer]:
+              - checkbox "Remember me" [ref=e110]
+              - generic [ref=e111]: Remember me
+            - link "Forgot password?" [ref=e112] [cursor=pointer]:
+              - /url: "#"
+          - button "Sign in" [ref=e116] [cursor=pointer]:
+            - img [ref=e118]
+            - generic [ref=e121]: Sign in
+        - paragraph [ref=e114]:
+          - text: Don't have an account?
+          - link "Sign up" [ref=e115] [cursor=pointer]:
+            - /url: /register

@@ -1,0 +1,200 @@
+.settings-container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1.5rem;
+
+  .settings-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--foreground);
+      margin-bottom: 0.5rem;
+    }
+
+    .subtitle {
+      color: var(--muted-foreground);
+      font-size: 0.95rem;
+    }
+  }
+
+  .settings-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .settings-section {
+    background: var(--card);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+
+      .section-icon {
+        width: 20px;
+        height: 20px;
+        color: var(--accent);
+      }
+
+      h2 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--foreground);
+      }
+    }
+
+    .setting-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .setting-info {
+        flex: 1;
+
+        h3 {
+          font-size: 0.95rem;
+          font-weight: 500;
+          color: var(--foreground);
+          margin-bottom: 0.25rem;
+        }
+
+        p {
+          font-size: 0.85rem;
+          color: var(--muted-foreground);
+        }
+      }
+
+      .theme-options {
+        display: flex;
+        gap: 0.5rem;
+
+        .theme-btn {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          padding: 0.625rem 1rem;
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          background: var(--background);
+          color: var(--foreground);
+          font-size: 0.875rem;
+          font-weight: 500;
+          cursor: pointer;
+          transition: all 0.2s ease;
+
+          &:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+          }
+
+          &.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+          }
+
+          .theme-icon {
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+
+      .toggle {
+        position: relative;
+        display: inline-block;
+        width: 44px;
+        height: 24px;
+        flex-shrink: 0;
+
+        input {
+          opacity: 0;
+          width: 0;
+          height: 0;
+
+          &:checked + .toggle-slider {
+            background-color: var(--accent);
+          }
+
+          &:checked + .toggle-slider:before {
+            transform: translateX(20px);
+          }
+        }
+
+        .toggle-slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background-color: var(--border);
+          transition: 0.3s;
+          border-radius: 24px;
+
+          &:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+          }
+        }
+      }
+
+      .select-input {
+        padding: 0.5rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--background);
+        color: var(--foreground);
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+          outline: none;
+          border-color: var(--accent);
+        }
+      }
+
+      .btn-secondary {
+        padding: 0.5rem 1.25rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        background: var(--background);
+        color: var(--foreground);
+        font-size: 0.875rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+          background: var(--muted);
+          border-color: var(--muted);
+        }
+      }
+    }
+  }
+}

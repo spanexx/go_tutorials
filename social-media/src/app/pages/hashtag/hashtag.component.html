@@ -1,0 +1,54 @@
+<div class="hashtag-container">
+  <div class="hashtag-header">
+    <div class="hashtag-title">
+      <lucide-angular [img]="hashtagIcon" class="hashtag-icon"></lucide-angular>
+      <h1>{{ displayTag }}</h1>
+    </div>
+    @if (postCount > 0) {
+      <p class="post-count">{{ postCount }} {{ postCount === 1 ? 'post' : 'posts' }}</p>
+    }
+  </div>
+
+  <div class="hashtag-layout">
+    <div class="hashtag-main">
+      @if (hasNoPosts) {
+        <div class="empty-state">
+          <lucide-angular [img]="hashtagIcon" class="empty-icon"></lucide-angular>
+          <h2>No posts yet</h2>
+          <p>Be the first to post with {{ displayTag }}</p>
+        </div>
+      }
+
+      @if (hasPosts) {
+        <div class="posts-list">
+          @for (post of posts; track post.id) {
+            <app-thread 
+              [post]="post" 
+              [isReply]="false" 
+              [depth]="0">
+            </app-thread>
+          }
+        </div>
+      }
+    </div>
+
+    <aside class="trending-sidebar">
+      <div class="trending-card">
+        <div class="trending-header">
+          <lucide-angular [img]="trendingIcon" class="trending-icon"></lucide-angular>
+          <h3>Trending Hashtags</h3>
+        </div>
+        <div class="trending-list">
+          @for (tag of trendingHashtags; track tag.tag) {
+            <a [routerLink]="['/hashtag', tag.tag]" class="trending-item" [class.active]="tag.tag === currentHashtag">
+              <div class="trending-info">
+                <p class="trending-tag">#{{ tag.tag }}</p>
+                <p class="trending-count">{{ tag.count }} {{ tag.count === 1 ? 'post' : 'posts' }}</p>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>

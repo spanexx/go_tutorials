@@ -1,0 +1,141 @@
+<div class="profile-edit-container">
+  <div class="edit-card">
+    <div class="edit-header">
+      <div class="header-left">
+        <h1>Edit Profile</h1>
+        <p>Update your personal information and profile details</p>
+      </div>
+      <button class="cancel-btn" (click)="onCancel()">
+        <lucide-angular [img]="closeIcon"></lucide-angular>
+        <span>Cancel</span>
+      </button>
+    </div>
+
+    <form (ngSubmit)="onSave()" class="edit-form">
+      @if (error) {
+        <div class="error-message">
+          {{ error }}
+        </div>
+      }
+
+      <!-- Profile Preview -->
+      <div class="profile-preview">
+        <div class="avatar-section">
+          <div class="avatar-preview">
+            <img [src]="avatar || 'https://i.pravatar.cc/150?img=1'" alt="Profile Avatar" class="preview-avatar" />
+            <label class="avatar-overlay" title="Change avatar">
+              <lucide-angular [img]="cameraIcon"></lucide-angular>
+              <input 
+                type="url" 
+                placeholder="Enter avatar URL" 
+                (change)="onAvatarChange($event)"
+                class="avatar-input"
+              />
+            </label>
+          </div>
+          <p class="avatar-hint">Click camera icon to change avatar URL</p>
+        </div>
+      </div>
+
+      <!-- Form Fields -->
+      <div class="form-section">
+        <div class="form-group">
+          <label for="name">
+            <lucide-angular [img]="userIcon" class="label-icon"></lucide-angular>
+            Full Name <span class="required">*</span>
+          </label>
+          <input
+            id="name"
+            type="text"
+            class="form-input"
+            placeholder="Enter your full name"
+            [(ngModel)]="name"
+            name="name"
+            [disabled]="isSaving"
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="username">
+            <lucide-angular [img]="userIcon" class="label-icon"></lucide-angular>
+            Username <span class="required">*</span>
+          </label>
+          <div class="input-with-prefix">
+            <span class="prefix">&#64;</span>
+            <input
+              id="username"
+              type="text"
+              class="form-input"
+              placeholder="username"
+              [(ngModel)]="username"
+              name="username"
+              [disabled]="isSaving"
+            />
+          </div>
+          <p class="form-hint">This is your unique identifier on SocialHub</p>
+        </div>
+
+        <div class="form-group">
+          <label for="email">
+            <lucide-angular [img]="mailIcon" class="label-icon"></lucide-angular>
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            class="form-input"
+            [value]="authService.user?.email"
+            disabled
+          />
+          <p class="form-hint">Email cannot be changed</p>
+        </div>
+
+        <div class="form-group">
+          <label for="bio">
+            <lucide-angular [img]="imageIcon" class="label-icon"></lucide-angular>
+            Bio
+          </label>
+          <textarea
+            id="bio"
+            class="form-textarea"
+            placeholder="Tell us about yourself..."
+            [(ngModel)]="bio"
+            name="bio"
+            rows="4"
+            [disabled]="isSaving"
+          ></textarea>
+          <p class="form-hint">{{ bio.length }}/160 characters</p>
+        </div>
+
+        <div class="form-group">
+          <label for="avatar">Avatar URL</label>
+          <input
+            id="avatar"
+            type="url"
+            class="form-input"
+            placeholder="https://example.com/avatar.jpg"
+            [(ngModel)]="avatar"
+            name="avatar"
+            [disabled]="isSaving"
+          />
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button type="button" class="btn-secondary" (click)="onCancel()">
+          Cancel
+        </button>
+        <button type="submit" class="btn-primary" [disabled]="!isFormValid || isSaving">
+          @if (isSaving) {
+            <span class="loading-spinner"></span>
+            <span>Saving...</span>
+          } @else {
+            <lucide-angular [img]="saveIcon"></lucide-angular>
+            <span>Save Changes</span>
+          }
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

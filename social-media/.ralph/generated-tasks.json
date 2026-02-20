@@ -1,0 +1,40 @@
+{
+  "tasks": [
+    {
+      "id": "1.3:1.3.1",
+      "type": "analysis",
+      "data": {
+        "plan": {
+          "milestone": "1.3",
+          "milestone_dir": "docs/PLAN/Phase-1-RAF-Orchestrator/Milestone-1.3-Backend-Task-Source-Contract",
+          "prd_file": "docs/PLAN/Phase-1-RAF-Orchestrator/Milestone-1.3-Backend-Task-Source-Contract/prd.json",
+          "prd_item_id": "1.3.1",
+          "prd_item_title": "Document the task source contract (file now, API later)"
+        },
+        "description": "Write down the minimal request/response contract for a task source so the orchestrator can later fetch tasks from the Go backend.",
+        "acceptance_criteria": [
+          "Contract includes required fields (id, type, data)",
+          "Contract includes optional fields and how they map to queue entries"
+        ]
+      }
+    },
+    {
+      "id": "1.3:1.3.2",
+      "type": "feature",
+      "data": {
+        "plan": {
+          "milestone": "1.3",
+          "milestone_dir": "docs/PLAN/Phase-1-RAF-Orchestrator/Milestone-1.3-Backend-Task-Source-Contract",
+          "prd_file": "docs/PLAN/Phase-1-RAF-Orchestrator/Milestone-1.3-Backend-Task-Source-Contract/prd.json",
+          "prd_item_id": "1.3.2",
+          "prd_item_title": "Orchestrator validates task schema consistently"
+        },
+        "description": "Ensure task validation logic is aligned with the documented contract and fails fast with clear errors.",
+        "acceptance_criteria": [
+          "Invalid tasks file is rejected with actionable error",
+          "Valid tasks file loads with correct task count"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,307 @@
+.create-post {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: var(--shadow-sm);
+
+  .create-post-header {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      flex-shrink: 0;
+      border: 1px solid hsl(var(--border));
+    }
+
+    .input-container {
+      flex: 1;
+      position: relative;
+
+      .post-textarea {
+        width: 100%;
+        border: 1px solid hsl(var(--input));
+        background: hsl(var(--background));
+        border-radius: var(--radius);
+        padding: 0.75rem 1rem;
+        resize: none;
+        font-family: inherit;
+        font-size: 0.95rem;
+        color: hsl(var(--foreground));
+        transition: all 0.15s ease;
+        min-height: 80px;
+        max-height: 300px;
+        overflow-y: auto;
+
+        &:focus {
+          outline: none;
+          border-color: hsl(var(--ring));
+          box-shadow: 0 0 0 2px hsl(var(--ring) / 0.1);
+        }
+
+        &::placeholder {
+          color: hsl(var(--muted-foreground));
+        }
+
+        &.error {
+          border-color: hsl(var(--destructive));
+        }
+      }
+
+      .character-count {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+
+        .progress-bar {
+          flex: 1;
+          height: 3px;
+          background: hsl(var(--muted));
+          border-radius: 9999px;
+          overflow: hidden;
+
+          .progress-fill {
+            height: 100%;
+            background: hsl(var(--accent));
+            border-radius: 9999px;
+            transition: width 0.2s ease, background 0.2s ease;
+
+            &.warning {
+              background: hsl(var(--warning));
+            }
+
+            &.danger {
+              background: hsl(var(--destructive));
+            }
+          }
+        }
+
+        .count-text {
+          font-size: 0.75rem;
+          color: hsl(var(--muted-foreground));
+          font-weight: 500;
+          min-width: 24px;
+          text-align: right;
+
+          &.over {
+            color: hsl(var(--destructive));
+          }
+        }
+      }
+    }
+  }
+
+  .image-preview {
+    position: relative;
+    margin: 0.75rem 0;
+    border-radius: var(--radius);
+    overflow: hidden;
+    max-height: 400px;
+    display: inline-block;
+
+    .preview-image {
+      max-width: 100%;
+      max-height: 400px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      border: 1px solid hsl(var(--border));
+    }
+
+    .remove-image-btn {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: hsl(var(--card) / 0.9);
+      border: 1px solid hsl(var(--border));
+      color: hsl(var(--foreground));
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s ease;
+      backdrop-filter: blur(4px);
+
+      &:hover {
+        background: hsl(var(--destructive));
+        border-color: hsl(var(--destructive));
+        color: hsl(var(--destructive-foreground));
+      }
+
+      lucide-icon {
+        width: 16px;
+        height: 16px;
+      }
+    }
+  }
+
+  .create-post-tools {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px solid hsl(var(--border));
+    gap: 0.75rem;
+    flex-wrap: wrap;
+
+    .tool-buttons {
+      display: flex;
+      gap: 0.25rem;
+
+      .tool-btn {
+        width: 36px;
+        height: 36px;
+        border: 1px solid transparent;
+        background: transparent;
+        border-radius: calc(var(--radius) - 0.25rem);
+        cursor: pointer;
+        transition: all 0.15s ease;
+        font-size: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: hsl(var(--muted-foreground));
+        padding: 0;
+        position: relative;
+
+        &:hover:not(:disabled) {
+          background: hsl(var(--accent));
+          color: hsl(var(--accent-foreground));
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
+        input[type="file"] {
+          display: none;
+        }
+
+        lucide-icon {
+          width: 18px;
+          height: 18px;
+          stroke-width: 2px;
+        }
+      }
+    }
+
+    .right-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      position: relative;
+
+      .emoji-picker {
+        position: absolute;
+        bottom: calc(100% + 0.5rem);
+        right: 0;
+        background: hsl(var(--card));
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
+        padding: 0.5rem;
+        box-shadow: 0 8px 24px hsl(var(--shadow) / 0.15);
+        z-index: 100;
+        display: grid;
+        grid-template-columns: repeat(8, 1fr);
+        gap: 0.25rem;
+
+        .emoji-row {
+          display: contents;
+        }
+
+        .emoji-btn {
+          width: 32px;
+          height: 32px;
+          border: none;
+          background: transparent;
+          border-radius: calc(var(--radius) - 0.25rem);
+          cursor: pointer;
+          font-size: 1.125rem;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          transition: all 0.15s ease;
+
+          &:hover {
+            background: hsl(var(--accent));
+          }
+        }
+      }
+
+      .post-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.25rem;
+        background: hsl(var(--accent));
+        color: hsl(var(--accent-foreground));
+        border: none;
+        border-radius: calc(var(--radius) - 0.25rem);
+        font-weight: 500;
+        font-size: 0.875rem;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        white-space: nowrap;
+
+        &:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        lucide-icon {
+          width: 16px;
+          height: 16px;
+          stroke-width: 2px;
+        }
+
+        .loading-spinner {
+          width: 16px;
+          height: 16px;
+          border: 2px solid hsl(var(--accent-foreground) / 0.3);
+          border-top-color: hsl(var(--accent-foreground));
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 640px) {
+  .create-post {
+    .create-post-tools {
+      flex-direction: column;
+      align-items: stretch;
+
+      .tool-buttons {
+        justify-content: center;
+      }
+
+      .right-actions {
+        justify-content: flex-end;
+      }
+    }
+  }
+}

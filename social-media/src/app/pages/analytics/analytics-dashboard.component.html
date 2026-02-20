@@ -1,0 +1,222 @@
+<div class="analytics-container">
+  <div class="analytics-header">
+    <div class="header-left">
+      <lucide-angular [img]="chartIcon" class="header-icon"></lucide-angular>
+      <h1>Analytics Dashboard</h1>
+    </div>
+    <p class="subtitle">Track your performance and engagement</p>
+  </div>
+
+  @if (metrics) {
+    <!-- Overview Cards -->
+    <div class="overview-cards">
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon posts">
+            <lucide-angular [img]="postIcon"></lucide-angular>
+          </div>
+          <span class="stat-label">Total Posts</span>
+        </div>
+        <p class="stat-value">{{ metrics.totalPosts }}</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon likes">
+            <lucide-angular [img]="heartIcon"></lucide-angular>
+          </div>
+          <span class="stat-label">Total Likes</span>
+        </div>
+        <p class="stat-value">{{ formatNumber(metrics.totalLikes) }}</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon replies">
+            <lucide-angular [img]="commentIcon"></lucide-angular>
+          </div>
+          <span class="stat-label">Total Replies</span>
+        </div>
+        <p class="stat-value">{{ formatNumber(metrics.totalReplies) }}</p>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-icon shares">
+            <lucide-angular [img]="shareIcon"></lucide-angular>
+          </div>
+          <span class="stat-label">Total Shares</span>
+        </div>
+        <p class="stat-value">{{ formatNumber(metrics.totalShares) }}</p>
+      </div>
+
+      <div class="stat-card highlight">
+        <div class="stat-header">
+          <div class="stat-icon engagement">
+            <lucide-angular [img]="trendingUpIcon"></lucide-angular>
+          </div>
+          <span class="stat-label">Avg Engagement</span>
+        </div>
+        <p class="stat-value">{{ metrics.avgEngagementRate }}</p>
+        <span class="stat-trend">per post</span>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <!-- Engagement Chart -->
+      <div class="analytics-card chart-card">
+        <div class="card-header">
+          <h2>Weekly Engagement</h2>
+          <span class="card-badge" [ngClass]="getTrendClass()">
+            <lucide-angular [img]="getTrendIcon()" class="trend-icon"></lucide-angular>
+            {{ engagementTrend === 'up' ? 'Increasing' : engagementTrend === 'down' ? 'Decreasing' : 'Stable' }}
+          </span>
+        </div>
+        <div class="chart-container">
+          <div class="bar-chart">
+            @for (day of engagementData; track day.label) {
+              <div class="bar-group">
+                <div class="bars">
+                  <div 
+                    class="bar likes-bar" 
+                    [style.height.%]="(day.likes / getMaxEngagement()) * 100"
+                    [attr.title]="day.likes + ' likes'"
+                  ></div>
+                  <div 
+                    class="bar replies-bar" 
+                    [style.height.%]="(day.replies / getMaxEngagement()) * 100"
+                    [attr.title]="day.replies + ' replies'"
+                  ></div>
+                  <div 
+                    class="bar shares-bar" 
+                    [style.height.%]="(day.shares / getMaxEngagement()) * 100"
+                    [attr.title]="day.shares + ' shares'"
+                  ></div>
+                </div>
+                <span class="bar-label">{{ day.label }}</span>
+              </div>
+            }
+          </div>
+          <div class="chart-legend">
+            <div class="legend-item">
+              <span class="legend-color likes"></span>
+              <span>Likes</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color replies"></span>
+              <span>Replies</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color shares"></span>
+              <span>Shares</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Follower Growth -->
+      <div class="analytics-card chart-card">
+        <div class="card-header">
+          <h2>Follower Growth</h2>
+          <span class="card-badge trend-up">
+            <lucide-angular [img]="trendingUpIcon" class="trend-icon"></lucide-angular>
+            +{{ followerGrowthPercent }}% this week
+          </span>
+        </div>
+        <div class="chart-container">
+          <div class="line-chart">
+            <svg viewBox="0 0 400 150" class="chart-svg">
+              <defs>
+                <linearGradient id="fillGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" style="stop-color:hsl(var(--accent));stop-opacity:0.3" />
+                  <stop offset="100%" style="stop-color:hsl(var(--accent));stop-opacity:0" />
+                </linearGradient>
+              </defs>
+              
+              <!-- Area fill -->
+              <path
+                [attr.d]="getAreaPath()"
+                fill="url(#fillGradient)"
+                class="area-path"
+              />
+              
+              <!-- Line -->
+              <path
+                [attr.d]="getLinePath()"
+                fill="none"
+                stroke="hsl(var(--accent))"
+                stroke-width="3"
+                class="line-path"
+              />
+              
+              <!-- Points -->
+              @for (point of getChartPoints(); track point.x) {
+                <circle
+                  [attr.cx]="point.x"
+                  [attr.cy]="point.y"
+                  r="5"
+                  class="chart-point"
+                  [attr.title]="point.label + ': ' + point.value + ' followers'"
+                />
+              }
+            </svg>
+          </div>
+          <div class="chart-labels">
+            @for (day of followerGrowth; track day.date) {
+              <span class="chart-label">{{ day.date }}</span>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Top Post -->
+      @if (metrics.topPost) {
+        <div class="analytics-card">
+          <div class="card-header">
+            <h2>Top Performing Post</h2>
+          </div>
+          <div class="top-post">
+            <p class="post-content">{{ metrics.topPost.content }}</p>
+            <div class="post-stats">
+              <div class="post-stat">
+                <lucide-angular [img]="heartIcon" class="stat-icon"></lucide-angular>
+                <span>{{ metrics.topPost.likes }}</span>
+              </div>
+              <div class="post-stat">
+                <lucide-angular [img]="commentIcon" class="stat-icon"></lucide-angular>
+                <span>{{ metrics.topPost.replies }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+
+      <!-- Top Hashtags -->
+      <div class="analytics-card">
+        <div class="card-header">
+          <h2>Top Hashtags</h2>
+        </div>
+        <div class="hashtags-list">
+          @for (hashtag of topHashtags; track hashtag.tag; let i = $index) {
+            <div class="hashtag-item">
+              <span class="hashtag-rank">{{ i + 1 }}</span>
+              <div class="hashtag-info">
+                <span class="hashtag-tag">#{{ hashtag.tag }}</span>
+                <div class="hashtag-bar">
+                  <div 
+                    class="hashtag-fill" 
+                    [style.width.%]="topHashtags.length > 0 ? (hashtag.count / topHashtags[0].count) * 100 : 0"
+                  ></div>
+                </div>
+              </div>
+              <span class="hashtag-count">{{ hashtag.count }} posts</span>
+            </div>
+          }
+          @if (topHashtags.length === 0) {
+            <p class="empty-message">No hashtags used yet</p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

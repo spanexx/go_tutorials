@@ -1,0 +1,19 @@
+<div class="toast-container">
+  @for (toast of toasts(); track toast.id) {
+    <div class="toast" [ngClass]="getClass(toast.type)">
+      <div class="toast-icon">
+        <lucide-angular [img]="getIcon(toast.type)"></lucide-angular>
+      </div>
+      <div class="toast-content">
+        <p class="toast-title">{{ toast.title }}</p>
+        @if (toast.message) {
+          <p class="toast-message">{{ toast.message }}</p>
+        }
+      </div>
+      <button class="toast-close" (click)="dismiss(toast.id)">
+        <lucide-angular [img]="closeIcon"></lucide-angular>
+      </button>
+      <div class="toast-progress" [style.animation-duration]="toast.duration + 'ms'"></div>
+    </div>
+  }
+</div>

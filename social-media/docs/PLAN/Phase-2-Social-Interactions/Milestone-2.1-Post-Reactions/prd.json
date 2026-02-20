@@ -1,0 +1,87 @@
+{
+  "milestone": "2.1",
+  "title": "Post Reactions & Engagement",
+  "problem": "Users need ways to express reactions to posts beyond simple likes. The 6-reaction system provides emotional range and increases engagement.",
+  "success_metrics": [
+    "Users can react to posts with 6 different reactions",
+    "Reaction counts display correctly",
+    "User's own reactions are visually indicated",
+    "Clicking a reaction toggles it on/off",
+    "Reaction summary shows breakdown of each type"
+  ],
+  "non_goals": [
+    "Reaction animations (Phase 3)",
+    "Custom reactions (Phase 4)",
+    "Reactions on comments (Phase 3)"
+  ],
+  "items": [
+    {
+      "id": "2.1.1",
+      "title": "Reaction Model & Service",
+      "type": "feature",
+      "description": "Define reaction data model and service for handling reactions.",
+      "acceptance_criteria": [
+        "ReactionType enum: Like, Love, Laugh, Wow, Sad, Angry",
+        "Reaction interface with user, post, type, timestamp",
+        "ReactionService with methods: addReaction, removeReaction, getReactionsForPost",
+        "Signal-based reaction counts per post",
+        "Optimistic UI updates"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.1.2",
+      "title": "Reaction Bar Component",
+      "type": "feature",
+      "description": "Create the reaction bar showing 6 reaction buttons with counts.",
+      "acceptance_criteria": [
+        "6 reaction buttons with icons",
+        "Each shows current count",
+        "User's active reaction highlighted",
+        "Click to toggle reaction",
+        "Hover tooltip with reaction names",
+        "Compact design fitting in post card",
+        "Accessible with keyboard"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.1.3",
+      "title": "Post Card Integration",
+      "type": "feature",
+      "description": "Integrate reaction bar into post cards with engagement tracking.",
+      "acceptance_criteria": [
+        "Reaction bar appears below post content",
+        "Like count updates optimistically",
+        "Clicking like again removes the reaction",
+        "Visual feedback on interaction",
+        "Update post stats in real-time"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.1.4",
+      "title": "Reaction Summary Display",
+      "type": "feature",
+      "description": "Show a summary of all reactions on a post with breakdown.",
+      "acceptance_criteria": [
+        "Summary bar showing top 3 reactions with icons",
+        "Total reaction count",
+        "Expandable view showing all reaction counts",
+        "Click to see who reacted (Phase 3)",
+        "Positioned at top of reaction bar"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/models/reaction.model.ts",
+    "src/app/shared/services/reaction.service.ts",
+    "src/app/shared/components/reaction-bar/reaction-bar.component.ts",
+    "src/app/shared/components/post-card/post-card.component.ts",
+    "src/app/shared/components/reaction-summary/reaction-summary.component.ts"
+  ],
+  "affected_dependencies": [
+    "Lucide icons"
+  ]
+}

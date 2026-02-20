@@ -1,0 +1,51 @@
+<article class="post-card">
+  <div class="post-header">
+    <div class="author-info">
+      <img [src]="post.author.avatar" [alt]="post.author.name" class="author-avatar" />
+      <div class="author-details">
+        <p class="author-name">{{ post.author.name }}</p>
+        <p class="author-handle">{{ post.author.username }} · {{ post.timestamp }}</p>
+      </div>
+    </div>
+    <button class="more-btn">
+      <lucide-icon [img]="moreIcon"></lucide-icon>
+    </button>
+  </div>
+
+  <p class="post-content">{{ post.content }}</p>
+
+  <img *ngIf="post.image" [src]="post.image" [alt]="post.content" class="post-image" />
+
+  <div class="post-stats">
+    <span>{{ post.likes }} likes</span>
+    <span>{{ post.comments }} comments</span>
+    <span>{{ post.shares }} shares</span>
+  </div>
+
+  <div class="post-actions">
+    <button
+      class="action-btn"
+      [class.liked]="isLiked"
+      (click)="toggleLike()"
+    >
+      <lucide-icon [img]="heartIcon" [class.fill-icon]="isLiked"></lucide-icon>
+      <span class="label">Like</span>
+    </button>
+    <button class="action-btn">
+      <lucide-icon [img]="commentIcon"></lucide-icon>
+      <span class="label">Comment</span>
+    </button>
+    <button class="action-btn">
+      <lucide-icon [img]="shareIcon"></lucide-icon>
+      <span class="label">Share</span>
+    </button>
+    <button
+      class="action-btn"
+      [class.saved]="isSaved"
+      (click)="toggleSave()"
+    >
+      <lucide-icon [img]="bookmarkIcon" [class.fill-icon]="isSaved"></lucide-icon>
+      <span class="label">Save</span>
+    </button>
+  </div>
+</article>

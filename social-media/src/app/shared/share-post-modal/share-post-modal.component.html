@@ -1,0 +1,69 @@
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="header-left">
+          <lucide-angular [img]="shareIcon" class="header-icon"></lucide-angular>
+          <h2>Share this post</h2>
+        </div>
+        <button class="close-btn" (click)="closeModal()">
+          <lucide-angular [img]="closeIcon"></lucide-angular>
+        </button>
+      </div>
+
+      <!-- Share Options -->
+      <div class="modal-body">
+        @if (shareData()) {
+          <!-- Post Preview -->
+          <div class="post-preview">
+            <div class="preview-avatar">
+              <img [src]="'https://i.pravatar.cc/150?u=' + shareData()?.author" [alt]="shareData()?.author" />
+            </div>
+            <div class="preview-content">
+              <p class="preview-text">{{ shareData()?.postContent }}</p>
+              <p class="preview-author">by &#64;{{ shareData()?.author }}</p>
+            </div>
+          </div>
+
+          <!-- Share Options Grid -->
+          <div class="share-options">
+            @for (option of shareOptions; track option.id) {
+              <button 
+                class="share-option" 
+                [style.--option-color]="option.color"
+                (click)="onShare(option)"
+              >
+                <div class="option-icon" [ngClass]="getIconClass(option.id)">
+                  @if (option.id === 'copy') {
+                    <lucide-angular [img]="linkIcon"></lucide-angular>
+                  } @else {
+                    <lucide-angular [img]="shareIcon"></lucide-angular>
+                  }
+                </div>
+                <span class="option-name">{{ option.name }}</span>
+              </button>
+            }
+          </div>
+
+          <!-- Copy Link Section -->
+          <div class="copy-link-section">
+            <label>Post URL</label>
+            <div class="url-input-wrapper">
+              <input type="text" [value]="getPostUrl()" readonly class="url-input" />
+              <button class="copy-btn" (click)="onShare(shareOptions[0])">
+                <lucide-angular [img]="linkIcon"></lucide-angular>
+                <span>Copy</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <p>Share this post with your friends and followers</p>
+      </div>
+    </div>
+  </div>
+}

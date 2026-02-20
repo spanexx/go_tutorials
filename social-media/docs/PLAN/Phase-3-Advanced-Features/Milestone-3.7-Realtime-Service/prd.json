@@ -1,0 +1,290 @@
+{
+  "milestone": "3.7",
+  "title": "Go Realtime Service",
+  "problem": "The application lacks real-time capabilities such as live notifications, instant messaging, typing indicators, and live feed updates. Users must manually refresh to see new content, creating a disconnected experience. A dedicated Realtime Service using WebSockets is needed to enable instant, bidirectional communication between server and clients.",
+  "success_metrics": [
+    "Realtime service running on port 8082",
+    "WebSocket connections stable with automatic reconnection",
+    "Notifications delivered in <100ms (p95)",
+    "Support for 1000+ concurrent connections (single instance)",
+    "Message delivery guarantee (at-least-once)",
+    "Angular frontend shows real-time updates without refresh",
+    "Fallback to HTTP polling when WebSocket unavailable"
+  ],
+  "non_goals": [
+    "Video/audio calls (WebRTC) - Future phase",
+    "File transfer over WebSocket - Future phase",
+    "End-to-end encryption for messages - Phase 4",
+    "Message reactions in chat - Phase 4",
+    "Voice messages - Future phase"
+  ],
+  "items": [
+    {
+      "id": "3.7.1",
+      "title": "WebSocket Server Setup",
+      "type": "infrastructure",
+      "description": "Set up WebSocket server with Gorilla WebSocket library.",
+      "acceptance_criteria": [
+        "cmd/realtime-service/main.go with WebSocket server",
+        "internal/websocket/server.go with WebSocketServer struct",
+        "Upgrade HTTP connections to WebSocket",
+        "Handle WebSocket handshake properly",
+        "Subprotocol negotiation",
+        "Compression enabled (permessage-deflate)",
+        "Ping/pong for connection health checks (30s interval)",
+        "Graceful shutdown drains connections"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.2",
+      "title": "Connection Manager",
+      "type": "feature",
+      "description": "Implement connection lifecycle management.",
+      "acceptance_criteria": [
+        "internal/websocket/connection.go with Connection struct",
+        "internal/websocket/manager.go with ConnectionManager",
+        "Methods: AddConnection, RemoveConnection, GetConnection, BroadcastToUser, BroadcastToChannel",
+        "Thread-safe with mutex or sync.Map",
+        "Connection metadata: userID, channels, lastSeen, userAgent",
+        "Max connections per user"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.3",
+      "title": "Message Protocol Design",
+      "type": "feature",
+      "description": "Define WebSocket message format and types.",
+      "acceptance_criteria": [
+        "internal/websocket/protocol.go with message types",
+        "Message format: { type, event, data, timestamp }",
+        "Acknowledgment system (message ID + ack)",
+        "Error messages format",
+        "Heartbeat messages for keepalive",
+        "Version field for protocol evolution"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.4",
+      "title": "Notification Channel",
+      "type": "feature",
+      "description": "Implement real-time notification delivery.",
+      "acceptance_criteria": [
+        "Users subscribed to personal notification channel",
+        "Notification payload with id, type, actor, post_id",
+        "Push notification for likes, comments, follows, mentions",
+        "Badge count update (unread count)",
+        "Batch notifications for high-volume users"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.5",
+      "title": "Messaging Channel",
+      "type": "feature",
+      "description": "Implement real-time direct messaging.",
+      "acceptance_criteria": [
+        "Private channels for 1:1 conversations",
+        "Message format with id, conversation_id, sender_id, content",
+        "Message persistence in PostgreSQL",
+        "Message ordering guaranteed",
+        "Delivery confirmation",
+        "Online/offline message handling"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.6",
+      "title": "Typing Indicators",
+      "type": "feature",
+      "description": "Implement real-time typing status.",
+      "acceptance_criteria": [
+        "Typing event: { event: typing_start, conversation_id }",
+        "Stop typing event",
+        "Debounce typing events (max 1 per 2 seconds)",
+        "Auto-clear after 5 seconds of inactivity",
+        "Show User is typing in UI",
+        "Respects user privacy settings"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.7",
+      "title": "Presence System",
+      "type": "feature",
+      "description": "Implement online/offline status tracking.",
+      "acceptance_criteria": [
+        "Presence channel for status updates",
+        "Status values: online, offline, away, busy",
+        "Automatic online on WebSocket connect",
+        "Automatic offline on disconnect (with debounce)",
+        "Manual status change API",
+        "Presence broadcast to followers",
+        "Last seen timestamp for offline users"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.8",
+      "title": "Read Receipts",
+      "type": "feature",
+      "description": "Implement message read confirmation.",
+      "acceptance_criteria": [
+        "Read receipt event: { event: message_read, message_ids }",
+        "Batch read receipts for efficiency",
+        "Update message status in database",
+        "Show read status in UI (checkmarks)",
+        "Per-message read tracking",
+        "Privacy setting to disable read receipts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.9",
+      "title": "Reconnection & Recovery",
+      "type": "feature",
+      "description": "Handle WebSocket disconnections and message recovery.",
+      "acceptance_criteria": [
+        "Client-side auto-reconnect with exponential backoff",
+        "Reconnection token for session recovery",
+        "Message queue for offline users (Redis streams)",
+        "Catch-up on reconnect: missed notifications, messages, presence",
+        "Sequence numbers for gap detection",
+        "Last message ID tracking",
+        "Max queue size (100 messages per user)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.10",
+      "title": "Fallback to HTTP Polling",
+      "type": "feature",
+      "description": "Provide HTTP polling for clients without WebSocket support.",
+      "acceptance_criteria": [
+        "GET /api/v1/realtime/poll endpoint",
+        "Long polling (30s timeout)",
+        "Returns events since last_poll_id",
+        "Event store in Redis for polling",
+        "Polling interval: 5 seconds (client-side)",
+        "Seamless upgrade to WebSocket if available"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.11",
+      "title": "Angular WebSocket Service",
+      "type": "integration",
+      "description": "Create Angular service for WebSocket communication.",
+      "acceptance_criteria": [
+        "src/app/shared/services/websocket.service.ts",
+        "Methods: connect, disconnect, subscribe, unsubscribe, send, on",
+        "Automatic reconnection with backoff",
+        "Connection status observable",
+        "Message queue while disconnected",
+        "RxJS-based event streams",
+        "Fallback to HTTP polling"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.12",
+      "title": "Real-Time Notifications Integration",
+      "type": "integration",
+      "description": "Integrate real-time notifications into Angular app.",
+      "acceptance_criteria": [
+        "src/app/shared/services/notification-realtime.service.ts",
+        "Subscribe to notification channel on login",
+        "Toast notification on new notification",
+        "Update notification badge count in header",
+        "Mark as read syncs with server",
+        "Desktop notifications (Notification API)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.13",
+      "title": "Real-Time Messages Integration",
+      "type": "integration",
+      "description": "Integrate real-time messaging into Angular app.",
+      "acceptance_criteria": [
+        "src/app/pages/messages/messages-realtime.service.ts",
+        "Live message updates in conversation view",
+        "Typing indicator display",
+        "Online status in user avatars",
+        "Unread count in conversation list",
+        "Message delivery status"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.14",
+      "title": "Real-Time Feed Updates",
+      "type": "integration",
+      "description": "Enable live updates to feed without refresh.",
+      "acceptance_criteria": [
+        "Subscribe to feed updates channel",
+        "New post notification (toast or banner)",
+        "X new posts banner (click to load)",
+        "Live reaction/comment counts",
+        "Throttle updates (batch every 30 seconds)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.15",
+      "title": "Integration Tests",
+      "type": "test",
+      "description": "Write comprehensive tests for realtime service.",
+      "acceptance_criteria": [
+        "internal/websocket/server_test.go",
+        "internal/websocket/manager_test.go",
+        "Test cases for handshake, connection lifecycle, broadcast, reconnection",
+        "Load test (1000 connections)",
+        "E2E tests with Angular frontend",
+        "Test coverage >80%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.7.16",
+      "title": "API Documentation Update",
+      "type": "documentation",
+      "description": "Document WebSocket API and HTTP fallback endpoints.",
+      "acceptance_criteria": [
+        "WebSocket API documentation",
+        "Connection URL: wss://api.devthread.io/ws",
+        "Authentication method documented",
+        "Message types and formats",
+        "Event types documented",
+        "HTTP polling endpoint docs",
+        "Client implementation guide"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/cmd/realtime-service/main.go",
+    "backend/internal/websocket/server.go",
+    "backend/internal/websocket/connection.go",
+    "backend/internal/websocket/manager.go",
+    "backend/internal/websocket/protocol.go",
+    "backend/internal/handlers/realtime_handler.go",
+    "backend/internal/service/presence_service.go",
+    "backend/internal/service/message_service.go",
+    "backend/migrations/000003_create_messages_tables.up.sql",
+    "backend/migrations/000003_create_messages_tables.down.sql",
+    "src/app/shared/services/websocket.service.ts",
+    "src/app/shared/services/notification-realtime.service.ts",
+    "src/app/pages/messages/messages-realtime.service.ts"
+  ],
+  "affected_dependencies": [
+    "github.com/gorilla/websocket",
+    "github.com/redis/go-redis/v9",
+    "github.com/google/uuid",
+    "github.com/gin-gonic/gin",
+    "github.com/stretchr/testify",
+    "github.com/testcontainers/testcontainers-go"
+  ]
+}

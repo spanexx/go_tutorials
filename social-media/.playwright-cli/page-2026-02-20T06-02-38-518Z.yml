@@ -1,0 +1,118 @@
+- generic [ref=e3]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - heading "SocialHub" [level=1] [ref=e8]:
+        - link "SocialHub" [ref=e9] [cursor=pointer]:
+          - /url: /feed
+      - generic [ref=e11]:
+        - textbox "Search posts, people, or hashtags..." [ref=e12]
+        - img [ref=e14]
+      - generic [ref=e17]:
+        - button "Toggle Theme" [ref=e18] [cursor=pointer]:
+          - img [ref=e20]
+        - link "3" [ref=e122] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e124]
+          - generic [ref=e127]: "3"
+        - button "Messages" [ref=e128] [cursor=pointer]:
+          - img [ref=e130]
+        - button "User Avatar" [ref=e133] [cursor=pointer]:
+          - img "User Avatar" [ref=e134]
+          - img [ref=e136]
+  - generic [ref=e23]:
+    - complementary [ref=e25]:
+      - navigation [ref=e26]:
+        - link "Feed" [ref=e27] [cursor=pointer]:
+          - /url: /feed
+          - img [ref=e29]
+          - generic [ref=e32]: Feed
+        - link "Explore" [ref=e33] [cursor=pointer]:
+          - /url: /explore
+          - img [ref=e35]
+          - generic [ref=e38]: Explore
+        - link "Messages" [ref=e39] [cursor=pointer]:
+          - /url: /messages
+          - img [ref=e41]
+          - generic [ref=e44]: Messages
+        - link "Notifications" [ref=e45] [cursor=pointer]:
+          - /url: /notifications
+          - img [ref=e47]
+          - generic [ref=e50]: Notifications
+        - link "Profile" [ref=e51] [cursor=pointer]:
+          - /url: /profile/1
+          - img [ref=e53]
+          - generic [ref=e56]: Profile
+        - link "Analytics" [ref=e57] [cursor=pointer]:
+          - /url: /analytics
+          - img [ref=e59]
+          - generic [ref=e61]: Analytics
+        - link "Bookmarks" [ref=e62] [cursor=pointer]:
+          - /url: /bookmarks
+          - img [ref=e64]
+          - generic [ref=e66]: Bookmarks
+        - link "Settings" [ref=e67] [cursor=pointer]:
+          - /url: /settings
+          - img [ref=e69]
+          - generic [ref=e72]: Settings
+      - generic [ref=e73]:
+        - button "New Post" [ref=e74] [cursor=pointer]:
+          - img [ref=e76]
+          - generic [ref=e78]: New Post
+        - generic [ref=e79]:
+          - generic [ref=e81]:
+            - text: Press
+            - generic [ref=e82]: "?"
+            - text: for shortcuts
+          - generic [ref=e84]:
+            - generic [ref=e85]: ⌘
+            - generic [ref=e86]: K
+            - text: to search
+    - main [ref=e87]:
+      - generic [ref=e139]:
+        - complementary [ref=e140]:
+          - generic [ref=e141]:
+            - heading "Quick Links" [level=3] [ref=e142]
+            - generic [ref=e143] [cursor=pointer]:
+              - img [ref=e145]
+              - generic [ref=e148]: "#WebDevelopment"
+            - generic [ref=e149] [cursor=pointer]:
+              - img [ref=e151]
+              - generic [ref=e154]: "#Angular"
+            - generic [ref=e155] [cursor=pointer]:
+              - img [ref=e157]
+              - generic [ref=e160]: "#TypeScript"
+        - generic [ref=e164]:
+          - generic [ref=e166]: Not yet refreshed
+          - button "Auto-refresh" [ref=e167] [cursor=pointer]:
+            - generic [ref=e168]: Auto-refresh
+        - complementary [ref=e263]:
+          - generic [ref=e264]:
+            - heading "Trending Now" [level=3] [ref=e265]
+            - generic [ref=e267] [cursor=pointer]:
+              - paragraph [ref=e268]: Technology • Trending
+              - paragraph [ref=e269]: "#WebDevelopment"
+              - paragraph [ref=e270]: 145K posts
+            - generic [ref=e272] [cursor=pointer]:
+              - paragraph [ref=e273]: Entertainment • Trending
+              - paragraph [ref=e274]: "#AngularJS"
+              - paragraph [ref=e275]: 89K posts
+            - generic [ref=e277] [cursor=pointer]:
+              - paragraph [ref=e278]: Design • Popular
+              - paragraph [ref=e279]: "#UIDesign"
+              - paragraph [ref=e280]: 234K posts
+          - generic [ref=e281]:
+            - heading "Suggestions For You" [level=3] [ref=e282]
+            - generic [ref=e283]:
+              - generic [ref=e284] [cursor=pointer]:
+                - img "User" [ref=e285]
+                - generic [ref=e286]:
+                  - paragraph [ref=e287]: Michael Chen
+                  - paragraph [ref=e288]: "@michaelchen"
+              - button "Follow" [ref=e289] [cursor=pointer]
+            - generic [ref=e290]:
+              - generic [ref=e291] [cursor=pointer]:
+                - img "User" [ref=e292]
+                - generic [ref=e293]:
+                  - paragraph [ref=e294]: Lisa Rodriguez
+                  - paragraph [ref=e295]: "@lisarodriguez"
+              - button "Follow" [ref=e296] [cursor=pointer]

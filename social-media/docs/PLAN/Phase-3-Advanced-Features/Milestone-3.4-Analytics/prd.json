@@ -1,0 +1,125 @@
+{
+  "milestone": "3.4",
+  "title": "Analytics Dashboard",
+  "problem": "Users want insights into their social media performance: engagement metrics, follower growth, and post analytics. The analytics dashboard provides data-driven understanding of user activity.",
+  "success_metrics": [
+    "Dashboard shows engagement metrics (likes, comments, shares)",
+    "Follower growth chart displays over time",
+    "Top performing posts are identified",
+    "Post reach and impressions are tracked",
+    "Data is visualized with charts",
+    "Time range can be selected (7d, 30d, 90d)"
+  ],
+  "non_goals": [
+    "Real-time analytics updates (Phase 4)",
+    "Export functionality (Phase 4)",
+    "Advanced filtering (Phase 4)",
+    "Predictive analytics (Phase 4)"
+  ],
+  "items": [
+    {
+      "id": "3.4.1",
+      "title": "Analytics Service",
+      "type": "feature",
+      "description": "Create analytics service with data aggregation and calculations.",
+      "acceptance_criteria": [
+        "AnalyticsService with methods: getEngagementStats, getFollowerGrowth, getTopPosts, getReachStats",
+        "Date range filtering (7d, 30d, 90d)",
+        "Mock data generation for development",
+        "Signal-based analytics state",
+        "Data aggregation functions",
+        "Comparison to previous period"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.4.2",
+      "title": "Analytics Overview Cards",
+      "type": "feature",
+      "description": "Create summary cards showing key metrics at a glance.",
+      "acceptance_criteria": [
+        "Total posts card with count and trend",
+        "Total followers card with growth indicator",
+        "Total engagement card (likes + comments + shares)",
+        "Average engagement rate card",
+        "Trend indicators (up/down arrows with percentages)",
+        "Click cards to see detailed view"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.4.3",
+      "title": "Follower Growth Chart",
+      "type": "feature",
+      "description": "Implement follower growth line chart over time.",
+      "acceptance_criteria": [
+        "Line chart showing follower count over time",
+        "X-axis: dates (daily points)",
+        "Y-axis: follower count",
+        "Hover to see exact count on specific date",
+        "Time range selector (7d, 30d, 90d)",
+        "Smooth curve rendering",
+        "Legend and axis labels"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.4.4",
+      "title": "Engagement Breakdown Chart",
+      "type": "feature",
+      "description": "Create engagement breakdown chart showing likes, comments, shares.",
+      "acceptance_criteria": [
+        "Bar or stacked bar chart",
+        "Categories: Likes, Comments, Shares",
+        "Time-based grouping (daily/weekly)",
+        "Color-coded by engagement type",
+        "Hover for exact values",
+        "Time range selector"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.4.5",
+      "title": "Top Posts Section",
+      "type": "feature",
+      "description": "Display top performing posts by various metrics.",
+      "acceptance_criteria": [
+        "Sort by: Most liked, Most commented, Most shared, Highest reach",
+        "Show top 5 posts per category",
+        "Post preview with engagement stats",
+        "Click to view full post",
+        "Engagement rate calculation",
+        "Time period indicator"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.4.6",
+      "title": "Analytics Page Layout",
+      "type": "feature",
+      "description": "Create the complete analytics page with all components.",
+      "acceptance_criteria": [
+        "Route: /analytics",
+        "Overview cards at top",
+        "Charts in grid layout",
+        "Top posts section below",
+        "Date range selector in header",
+        "Loading state with skeletons",
+        "Error state with retry",
+        "Responsive layout for mobile"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/services/analytics.service.ts",
+    "src/app/shared/components/analytics-card/analytics-card.component.ts",
+    "src/app/shared/components/follower-chart/follower-chart.component.ts",
+    "src/app/shared/components/engagement-chart/engagement-chart.component.ts",
+    "src/app/shared/components/top-posts/top-posts.component.ts",
+    "src/app/pages/analytics/analytics-dashboard.component.ts"
+  ],
+  "affected_dependencies": [
+    "Chart library (Chart.js or similar)"
+  ]
+}

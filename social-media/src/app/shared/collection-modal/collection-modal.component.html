@@ -1,0 +1,100 @@
+@if (visible) {
+  <div class="modal-overlay" (click)="close()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <h2>{{ isEditing ? 'Edit Collection' : 'New Collection' }}</h2>
+        <button class="close-btn" (click)="close()">
+          <lucide-angular [img]="paletteIcon"></lucide-angular>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="name">Collection Name</label>
+          <input
+            id="name"
+            type="text"
+            class="form-input"
+            placeholder="Enter collection name"
+            [(ngModel)]="name"
+            maxlength="30"
+          />
+          <span class="char-count">{{ name.length }}/30</span>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description (optional)</label>
+          <textarea
+            id="description"
+            class="form-textarea"
+            placeholder="Describe this collection"
+            [(ngModel)]="description"
+            rows="3"
+            maxlength="100"
+          ></textarea>
+        </div>
+
+        <!-- Color Selection -->
+        <div class="form-group">
+          <label>
+            <lucide-angular [img]="paletteIcon" class="label-icon"></lucide-angular>
+            Color
+          </label>
+          <div class="color-options">
+            @for (color of colors; track color) {
+              <button
+                type="button"
+                class="color-btn"
+                [class.selected]="selectedColor === color"
+                [style.background]="color"
+                (click)="selectColor(color)"
+              >
+                @if (selectedColor === color) {
+                  <span class="check-mark">✓</span>
+                }
+              </button>
+            }
+          </div>
+        </div>
+
+        <!-- Icon Selection -->
+        <div class="form-group">
+          <label>
+            <lucide-angular [img]="folderIcon" class="label-icon"></lucide-angular>
+            Icon
+          </label>
+          <div class="icon-options">
+            @for (icon of icons; track icon.icon) {
+              <button
+                type="button"
+                class="icon-btn"
+                [class.selected]="selectedIcon === icon.icon"
+                (click)="selectIcon(icon.icon)"
+                [attr.title]="icon.label"
+              >
+                {{ getIconEmoji(icon.icon) }}
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        @if (isEditing) {
+          <button class="delete-btn" (click)="onDelete()">
+            Delete Collection
+          </button>
+        }
+        <div class="footer-actions">
+          <button class="cancel-btn" (click)="close()">Cancel</button>
+          <button class="save-btn" [disabled]="!canSave" (click)="onSave()">
+            {{ isEditing ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}

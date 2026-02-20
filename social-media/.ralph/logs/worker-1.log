@@ -1,0 +1,32 @@
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.2:1.2.1
+[1;33m[Agent 1][0m Executing 1.2:1.2.1 (type: feature)
+[0;31m[Agent 1][0m Task failed: 1.2:1.2.1 - Agent execution failed: Invalid --resume: "agent-1-1771572062". Must be a valid UUID (e.g., "123e4567-e89b-12d3-a456-426614174000"). Usage: qwen [options] [command]  Qwen Code - Launch an interactive CLI, use -p/--prompt for non-interactive mode  
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.2:1.2.1
+[1;33m[Agent 1][0m Executing 1.2:1.2.1 (type: feature)
+[0;31m[Agent 1][0m Task failed: 1.2:1.2.1 - Agent execution failed: Invalid --session-id: "ralph-agent-1". Must be a valid UUID (e.g., "123e4567-e89b-12d3-a456-426614174000"). Usage: qwen [options] [command]  Qwen Code - Launch an interactive CLI, use -p/--prompt for non-interactive mode  
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.2:1.2.1
+[1;33m[Agent 1][0m Executing 1.2:1.2.1 (type: feature)
+[0;32m[Agent 1][0m Task completed: 1.2:1.2.1
+[0;32m[Agent 1][0m Claimed task: 1.2:1.2.2
+[1;33m[Agent 1][0m Executing 1.2:1.2.2 (type: feature)
+[0;31m[Agent 1][0m Task failed: 1.2:1.2.2 - Agent execution failed: Error: Session Id 38fe87d9-fe9f-45f7-99e3-091c73adac10 is already in use. 
+bash: -c: line 1: unexpected EOF while looking for matching `"'
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.3:1.3.1
+[1;33m[Agent 1][0m Executing 1.3:1.3.1 (type: analysis)
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.3:1.3.1
+[1;33m[Agent 1][0m Executing 1.3:1.3.1 (type: analysis)
+[0;34m[Agent 1][0m Registered
+[0;32m[Agent 1][0m Claimed task: 1.3:1.3.2
+[1;33m[Agent 1][0m Executing 1.3:1.3.2 (type: feature)

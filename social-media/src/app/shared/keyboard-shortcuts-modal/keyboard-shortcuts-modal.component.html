@@ -1,0 +1,39 @@
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div class="header-left">
+          <lucide-angular [img]="keyboardIcon" class="header-icon"></lucide-angular>
+          <h2>Keyboard Shortcuts</h2>
+        </div>
+        <button class="close-btn" (click)="closeModal()">
+          <lucide-angular [img]="closeIcon"></lucide-angular>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        @for (category of shortcutsByCategory | keyvalue; track category.key) {
+          <div class="shortcut-category">
+            <h3>{{ category.key }}</h3>
+            <div class="shortcuts-list">
+              @for (shortcut of category.value; track shortcut.keys) {
+                <div class="shortcut-item">
+                  <div class="shortcut-keys">
+                    @for (key of formatKeys(shortcut.keys); track key) {
+                      <kbd class="key">{{ key }}</kbd>
+                    }
+                  </div>
+                  <span class="shortcut-description">{{ shortcut.description }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </div>
+
+      <div class="modal-footer">
+        <p>Press <kbd>?</kbd> to open this help, <kbd>esc</kbd> to close</p>
+      </div>
+    </div>
+  </div>
+}

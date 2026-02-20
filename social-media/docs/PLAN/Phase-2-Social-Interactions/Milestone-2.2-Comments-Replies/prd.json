@@ -1,0 +1,106 @@
+{
+  "milestone": "2.2",
+  "title": "Comments & Replies System",
+  "problem": "Discussion and conversation are core to social media. Users need to comment on posts and reply to other comments in threaded conversations.",
+  "success_metrics": [
+    "Users can add comments to posts",
+    "Comments display chronologically",
+    "Users can reply to comments (nesting)",
+    "Reply threads are collapsible",
+    "Comment count updates in real-time",
+    "Comment input has character limit"
+  ],
+  "non_goals": [
+    "Rich text in comments (Phase 3)",
+    "Comment reactions (Phase 3)",
+    "Comment editing/deletion (Phase 3)",
+    "Image attachments in comments (Phase 3)"
+  ],
+  "items": [
+    {
+      "id": "2.2.1",
+      "title": "Comment Model & Service",
+      "type": "feature",
+      "description": "Define comment data model and service with support for nested replies.",
+      "acceptance_criteria": [
+        "Comment interface with id, author, content, postId, parentId, createdAt",
+        "CommentService with methods: getCommentsForPost, addComment, getReplies",
+        "Support for nested replies (parentId references)",
+        "Signal-based comment state per post",
+        "Comment count tracking"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.2.2",
+      "title": "Comment Component",
+      "type": "feature",
+      "description": "Create individual comment component with author info and content.",
+      "acceptance_criteria": [
+        "Author avatar and name linking to profile",
+        "Comment content with clickable mentions",
+        "Relative timestamp",
+        "Reply button",
+        "Like button placeholder (Phase 3)",
+        "Nested replies indicator",
+        "Collapsible nested threads"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.2.3",
+      "title": "Comment List Component",
+      "type": "feature",
+      "description": "Create the comment list showing all comments on a post with threading.",
+      "acceptance_criteria": [
+        "List of top-level comments",
+        "Nested replies shown indented",
+        "Load more button for pagination",
+        "Empty state when no comments",
+        "Sort by oldest/newest toggle",
+        "Collapse/expand all threads button"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.2.4",
+      "title": "Comment Input Component",
+      "type": "feature",
+      "description": "Build the comment input form with character count and submit.",
+      "acceptance_criteria": [
+        "Textarea with placeholder",
+        "Character count (max 280)",
+        "Submit button",
+        "Cancel button (when replying)",
+        "Loading state",
+        "Auto-focus when opening reply",
+        "Keyboard shortcut (R to reply)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.2.5",
+      "title": "Thread Component",
+      "type": "feature",
+      "description": "Create the threaded conversation view for nested replies.",
+      "acceptance_criteria": [
+        "Visual nesting with indentation or lines",
+        "Collapse/expand individual threads",
+        "Show reply count on collapsed threads",
+        "Show more replies for long threads",
+        "Maintain context when replying deep in thread"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/models/comment.model.ts",
+    "src/app/shared/services/comment.service.ts",
+    "src/app/shared/components/comment/comment.component.ts",
+    "src/app/shared/components/comment-list/comment-list.component.ts",
+    "src/app/shared/components/comment-input/comment-input.component.ts",
+    "src/app/shared/components/thread/thread.component.ts",
+    "src/app/shared/components/post-card/post-card.component.ts"
+  ],
+  "affected_dependencies": []
+}

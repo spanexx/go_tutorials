@@ -1,0 +1,95 @@
+<header class="header">
+  <div class="header-container">
+    <div class="logo-section">
+      <h1 class="logo">
+        <a routerLink="/feed">SocialHub</a>
+      </h1>
+    </div>
+
+    <div class="search-section">
+      <form (submit)="onSearchSubmit($event)">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Search posts, people, or hashtags..."
+          [class.active]="isSearchActive || hasQuery"
+          (focus)="toggleSearch()"
+          (blur)="toggleSearch()"
+          (input)="onSearchInput($event)"
+          [value]="searchInputValue"
+        />
+        <lucide-icon [img]="searchIcon" class="search-icon"></lucide-icon>
+        @if (hasQuery) {
+          <button type="button" class="clear-btn" (click)="clearSearch()">
+            <span>×</span>
+          </button>
+        }
+      </form>
+      @if (showResults) {
+        <app-search-results
+          [results]="searchResults"
+          [query]="searchInputValue"
+          [isSearching]="isSearching">
+        </app-search-results>
+      }
+    </div>
+
+    <div class="header-actions">
+      <button class="action-btn theme-toggle" title="Toggle Theme" (click)="themeService.toggleTheme()">
+        <lucide-icon [img]="themeService.getTheme() === 'dark' ? sunIcon : moonIcon" class="action-icon"></lucide-icon>
+      </button>
+      @if (authService.isAuthenticated) {
+        <a [routerLink]="['/notifications']" class="action-btn" title="Notifications">
+          <lucide-icon [img]="bellIcon" class="action-icon"></lucide-icon>
+          @if (unreadNotifications > 0) {
+            <span class="notification-badge">{{ unreadNotifications }}</span>
+          }
+        </a>
+        <button class="action-btn" title="Messages">
+          <lucide-icon [img]="messageIcon" class="action-icon"></lucide-icon>
+        </button>
+      }
+
+      @if (authService.isAuthenticated && authService.user) {
+        <div class="user-menu-wrapper" (click)="toggleUserMenu()" (clickOutside)="closeUserMenu()">
+          <button class="user-menu-trigger">
+            <img [src]="authService.user.avatar || 'https://i.pravatar.cc/150?img=1'" alt="User Avatar" class="user-avatar" />
+            <lucide-icon [img]="chevronIcon" class="chevron-icon"></lucide-icon>
+          </button>
+
+          @if (showUserMenu) {
+            <div class="user-menu-dropdown">
+              <div class="user-menu-header">
+                <img [src]="authService.user.avatar || 'https://i.pravatar.cc/150?img=1'" alt="User Avatar" class="dropdown-avatar" />
+                <div class="user-menu-info">
+                  <p class="user-menu-name">{{ authService.user.name }}</p>
+                  <p class="user-menu-handle">&#64;{{ authService.user.username }}</p>
+                </div>
+              </div>
+
+              <div class="user-menu-items">
+                <a [routerLink]="['/profile', authService.user.username]" class="menu-item" (click)="closeUserMenu()">
+                  <lucide-icon [img]="userIcon" class="menu-icon"></lucide-icon>
+                  <span>Profile</span>
+                </a>
+                <a [routerLink]="['/settings']" class="menu-item" (click)="closeUserMenu()">
+                  <lucide-icon [img]="settingsIcon" class="menu-icon"></lucide-icon>
+                  <span>Settings</span>
+                </a>
+              </div>
+
+              <div class="user-menu-divider"></div>
+
+              <button class="menu-item logout-btn" (click)="logout()">
+                <lucide-icon [img]="logoutIcon" class="menu-icon"></lucide-icon>
+                <span>Logout</span>
+              </button>
+            </div>
+          }
+        </div>
+      } @else {
+        <a [routerLink]="['/login']" class="login-btn">Sign In</a>
+      }
+    </div>
+  </div>
+</header>

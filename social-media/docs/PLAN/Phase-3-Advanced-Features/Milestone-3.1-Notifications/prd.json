@@ -1,0 +1,106 @@
+{
+  "milestone": "3.1",
+  "title": "Notifications System",
+  "problem": "Users need to be informed about activities relevant to them: likes, comments, follows, mentions. A comprehensive notifications system keeps users engaged and informed.",
+  "success_metrics": [
+    "Users receive notifications for relevant activities",
+    "Notifications have unread indicators",
+    "Notifications are filterable by type",
+    "Users can mark notifications as read/unread",
+    "Unread count badge updates in real-time",
+    "Notification preferences can be managed"
+  ],
+  "non_goals": [
+    "Push notifications (Phase 4)",
+    "Email notifications (Phase 4)",
+    "Real-time delivery via WebSockets (Phase 4)"
+  ],
+  "items": [
+    {
+      "id": "3.1.1",
+      "title": "Notification Model & Service",
+      "type": "feature",
+      "description": "Define notification data model and comprehensive service.",
+      "acceptance_criteria": [
+        "Notification interface with id, type, actor, target, read, createdAt",
+        "Types: LIKE, COMMENT, FOLLOW, MENTION, REPLY, SHARE",
+        "NotificationService with methods: getNotifications, markAsRead, markAllAsRead, deleteNotification, getUnreadCount",
+        "Signal-based notification state",
+        "Unread count tracking"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.1.2",
+      "title": "Notification Item Component",
+      "type": "feature",
+      "description": "Create individual notification display component.",
+      "acceptance_criteria": [
+        "Different styling for read vs unread",
+        "Actor avatar and name",
+        "Notification message text",
+        "Target preview (post content snippet)",
+        "Relative timestamp",
+        "Click to navigate to relevant content",
+        "Mark as read on click",
+        "Delete option"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.1.3",
+      "title": "Notifications Page Enhancement",
+      "type": "feature",
+      "description": "Enhance the notifications page with filtering and management.",
+      "acceptance_criteria": [
+        "Filter tabs: All, Likes, Comments, Follows, Mentions",
+        "Mark all as read button",
+        "Delete all read notifications button",
+        "Empty state design",
+        "Loading skeleton",
+        "Pull to refresh (mobile)",
+        "Settings link"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.1.4",
+      "title": "Unread Count Badge",
+      "type": "feature",
+      "description": "Add unread notification count to header bell icon.",
+      "acceptance_criteria": [
+        "Badge shows count on bell icon in header",
+        "Updates when new notifications arrive",
+        "Clears when notifications viewed",
+        "Maximum display (99+)",
+        "Visual distinction for new notifications",
+        "Click badge to navigate to notifications"
+      ],
+      "passes": false
+    },
+    {
+      "id": "3.1.5",
+      "title": "Notification Settings (Placeholder)",
+      "type": "feature",
+      "description": "Create notification settings page structure.",
+      "acceptance_criteria": [
+        "Settings page route",
+        "Toggle switches for notification types",
+        "Email notification preferences (placeholder)",
+        "Push notification preferences (placeholder)",
+        "Sound settings (placeholder)",
+        "Save settings functionality"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/models/notification.model.ts",
+    "src/app/shared/services/notification.service.ts",
+    "src/app/shared/components/notification-item/notification-item.component.ts",
+    "src/app/pages/notifications/notifications.component.ts",
+    "src/app/shared/components/header/header.component.ts",
+    "src/app/pages/settings/notification-settings/notification-settings.component.ts"
+  ],
+  "affected_dependencies": []
+}

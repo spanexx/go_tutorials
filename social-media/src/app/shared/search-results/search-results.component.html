@@ -1,0 +1,85 @@
+<div class="search-results">
+  @if (isSearching) {
+    <div class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Searching...</p>
+    </div>
+  }
+
+  @if (hasNoResults) {
+    <div class="no-results">
+      <p>No results found for "<strong>{{ query }}</strong>"</p>
+    </div>
+  }
+
+  @if (hasResults) {
+    <!-- Users Section -->
+    @if (results.users.length > 0) {
+      <section class="results-section">
+        <div class="section-header">
+          <lucide-angular [img]="userIcon" class="section-icon"></lucide-angular>
+          <h3>People</h3>
+        </div>
+        <div class="results-list">
+          @for (user of results.users; track user.username) {
+            <a [routerLink]="['/profile', user.username]" class="result-item user-result">
+              <img [src]="user.avatar" [alt]="user.name" class="user-avatar" />
+              <div class="user-info">
+                <p class="user-name">{{ user.name }}</p>
+                <p class="user-handle">&#64;{{ user.username }}</p>
+                @if (user.bio) {
+                  <p class="user-bio">{{ getPreviewContent(user.bio) }}</p>
+                }
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Posts Section -->
+    @if (results.posts.length > 0) {
+      <section class="results-section">
+        <div class="section-header">
+          <lucide-angular [img]="postIcon" class="section-icon"></lucide-angular>
+          <h3>Posts</h3>
+        </div>
+        <div class="results-list">
+          @for (post of results.posts; track post.id) {
+            <a [routerLink]="['/feed']" class="result-item post-result">
+              <div class="post-content">
+                <p class="post-text">{{ getPreviewContent(post.content) }}</p>
+                <div class="post-meta">
+                  <img [src]="post.author.avatar" [alt]="post.author.name" class="post-author-avatar" />
+                  <span class="post-author">{{ post.author.name }}</span>
+                  <span class="post-time">{{ post.timestamp }}</span>
+                </div>
+              </div>
+            </a>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Hashtags Section -->
+    @if (results.hashtags.length > 0) {
+      <section class="results-section">
+        <div class="section-header">
+          <lucide-angular [img]="hashtagIcon" class="section-icon"></lucide-angular>
+          <h3>Hashtags</h3>
+        </div>
+        <div class="results-list">
+          @for (hashtag of results.hashtags; track hashtag.tag) {
+            <a [routerLink]="['/explore']" class="result-item hashtag-result">
+              <div class="hashtag-info">
+                <p class="hashtag-tag">#{{ hashtag.tag }}</p>
+                <p class="hashtag-count">{{ hashtag.count | number }} posts</p>
+              </div>
+              <lucide-angular [img]="trendingIcon" class="trending-icon"></lucide-angular>
+            </a>
+          }
+        </div>
+      </section>
+    }
+  }
+</div>

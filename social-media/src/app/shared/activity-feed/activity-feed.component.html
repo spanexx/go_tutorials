@@ -1,0 +1,63 @@
+<div class="activity-feed">
+  <div class="activity-header">
+    <div class="header-left">
+      <lucide-angular [img]="activityIcon" class="header-icon"></lucide-angular>
+      <h3>Activity Feed</h3>
+      @if (unreadCount > 0) {
+        <span class="unread-badge">{{ unreadCount }}</span>
+      }
+    </div>
+    @if (unreadCount > 0) {
+      <button class="mark-all-btn" (click)="markAllAsRead()" title="Mark all as read">
+        <lucide-angular [img]="checkAllIcon" class="btn-icon"></lucide-angular>
+      </button>
+    }
+  </div>
+
+  <div class="activity-list">
+    @for (activity of activities; track activity.id) {
+      <div 
+        class="activity-item" 
+        [class.unread]="!activity.isRead"
+        [class.read]="activity.isRead"
+      >
+        <div class="activity-icon-wrapper" [ngClass]="getColorClass(activity.type)">
+          <lucide-angular [img]="getIcon(activity.type)"></lucide-angular>
+        </div>
+
+        <div class="activity-content">
+          <a [routerLink]="['/profile', activity.user.username]" class="activity-user">
+            <img [src]="activity.user.avatar" [alt]="activity.user.name" class="user-avatar" />
+          </a>
+
+          <div class="activity-details">
+            <p class="activity-text" [innerHTML]="getActionText(activity)"></p>
+            
+            @if (activity.target?.content) {
+              <p class="activity-preview">{{ activity.target?.content }}</p>
+            }
+
+            <p class="activity-time">{{ getTimeAgo(activity.timestamp) }}</p>
+          </div>
+        </div>
+
+        @if (!activity.isRead) {
+          <button class="mark-read-btn" (click)="markAsRead(activity.id)" title="Mark as read">
+            <lucide-angular [img]="checkIcon" class="check-icon"></lucide-angular>
+          </button>
+        }
+      </div>
+    }
+
+    @if (activities.length === 0) {
+      <div class="empty-activity">
+        <lucide-angular [img]="activityIcon" class="empty-icon"></lucide-angular>
+        <p>No recent activity</p>
+      </div>
+    }
+  </div>
+
+  <div class="activity-footer">
+    <a routerLink="/notifications" class="view-all-link">View all activity</a>
+  </div>
+</div>

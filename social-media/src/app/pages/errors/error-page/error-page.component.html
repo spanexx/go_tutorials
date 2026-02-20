@@ -1,0 +1,37 @@
+<div class="error-page-container">
+  <div class="error-page-content">
+    <div class="error-icon-wrapper">
+      <lucide-angular [img]="alertIcon"></lucide-angular>
+    </div>
+
+    <h1>{{ getErrorTitle() }}</h1>
+    <p class="error-message">{{ getErrorMessage() }}</p>
+
+    @if (error()?.details) {
+      <div class="error-details">
+        <p>{{ error()?.details }}</p>
+      </div>
+    }
+
+    @if (error()?.code) {
+      <div class="error-code-display">
+        Error Code: {{ error()?.code }}
+      </div>
+    }
+
+    <div class="error-actions">
+      <button class="btn-secondary" (click)="retry()">
+        <lucide-angular [img]="refreshIcon"></lucide-angular>
+        <span>Try Again</span>
+      </button>
+      <a routerLink="/feed" class="btn-primary" (click)="errorService.clearError()">
+        <lucide-angular [img]="homeIcon"></lucide-angular>
+        <span>Back to Home</span>
+      </a>
+    </div>
+
+    <div class="error-timestamp">
+      <p>Error occurred at: {{ error()?.timestamp | date:'medium' }}</p>
+    </div>
+  </div>
+</div>

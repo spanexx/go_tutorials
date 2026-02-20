@@ -1,0 +1,96 @@
+<div class="create-post">
+  <div class="create-post-header">
+    <img src="https://i.pravatar.cc/150?img=1" alt="User Avatar" class="avatar" />
+    <div class="input-container">
+      <textarea
+        class="post-textarea"
+        placeholder="What's on your mind?"
+        [(ngModel)]="postContent"
+        (input)="onTextareaInput($event)"
+        (keydown.control.enter)="canPost ? onPostClick() : null"
+        [class.error]="isOverLimit"
+        #postTextarea
+      ></textarea>
+      
+      <!-- Character Count Progress -->
+      <div class="character-count">
+        <div class="progress-bar">
+          <div 
+            class="progress-fill" 
+            [style.width.%]="progressPercentage"
+            [class.warning]="progressPercentage > 80 && progressPercentage <= 100"
+            [class.danger]="progressPercentage > 100"
+          ></div>
+        </div>
+        <span class="count-text" [class.over]="isOverLimit">
+          {{ remainingCharacters }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Preview -->
+  @if (selectedImage) {
+    <div class="image-preview">
+      <img [src]="selectedImage" alt="Selected image" class="preview-image" />
+      <button class="remove-image-btn" (click)="removeImage()" title="Remove image">
+        <lucide-icon [img]="closeIcon"></lucide-icon>
+      </button>
+    </div>
+  }
+
+  <div class="create-post-tools">
+    <div class="tool-buttons">
+      <label class="tool-btn" title="Add Image">
+        <input 
+          type="file" 
+          accept="image/*" 
+          (change)="onImageSelected($event)" 
+          hidden 
+        />
+        <lucide-icon [img]="imageIcon"></lucide-icon>
+      </label>
+      <button class="tool-btn" title="Add Emoji" (click)="toggleEmojiPicker()">
+        <lucide-icon [img]="smileIcon"></lucide-icon>
+      </button>
+      <button class="tool-btn" title="Add Location" disabled>
+        <lucide-icon [img]="locationIcon"></lucide-icon>
+      </button>
+    </div>
+
+    <div class="right-actions">
+      <!-- Emoji Picker -->
+      @if (showEmojiPicker) {
+        <div class="emoji-picker">
+          @for (emojiRow of emojiRows; track $index) {
+            <div class="emoji-row">
+              @for (emoji of emojiRow; track emoji) {
+                <button 
+                  class="emoji-btn" 
+                  (click)="addEmoji(emoji)"
+                  type="button"
+                >
+                  {{ emoji }}
+                </button>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <button 
+        class="post-btn" 
+        (click)="onPostClick()" 
+        [disabled]="!canPost"
+        title="Post (Ctrl+Enter)"
+      >
+        @if (isPosting) {
+          <span class="loading-spinner"></span>
+        } @else {
+          <lucide-icon [img]="sendIcon"></lucide-icon>
+        }
+        <span>{{ isPosting ? 'Posting...' : 'Post' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

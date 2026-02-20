@@ -1,0 +1,25 @@
+{
+  "milestone": "0.1",
+  "title": "Unmock Codebase",
+  "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
+  "generated_at": "2026-02-20T10:59:15Z",
+  "max_items": 200,
+  "findings_count": 1,
+  "files_with_findings": 1,
+  "items": [
+    {
+      "id": "C.001",
+      "title": "Unmock / remove stubs in ralph-critic.sh",
+      "type": "tech_debt",
+      "description": "This file contains indicators of mocked/stubbed/placeholder logic that should be implemented properly.",
+      "acceptance_criteria": [
+        "Replace mocked/stubbed logic with real implementation (no placeholders).",
+        "Remove TODO/FIXME/placeholder markers tied to this behavior.",
+        "Add/update minimal tests or checks appropriate for the touched area.",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true.",
+        "ralph-critic.sh:121 [not_implemented] (\"not_implemented\", re.compile(r\"not\\\\s+implemented|unimplemented\", re.IGNORECASE)),"
+      ],
+      "passes": true
+    }
+  ]
+}

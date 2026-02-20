@@ -1,0 +1,259 @@
+{
+  "milestone": "2.6",
+  "title": "Go Posts Service API",
+  "problem": "The frontend currently stores posts in localStorage with no real backend persistence, preventing multi-user interactions, feed algorithms, and data consistency. A dedicated Posts Service is needed to handle post CRUD operations, comments, reactions, and feed generation with proper database persistence and API endpoints.",
+  "success_metrics": [
+    "Posts service running on port 8081",
+    "PostgreSQL schema for posts, comments, reactions",
+    "All CRUD endpoints functional and tested",
+    "Feed endpoint returns paginated results in <150ms (p95)",
+    "Angular frontend successfully migrated from mock to real API",
+    "API documentation complete with Swagger",
+    "Integration test coverage >80%"
+  ],
+  "non_goals": [
+    "Real-time post updates via WebSocket - Phase 3",
+    "Image upload and processing - Phase 3",
+    "Full-text search with Elasticsearch - Phase 3",
+    "Rate limiting and throttling - Phase 4",
+    "CDN integration for media - Phase 4"
+  ],
+  "items": [
+    {
+      "id": "2.6.1",
+      "title": "Database Schema Design & Migrations",
+      "type": "infrastructure",
+      "description": "Design and implement PostgreSQL schema for posts, comments, and reactions.",
+      "acceptance_criteria": [
+        "migrations/000002_create_posts_tables.up.sql with posts, comments, reactions, follows tables",
+        "Indexes on user_id, created_at, parent_id, post_id",
+        "Foreign keys with CASCADE delete where appropriate",
+        "Unique constraint on (post_id, user_id, type) for reactions",
+        "Down migrations for rollback",
+        "make migrate-up applies all migrations"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.2",
+      "title": "Post Repository Layer",
+      "type": "feature",
+      "description": "Implement database access layer for post operations using sqlc.",
+      "acceptance_criteria": [
+        "internal/repository/posts.sql with queries: CreatePost, GetPostByID, GetPostsWithDetails, UpdatePost, DeletePost",
+        "GetPostsByUserID, GetPostsByHashtag, GetThreadPosts",
+        "IncrementLikeCount, DecrementLikeCount, IncrementCommentCount",
+        "internal/repository/posts.sql.go generated",
+        "Transactions for complex operations",
+        "Handles soft deletes (deleted_at column)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.3",
+      "title": "Comment Repository Layer",
+      "type": "feature",
+      "description": "Implement database access layer for comment operations.",
+      "acceptance_criteria": [
+        "internal/repository/comments.sql with queries: CreateComment, GetCommentsByPostID, GetCommentByID, DeleteComment",
+        "GetRepliesToComment (nested comments)",
+        "CountCommentsByPostID",
+        "Supports nested comments via parent_id",
+        "Efficient tree retrieval for threaded discussions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.4",
+      "title": "Reaction Repository Layer",
+      "type": "feature",
+      "description": "Implement database access layer for reaction operations.",
+      "acceptance_criteria": [
+        "internal/repository/reactions.sql with queries: AddReaction, RemoveReaction, GetReactionsByPostID",
+        "GetUserReaction (check if user reacted)",
+        "CountReactionsByType, GetReactionCountsByPostID",
+        "Upsert pattern for add/update reactions",
+        "Efficient aggregation for reaction counts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.5",
+      "title": "Post Service Layer",
+      "type": "feature",
+      "description": "Implement business logic for post operations.",
+      "acceptance_criteria": [
+        "internal/service/post_service.go with PostService",
+        "Methods: CreatePost, GetPost, GetFeed, UpdatePost, DeletePost, GetPostsByUser",
+        "Feed types: home (following), trending, latest",
+        "Trending algorithm: score = likes*1 + comments*2 + recency_boost",
+        "Authorization: users can only update/delete their own posts",
+        "Content validation (max 5000 chars, no XSS)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.6",
+      "title": "Reaction Service Layer",
+      "type": "feature",
+      "description": "Implement business logic for post reactions.",
+      "acceptance_criteria": [
+        "internal/service/reaction_service.go with ReactionService",
+        "Methods: React, RemoveReaction, GetReactions",
+        "Valid reaction types: like, love, laugh, wow, sad, angry",
+        "Toggle behavior (reacting again with same type removes reaction)",
+        "Updates post reaction counts atomically",
+        "Prevents duplicate reactions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.7",
+      "title": "Comment Service Layer",
+      "type": "feature",
+      "description": "Implement business logic for comment operations.",
+      "acceptance_criteria": [
+        "internal/service/comment_service.go with CommentService",
+        "Methods: AddComment, GetComments, DeleteComment",
+        "Nested comments supported (parentID optional)",
+        "Comment depth limit (max 5 levels)",
+        "Authorization checks for deletion"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.8",
+      "title": "Post HTTP Handlers",
+      "type": "feature",
+      "description": "Create HTTP handlers for post endpoints.",
+      "acceptance_criteria": [
+        "internal/handlers/post_handler.go with PostHandler",
+        "Routes: GET/POST /api/v1/posts, GET/PUT/DELETE /api/v1/posts/:id, GET /api/v1/feed",
+        "Request validation with go-playground/validator",
+        "Consistent error responses",
+        "Pagination: page, limit, has_more"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.9",
+      "title": "Reaction HTTP Handlers",
+      "type": "feature",
+      "description": "Create HTTP handlers for reaction endpoints.",
+      "acceptance_criteria": [
+        "internal/handlers/reaction_handler.go with ReactionHandler",
+        "Routes: POST/DELETE /api/v1/posts/:id/reactions, GET /api/v1/posts/:id/reactions",
+        "Reaction type in body: { type: like }",
+        "Returns 400 for invalid reaction type",
+        "Idempotent delete (no error if reaction doesn't exist)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.10",
+      "title": "Comment HTTP Handlers",
+      "type": "feature",
+      "description": "Create HTTP handlers for comment endpoints.",
+      "acceptance_criteria": [
+        "internal/handlers/comment_handler.go with CommentHandler",
+        "Routes: GET/POST /api/v1/posts/:id/comments, DELETE /api/v1/comments/:id",
+        "Nested replies via parent_id in request body",
+        "Returns comment tree with nested replies"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.11",
+      "title": "Feed Algorithm Implementation",
+      "type": "feature",
+      "description": "Implement feed ranking and pagination logic.",
+      "acceptance_criteria": [
+        "Home feed: posts from followed users, ranked by score",
+        "Trending feed: posts with highest engagement in last 24h",
+        "Latest feed: chronological, all posts",
+        "Score calculation: likes*1 + comments*2 + shares*3 + time_decay",
+        "Cursor-based pagination (not offset)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.12",
+      "title": "Angular Frontend Integration",
+      "type": "integration",
+      "description": "Migrate Angular frontend from mock to real Posts API.",
+      "acceptance_criteria": [
+        "src/app/shared/services/post.service.ts calls real API",
+        "src/app/shared/services/feed.service.ts updated",
+        "src/app/shared/services/reaction.service.ts created",
+        "src/app/shared/services/comment.service.ts created",
+        "Feed page loads from API with skeleton loading",
+        "Reactions update in real-time (optimistic UI)",
+        "Error handling with toast notifications"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.13",
+      "title": "Integration Tests",
+      "type": "test",
+      "description": "Write comprehensive integration tests for posts service.",
+      "acceptance_criteria": [
+        "internal/handlers/post_handler_test.go",
+        "internal/handlers/comment_handler_test.go",
+        "internal/handlers/reaction_handler_test.go",
+        "Test database with testcontainers",
+        "Test cases for CRUD, reactions, comments, feed, pagination",
+        "Test coverage >80%"
+      ],
+      "passes": false
+    },
+    {
+      "id": "2.6.14",
+      "title": "API Documentation Update",
+      "type": "documentation",
+      "description": "Generate OpenAPI documentation for posts and comments endpoints.",
+      "acceptance_criteria": [
+        "Swag comments on all handlers",
+        "make docs updates docs/swagger.yaml",
+        "Documentation includes post schemas, comment tree, reaction types",
+        "Feed types and ranking documented",
+        "Swagger UI accessible at /swagger"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/cmd/posts-service/main.go",
+    "backend/internal/service/post_service.go",
+    "backend/internal/service/comment_service.go",
+    "backend/internal/service/reaction_service.go",
+    "backend/internal/handlers/post_handler.go",
+    "backend/internal/handlers/comment_handler.go",
+    "backend/internal/handlers/reaction_handler.go",
+    "backend/internal/repository/posts.sql",
+    "backend/internal/repository/posts.sql.go",
+    "backend/internal/repository/comments.sql",
+    "backend/internal/repository/comments.sql.go",
+    "backend/internal/repository/reactions.sql",
+    "backend/internal/repository/reactions.sql.go",
+    "backend/internal/dto/post_dto.go",
+    "backend/migrations/000002_create_posts_tables.up.sql",
+    "backend/migrations/000002_create_posts_tables.down.sql",
+    "backend/docs/swagger.yaml",
+    "src/app/shared/services/post.service.ts",
+    "src/app/shared/services/feed.service.ts",
+    "src/app/shared/services/reaction.service.ts",
+    "src/app/shared/services/comment.service.ts"
+  ],
+  "affected_dependencies": [
+    "github.com/gin-gonic/gin",
+    "github.com/jackc/pgx/v5",
+    "github.com/sqlc-dev/sqlc",
+    "github.com/golang-migrate/migrate/v4",
+    "github.com/go-playground/validator/v10",
+    "github.com/redis/go-redis/v9",
+    "github.com/google/uuid",
+    "github.com/stretchr/testify",
+    "github.com/testcontainers/testcontainers-go"
+  ]
+}

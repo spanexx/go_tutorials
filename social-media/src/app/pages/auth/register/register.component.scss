@@ -1,0 +1,254 @@
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, hsl(var(--card)) 0%, hsl(var(--muted) / 0.3) 100%);
+
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: hsl(var(--card));
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--border));
+    padding: 2.5rem;
+    box-shadow: 0 8px 32px hsl(var(--shadow) / 0.1);
+
+    .auth-header {
+      text-align: center;
+      margin-bottom: 2rem;
+
+      h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: hsl(var(--foreground));
+        margin-bottom: 0.5rem;
+      }
+
+      p {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.95rem;
+        margin: 0;
+      }
+    }
+
+    .auth-form {
+      .error-message {
+        background: hsl(var(--destructive) / 0.1);
+        border: 1px solid hsl(var(--destructive) / 0.3);
+        color: hsl(var(--destructive));
+        padding: 0.75rem 1rem;
+        border-radius: calc(var(--radius) - 0.25rem);
+        font-size: 0.875rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+
+        label {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 500;
+          color: hsl(var(--foreground));
+          margin-bottom: 0.5rem;
+        }
+
+        .input-wrapper {
+          position: relative;
+          display: flex;
+          align-items: center;
+
+          .input-icon {
+            position: absolute;
+            left: 0.875rem;
+            width: 18px;
+            height: 18px;
+            color: hsl(var(--muted-foreground));
+            pointer-events: none;
+          }
+
+          .form-input {
+            width: 100%;
+            padding: 0.75rem 3rem 0.75rem 2.75rem;
+            border: 1px solid hsl(var(--input));
+            border-radius: calc(var(--radius) - 0.25rem);
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            font-size: 0.95rem;
+            transition: all 0.15s ease;
+
+            &::placeholder {
+              color: hsl(var(--muted-foreground));
+            }
+
+            &:focus {
+              outline: none;
+              border-color: hsl(var(--ring));
+              box-shadow: 0 0 0 2px hsl(var(--ring) / 0.1);
+            }
+
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+
+            &.error {
+              border-color: hsl(var(--destructive));
+            }
+          }
+
+          .password-toggle {
+            position: absolute;
+            right: 0.75rem;
+            background: transparent;
+            border: none;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: hsl(var(--muted-foreground));
+            transition: color 0.15s ease;
+
+            &:hover {
+              color: hsl(var(--foreground));
+            }
+
+            .toggle-icon {
+              width: 18px;
+              height: 18px;
+            }
+          }
+        }
+
+        .form-hint {
+          font-size: 0.75rem;
+          color: hsl(var(--muted-foreground));
+          margin-top: 0.375rem;
+          margin-bottom: 0;
+        }
+
+        .form-error {
+          font-size: 0.75rem;
+          color: hsl(var(--destructive));
+          margin-top: 0.375rem;
+          margin-bottom: 0;
+        }
+      }
+
+      .form-options {
+        margin-bottom: 1.5rem;
+
+        .checkbox-label {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: hsl(var(--muted-foreground));
+          cursor: pointer;
+          line-height: 1.4;
+
+          input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            margin-top: 0.125rem;
+            accent-color: hsl(var(--accent));
+            cursor: pointer;
+            flex-shrink: 0;
+
+            &:disabled {
+              cursor: not-allowed;
+            }
+          }
+
+          a {
+            color: hsl(var(--accent));
+            text-decoration: none;
+
+            &:hover {
+              text-decoration: underline;
+            }
+          }
+        }
+      }
+
+      .submit-btn {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.875rem 1.5rem;
+        background: hsl(var(--accent));
+        color: hsl(var(--accent-foreground));
+        border: none;
+        border-radius: calc(var(--radius) - 0.25rem);
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover:not(:disabled) {
+          opacity: 0.9;
+          transform: translateY(-1px);
+        }
+
+        &:disabled {
+          opacity: 0.6;
+          cursor: not-allowed;
+          transform: none;
+        }
+
+        .btn-icon {
+          width: 18px;
+          height: 18px;
+          stroke-width: 2px;
+        }
+
+        .loading-spinner {
+          width: 18px;
+          height: 18px;
+          border: 2px solid hsl(var(--accent-foreground) / 0.3);
+          border-top-color: hsl(var(--accent-foreground));
+          border-radius: 50%;
+          animation: spin 0.8s linear infinite;
+        }
+      }
+    }
+
+    .auth-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid hsl(var(--border));
+
+      p {
+        color: hsl(var(--muted-foreground));
+        font-size: 0.9rem;
+        margin: 0;
+
+        a {
+          color: hsl(var(--accent));
+          font-weight: 500;
+          text-decoration: none;
+          transition: color 0.15s ease;
+
+          &:hover {
+            color: hsl(var(--accent) / 0.8);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

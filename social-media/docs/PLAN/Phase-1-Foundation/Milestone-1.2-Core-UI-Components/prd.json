@@ -1,0 +1,128 @@
+{
+  "milestone": "1.2",
+  "title": "Core UI Components & Design System",
+  "problem": "SocialHub needs a consistent, modern design system with reusable UI components to ensure visual coherence across all pages. Without a solid component foundation, development will be inconsistent and maintenance will be difficult.",
+  "success_metrics": [
+    "Design tokens (CSS variables) are consistent across the app",
+    "Header component is fully functional with search, theme toggle, and user menu",
+    "Sidebar navigation works with keyboard shortcuts and active state highlighting",
+    "Toast notification system can display success, error, warning, and info messages",
+    "Skeleton loading components provide smooth content transitions",
+    "All components are responsive across breakpoints"
+  ],
+  "non_goals": [
+    "Advanced animations (Phase 2+)",
+    "Custom icon library (use Lucide)",
+    "Component library documentation site (Phase 4+)"
+  ],
+  "items": [
+    {
+      "id": "1.2.1",
+      "title": "Design Tokens & CSS Variables",
+      "type": "feature",
+      "description": "Implement the complete design system with CSS custom properties for colors, typography, spacing, shadows, and border radius.",
+      "acceptance_criteria": [
+        "All color variables defined (--accent, --destructive, --success, --warning, --info, --muted, etc.)",
+        "Typography scale implemented (0.75rem to 2rem)",
+        "Spacing system defined (0.25rem to 2rem)",
+        "Border radius tokens (small, default, large, full)",
+        "Shadow elevations (small, medium, large)",
+        "CSS reset and base styles",
+        "Variables work in both light and dark modes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.2.2",
+      "title": "Header Component",
+      "type": "feature",
+      "description": "Create the global header with logo, search, theme toggle, notifications badge, and user menu.",
+      "acceptance_criteria": [
+        "Logo links to feed",
+        "Search input with icon and keyboard shortcut (/)",
+        "Theme toggle button (sun/moon icons)",
+        "Notifications bell with unread count badge",
+        "User avatar dropdown menu",
+        "Sticky positioning at top",
+        "Responsive: search collapses to icon on mobile"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.2.3",
+      "title": "Sidebar Navigation",
+      "type": "feature",
+      "description": "Create the sidebar navigation menu with icons, active route highlighting, and keyboard shortcuts.",
+      "acceptance_criteria": [
+        "Navigation links: Feed, Explore, Messages, Notifications, Bookmarks, Analytics, Profile, Settings",
+        "Icons from Lucide for each nav item",
+        "Active route highlighted with accent color",
+        "Hover states with subtle background",
+        "Keyboard shortcuts displayed (G F, G E, etc.)",
+        "Collapsible on mobile (hamburger menu)",
+        "Quick post creation button (C shortcut)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.2.4",
+      "title": "Toast Notification System",
+      "type": "feature",
+      "description": "Implement a toast notification service and components for user feedback.",
+      "acceptance_criteria": [
+        "ToastService with success, error, warning, info methods",
+        "Toast component with icons and colors per type",
+        "Auto-dismiss after 5 seconds",
+        "Manual dismiss with X button",
+        "Stack multiple toasts",
+        "Position: top-right on desktop, bottom on mobile",
+        "Smooth enter/exit animations"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.2.5",
+      "title": "Skeleton Loading Components",
+      "type": "feature",
+      "description": "Create skeleton loading states for posts, profiles, and lists to improve perceived performance.",
+      "acceptance_criteria": [
+        "Skeleton post card component",
+        "Skeleton profile card component",
+        "Skeleton list item component",
+        "Shimmer animation effect",
+        "Configurable number of skeleton items",
+        "Match the layout of actual content",
+        "Accessible (aria-busy, aria-label)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.2.6",
+      "title": "Dark Mode Toggle",
+      "type": "feature",
+      "description": "Implement theme switching between light and dark modes with system preference detection.",
+      "acceptance_criteria": [
+        "Theme toggle in header",
+        "localStorage persists user preference",
+        "System preference detection (prefers-color-scheme)",
+        "Smooth transition between themes",
+        "All components respect theme variables",
+        "Default to system preference on first visit"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/styles.scss",
+    "src/app/shared/components/header/header.component.ts",
+    "src/app/shared/components/sidebar/sidebar.component.ts",
+    "src/app/shared/components/toast/toast.component.ts",
+    "src/app/shared/services/toast.service.ts",
+    "src/app/shared/components/skeleton-post/skeleton-post.component.ts",
+    "src/app/shared/components/skeleton-profile/skeleton-profile.component.ts"
+  ],
+  "affected_dependencies": [
+    "Lucide Angular icons",
+    "Angular animations module"
+  ]
+}

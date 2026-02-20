@@ -1,0 +1,125 @@
+<div class="explore-container">
+  <div class="explore-header">
+    <h1>Explore</h1>
+    <p class="subtitle">Discover trending topics and connect with creators</p>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-section">
+    <div class="search-input-wrapper">
+      <lucide-angular [img]="searchIcon" class="search-icon"></lucide-angular>
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search topics, hashtags, or people..."
+        (input)="onSearchInput($event)"
+        [value]="searchQuery"
+      />
+      @if (searchQuery) {
+        <button class="clear-btn" (click)="searchQuery = ''">×</button>
+      }
+    </div>
+  </div>
+
+  <!-- Category Filters -->
+  <div class="category-filters">
+    @for (category of categories; track category.id) {
+      <button
+        class="filter-btn"
+        [class.active]="selectedCategory === category.id"
+        (click)="selectCategory(category.id)"
+        [style.--category-color]="category.color"
+      >
+        <span class="category-icon">{{ category.icon }}</span>
+        <span class="category-name">{{ category.name }}</span>
+      </button>
+    }
+  </div>
+
+  <div class="explore-layout">
+    <!-- Main Content - Trending Topics -->
+    <main class="explore-main">
+      <div class="section-header">
+        <lucide-angular [img]="trendingIcon" class="section-icon"></lucide-angular>
+        <h2>Trending Topics</h2>
+      </div>
+
+      @if (trendingTopics.length > 0) {
+        <div class="topics-grid">
+          @for (topic of trendingTopics; track topic.id) {
+            <a [routerLink]="['/hashtag', topic.title]" class="topic-card">
+              <div class="topic-gradient" [style.background]="topic.gradient"></div>
+              <div class="topic-content">
+                <div class="topic-header">
+                  <lucide-angular [img]="hashtagIcon" class="topic-icon"></lucide-angular>
+                  <span class="topic-category">{{ getCategoryName(topic.category) }}</span>
+                </div>
+                <h3 class="topic-title">#{{ topic.title }}</h3>
+                <p class="topic-posts">{{ formatPostCount(topic.posts) }} posts</p>
+              </div>
+            </a>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <p>No topics found for "{{ searchQuery }}"</p>
+        </div>
+      }
+    </main>
+
+    <!-- Sidebar - Suggested Users -->
+    <aside class="explore-sidebar">
+      <div class="suggestions-card">
+        <div class="section-header">
+          <lucide-angular [img]="usersIcon" class="section-icon"></lucide-angular>
+          <h2>Suggested Users</h2>
+        </div>
+
+        <div class="suggestions-list">
+          @for (user of suggestedUsers; track user.username) {
+            <div class="suggestion-item">
+              <a [routerLink]="['/profile', user.username]" class="user-link">
+                <img [src]="user.avatar" [alt]="user.name" class="user-avatar" />
+                <div class="user-info">
+                  <p class="user-name">{{ user.name }}</p>
+                  <p class="user-handle">&#64;{{ user.username }}</p>
+                  <p class="user-bio">{{ user.bio }}</p>
+                </div>
+              </a>
+              <button
+                class="follow-btn"
+                [class.following]="exploreService.isFollowing(user.username)"
+                (click)="toggleFollow(user.username)"
+              >
+                {{ exploreService.isFollowing(user.username) ? 'Following' : 'Follow' }}
+              </button>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Top Trending Mini Card -->
+      <div class="top-trending-card">
+        <div class="section-header">
+          <lucide-angular [img]="trendingIcon" class="section-icon"></lucide-angular>
+          <h2>Top Trending</h2>
+        </div>
+
+        <div class="top-trending-list">
+          @for (topic of topTrending; track topic.id; let i = $index) {
+            <a [routerLink]="['/hashtag', topic.title]" class="top-trending-item">
+              <span class="trend-rank" [class.top-3]="i < 3">{{ i + 1 }}</span>
+              <div class="trend-info">
+                <p class="trend-title">#{{ topic.title }}</p>
+                <p class="trend-count">{{ formatPostCount(topic.posts) }} posts</p>
+              </div>
+            </a>
+          }
+        </div>
+      </div>
+
+      <!-- Activity Feed -->
+      <app-activity-feed></app-activity-feed>
+    </aside>
+  </div>
+</div>

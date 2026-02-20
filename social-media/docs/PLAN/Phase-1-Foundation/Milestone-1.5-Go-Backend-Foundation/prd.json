@@ -1,0 +1,244 @@
+{
+  "milestone": "1.5",
+  "title": "Go Backend Foundation",
+  "problem": "The application currently relies on mock authentication with localStorage, which doesn't provide real user persistence, security, or multi-user support. A production-ready backend is needed to handle user authentication, session management, and API requests securely and scalably.",
+  "success_metrics": [
+    "Auth service running on port 8080",
+    "PostgreSQL database with users table and migrations",
+    "JWT-based authentication working end-to-end",
+    "API endpoints respond in <100ms (p95)",
+    "Angular frontend can authenticate against real API",
+    "All auth endpoints covered by integration tests",
+    "OpenAPI documentation available at /swagger"
+  ],
+  "non_goals": [
+    "OAuth/Social login (GitHub, GitLab, Google) - Phase 2",
+    "Password reset via email - Phase 2",
+    "Rate limiting - Phase 4",
+    "Distributed tracing - Phase 4",
+    "Kubernetes deployment - Phase 4"
+  ],
+  "items": [
+    {
+      "id": "1.5.1",
+      "title": "Project Structure & Module Setup",
+      "type": "infrastructure",
+      "description": "Initialize Go module and create standard project layout following Go best practices.",
+      "acceptance_criteria": [
+        "Go module initialized at backend/go.mod with Go 1.21+",
+        "Directory structure created: cmd/, internal/, pkg/, configs/, migrations/",
+        "cmd/auth-service/main.go with basic server startup",
+        ".gitignore for Go projects",
+        "Makefile with common commands (build, run, test, migrate)",
+        "docker-compose.yml for local PostgreSQL + Redis"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.2",
+      "title": "Database Schema & Migrations",
+      "type": "infrastructure",
+      "description": "Design and implement PostgreSQL schema for users and authentication.",
+      "acceptance_criteria": [
+        "migrations/000001_create_users_table.up.sql with users table",
+        "migrations/000001_create_users_table.down.sql for rollback",
+        "Users table includes: id (UUID), email (unique), username (unique), password_hash, display_name, avatar_url, bio, created_at, updated_at",
+        "Indexes on email, username, created_at",
+        "Migration tool configured (golang-migrate or goose)",
+        "make migrate-up and make migrate-down commands work"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.3",
+      "title": "Configuration Management",
+      "type": "infrastructure",
+      "description": "Implement centralized configuration with environment variable support.",
+      "acceptance_criteria": [
+        "internal/config/config.go with Config struct",
+        "Supports: PORT, DATABASE_URL, REDIS_URL, JWT_SECRET, JWT_EXPIRY, ENV",
+        "Default values for development",
+        "Validation for required fields",
+        "configs/dev.yaml and configs/prod.yaml examples",
+        "Config loaded at startup and logged (excluding secrets)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.4",
+      "title": "HTTP Server & Router Setup",
+      "type": "feature",
+      "description": "Set up Gin HTTP server with middleware chain and health endpoints.",
+      "acceptance_criteria": [
+        "internal/http/server.go with Gin router setup",
+        "Middleware: Recovery, Logger, CORS, RequestID",
+        "Health endpoint: GET /healthz returns {status: ok}",
+        "Ready endpoint: GET /readyz checks DB connection",
+        "Graceful shutdown with context timeout",
+        "Server runs on configurable port (default 8080)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.5",
+      "title": "Repository Layer (sqlc)",
+      "type": "feature",
+      "description": "Implement type-safe database access using sqlc for SQL generation.",
+      "acceptance_criteria": [
+        "sqlc.yaml configuration file",
+        "internal/repository/users.sql.go generated from SQL",
+        "internal/repository/users.sql with queries: CreateUser, GetUserByID, GetUserByEmail, GetUserByUsername, UpdateUser",
+        "make generate command runs sqlc",
+        "Repository interface defined in internal/repository/repository.go",
+        "All queries use transactions where appropriate"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.6",
+      "title": "Service Layer & Business Logic",
+      "type": "feature",
+      "description": "Implement authentication business logic in service layer.",
+      "acceptance_criteria": [
+        "internal/service/auth_service.go with AuthService struct",
+        "Methods: Register, Login, Logout, RefreshToken, GetCurrentUser",
+        "Password hashing with bcrypt (cost 12)",
+        "Email format validation",
+        "Username validation (alphanumeric, 3-30 chars)",
+        "Password strength validation (min 8 chars, mixed case, number)",
+        "Duplicate email/username error handling",
+        "Returns proper domain errors (ErrUserExists, ErrInvalidCredentials)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.7",
+      "title": "JWT Authentication Middleware",
+      "type": "feature",
+      "description": "Implement JWT token generation, validation, and middleware.",
+      "acceptance_criteria": [
+        "internal/auth/jwt.go with JWTManager struct",
+        "Access token (15 min expiry) and Refresh token (7 day expiry)",
+        "Claims include: user_id, email, username, exp, iat, jti",
+        "AuthMiddleware() extracts and validates JWT from Authorization header",
+        "Bearer <token> format supported",
+        "Invalid/expired tokens return 401 Unauthorized",
+        "Token refresh endpoint rotates refresh tokens",
+        "Blacklist revoked tokens in Redis"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.8",
+      "title": "HTTP Handlers & Routes",
+      "type": "feature",
+      "description": "Create HTTP handlers and wire up authentication routes.",
+      "acceptance_criteria": [
+        "internal/handlers/auth_handler.go with AuthHandler",
+        "Routes registered in cmd/auth-service/main.go",
+        "Request/Response DTOs in internal/dto/",
+        "Consistent error response format",
+        "Input validation before calling service layer",
+        "HTTP status codes: 200, 201, 400, 401, 404, 409, 500"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.9",
+      "title": "API Documentation (OpenAPI/Swagger)",
+      "type": "documentation",
+      "description": "Generate OpenAPI 3.0 documentation for all auth endpoints.",
+      "acceptance_criteria": [
+        "Swag comments on all handlers",
+        "make docs generates docs/swagger.yaml and docs/swagger.json",
+        "Swagger UI served at GET /swagger/*",
+        "Documentation includes request/response schemas",
+        "Authentication requirements documented",
+        "Error responses documented",
+        "Example values provided"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.10",
+      "title": "Integration Tests",
+      "type": "test",
+      "description": "Write comprehensive integration tests for auth service.",
+      "acceptance_criteria": [
+        "internal/handlers/auth_handler_test.go",
+        "Test database with testcontainers or separate DB",
+        "Test cases for register, login, refresh, logout, protected routes",
+        "Test coverage >80%",
+        "make test runs all tests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.11",
+      "title": "Docker & Local Development Setup",
+      "type": "infrastructure",
+      "description": "Containerize auth service and simplify local development.",
+      "acceptance_criteria": [
+        "Dockerfile with multi-stage build",
+        "docker-compose.yml with auth-service, postgres, redis",
+        "docker-compose.dev.yml for development with hot reload",
+        ".env.example with all required variables",
+        "README.md with local setup instructions",
+        "Health checks configured in Docker"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.5.12",
+      "title": "Frontend Integration Configuration",
+      "type": "integration",
+      "description": "Configure Angular frontend to use real auth API instead of mocks.",
+      "acceptance_criteria": [
+        "src/environments/environment.ts with apiUrl",
+        "src/app/shared/services/auth.service.ts updated to call real API",
+        "HTTP interceptor adds JWT token to requests",
+        "HTTP interceptor handles 401 responses",
+        "CORS configured in Go backend for Angular",
+        "Login/Register flows tested end-to-end"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/go.mod",
+    "backend/go.sum",
+    "backend/cmd/auth-service/main.go",
+    "backend/internal/config/config.go",
+    "backend/internal/http/server.go",
+    "backend/internal/handlers/auth_handler.go",
+    "backend/internal/service/auth_service.go",
+    "backend/internal/repository/users.sql",
+    "backend/internal/repository/users.sql.go",
+    "backend/internal/dto/auth_dto.go",
+    "backend/internal/auth/jwt.go",
+    "backend/migrations/000001_create_users_table.up.sql",
+    "backend/migrations/000001_create_users_table.down.sql",
+    "backend/sqlc.yaml",
+    "backend/Dockerfile",
+    "backend/docker-compose.yml",
+    "backend/Makefile",
+    "backend/.env.example",
+    "backend/docs/swagger.yaml",
+    "src/environments/environment.ts",
+    "src/app/shared/services/auth.service.ts",
+    "src/app/shared/interceptors/auth.interceptor.ts"
+  ],
+  "affected_dependencies": [
+    "Go 1.21+",
+    "github.com/gin-gonic/gin",
+    "github.com/jackc/pgx/v5",
+    "github.com/sqlc-dev/sqlc",
+    "github.com/golang-migrate/migrate/v4",
+    "github.com/golang-jwt/jwt/v5",
+    "github.com/redis/go-redis/v9",
+    "golang.org/x/crypto/bcrypt",
+    "github.com/swaggo/swag",
+    "github.com/swaggo/gin-swagger",
+    "github.com/stretchr/testify"
+  ]
+}

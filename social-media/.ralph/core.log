@@ -1,0 +1,13 @@
+[0;35m╔════════════════════════════════════════════════╗[0m
+[0;35m║   Ralph Real-Time Orchestrator v3.0          ║[0m
+[0;35m║   Multi-Agent System with Chat & Monitoring     ║[0m
+[0;35m╚════════════════════════════════════════════════╝[0m
+[0;34m[Orchestrator] Initializing comm system...[0m
+[0;32m[Orchestrator] Comm CLI available (chat persistence enabled).[0m
+[0;34m[Orchestrator][0m Spawned worker-1 (PID: 895723)
+[0;34m[Orchestrator][0m Starting orchestration loop
+[0;34m[Orchestrator][0m Worker 1 died unexpectedly
+[0;34m[Orchestrator][0m Killed worker-1 (died)
+[0;34m[Orchestrator][0m Spawned worker-1 (PID: 898824)
+[0;34m[Orchestrator][0m Worker 1 died unexpectedly
+[0;34m[Orchestrator][0m Killed worker-1 (died)

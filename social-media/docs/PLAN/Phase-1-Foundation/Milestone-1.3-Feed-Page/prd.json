@@ -1,0 +1,115 @@
+{
+  "milestone": "1.3",
+  "title": "Feed Page & Post Creation",
+  "problem": "The feed is the core of SocialHub where users consume and create content. Without a functional feed, users cannot engage with the platform's primary purpose.",
+  "success_metrics": [
+    "Users can create posts with text content",
+    "Feed displays posts in chronological order",
+    "Infinite scroll loads more posts as user scrolls",
+    "Post cards display author, content, timestamp, and engagement stats",
+    "Create post form has character count and validation",
+    "Skeleton loading provides smooth experience during data fetch"
+  ],
+  "non_goals": [
+    "Image uploads in posts (Phase 2+)",
+    "Post reactions (Phase 2+)",
+    "Post comments/replies (Phase 2+)",
+    "Share functionality (Phase 2+)",
+    "Real-time feed updates (Phase 4+)"
+  ],
+  "items": [
+    {
+      "id": "1.3.1",
+      "title": "Post Model & Service",
+      "type": "feature",
+      "description": "Define the Post data model and create a PostService for CRUD operations with mock data.",
+      "acceptance_criteria": [
+        "Post interface with fields: id, author, content, createdAt, likesCount, commentsCount, sharesCount, images",
+        "Author interface with fields: id, name, username, avatar",
+        "PostService with methods: getFeedPosts, getUserPosts, createPost, getPostById",
+        "Mock data generator for development",
+        "Signal-based state management for posts",
+        "Pagination support (offset, limit)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.3.2",
+      "title": "Post Card Component",
+      "type": "feature",
+      "description": "Create the post card component that displays individual posts with author info, content, timestamp, and engagement preview.",
+      "acceptance_criteria": [
+        "Author avatar and name link to profile",
+        "Username displayed (@username)",
+        "Relative timestamp (e.g., '2h ago')",
+        "Post content with clickable hashtags and mentions",
+        "Engagement stats row (likes, comments, shares)",
+        "Hover effects on interactive elements",
+        "Responsive layout"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.3.3",
+      "title": "Create Post Component",
+      "type": "feature",
+      "description": "Build the create post form with text input, character count, and submit functionality.",
+      "acceptance_criteria": [
+        "Textarea with placeholder 'What's on your mind?'",
+        "Character count display (max 280 characters)",
+        "Visual indicator when near/over limit",
+        "Submit button (disabled when empty or over limit)",
+        "Loading state during submission",
+        "Success toast on post creation",
+        "Auto-focus on textarea when opened",
+        "Keyboard shortcut (C) to open"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.3.4",
+      "title": "Feed Page Layout",
+      "type": "feature",
+      "description": "Create the main feed page layout with create post section, posts list, and infinite scroll.",
+      "acceptance_criteria": [
+        "Create post component at top of feed",
+        "Posts list with vertical spacing",
+        "Infinite scroll implementation",
+        "Loading spinner at bottom during fetch",
+        "Empty state when no posts",
+        "Error state with retry button",
+        "Refresh button to reload feed"
+      ],
+      "passes": false
+    },
+    {
+      "id": "1.3.5",
+      "title": "Infinite Scroll Implementation",
+      "type": "feature",
+      "description": "Implement infinite scroll for the feed to load posts progressively as user scrolls.",
+      "acceptance_criteria": [
+        "Intersection Observer based scroll detection",
+        "Load more posts when nearing bottom",
+        "Page size: 10 posts per fetch",
+        "Loading indicator during fetch",
+        "No duplicate posts loaded",
+        "Smooth scroll behavior",
+        "Handle end of feed (no more posts)"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/models/post.model.ts",
+    "src/app/shared/services/post.service.ts",
+    "src/app/shared/components/post-card/post-card.component.ts",
+    "src/app/shared/components/create-post/create-post.component.ts",
+    "src/app/pages/feed/feed.component.ts",
+    "src/app/pages/feed/feed.component.html",
+    "src/app/shared/directives/infinite-scroll.directive.ts"
+  ],
+  "affected_dependencies": [
+    "Angular Signals",
+    "RxJS"
+  ]
+}

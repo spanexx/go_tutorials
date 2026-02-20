@@ -1,0 +1,97 @@
+<div class="bookmarks-container">
+  <div class="bookmarks-header">
+    <div class="header-left">
+      <lucide-angular [img]="bookmarkIcon" class="header-icon"></lucide-angular>
+      <h1>Bookmarks</h1>
+      @if (getTotalSavedCount() > 0) {
+        <span class="total-count">{{ getTotalSavedCount() }} saved</span>
+      }
+    </div>
+    <button class="new-collection-btn" (click)="openNewCollectionModal()">
+      <lucide-angular [img]="plusIcon"></lucide-angular>
+      <span>New Collection</span>
+    </button>
+  </div>
+
+  <div class="bookmarks-layout">
+    <!-- Collections Sidebar -->
+    <aside class="collections-sidebar">
+      <div class="collections-list">
+        @for (collection of collections; track collection.id) {
+          <div 
+            class="collection-item"
+            [class.active]="selectedCollectionId === collection.id"
+            (click)="selectCollection(collection.id)"
+          >
+            <div class="collection-left">
+              <span class="collection-icon" [style.color]="collection.color">
+                {{ getIconEmoji(collection.icon) }}
+              </span>
+              <div class="collection-info">
+                <span class="collection-name">{{ collection.name }}</span>
+                <span class="collection-count">{{ getCollectionCount(collection.id) }} posts</span>
+              </div>
+            </div>
+            @if (!collection.isDefault) {
+              <button 
+                class="edit-collection-btn" 
+                (click)="openEditCollectionModal(collection.id); $event.stopPropagation()"
+                title="Edit collection"
+              >
+                ⋮
+              </button>
+            }
+          </div>
+        }
+      </div>
+    </aside>
+
+    <!-- Posts Content -->
+    <main class="bookmarks-content">
+      @if (selectedCollection) {
+        <div class="collection-header">
+          <div class="collection-title">
+            <span class="collection-icon" [style.color]="selectedCollection.color">
+              {{ getIconEmoji(selectedCollection.icon) }}
+            </span>
+            <h2>{{ selectedCollection.name }}</h2>
+          </div>
+          @if (selectedCollection.description) {
+            <p class="collection-description">{{ selectedCollection.description }}</p>
+          }
+        </div>
+      }
+
+      @if (hasSavedPosts) {
+        <div class="posts-list">
+          @for (post of savedPosts; track post.id) {
+            <app-thread 
+              [post]="post" 
+              [isReply]="false" 
+              [depth]="0">
+            </app-thread>
+          }
+        </div>
+      } @else {
+        <div class="empty-state">
+          <lucide-angular [img]="bookmarkIcon" class="empty-icon"></lucide-angular>
+          <h2>No bookmarks yet</h2>
+          <p>Save posts to read them later</p>
+          @if (selectedCollectionId !== 'default') {
+            <button class="view-all-btn" (click)="selectCollection('default')">
+              View all bookmarks
+            </button>
+          }
+        </div>
+      }
+    </main>
+  </div>
+
+  <!-- Collection Modal -->
+  <app-collection-modal
+    [visible]="showCollectionModal"
+    [editCollectionId]="editCollectionId"
+    (closed)="closeCollectionModal()"
+    (collectionSaved)="closeCollectionModal()"
+  ></app-collection-modal>
+</div>

@@ -1,0 +1,50 @@
+<div class="refresh-container">
+  <!-- Pull to refresh indicator -->
+  @if (show) {
+    <div class="pull-indicator">
+      <div class="spinner-wrapper">
+        <lucide-angular [img]="refreshIcon" class="spinning-icon"></lucide-angular>
+      </div>
+      <span>Refreshing...</span>
+    </div>
+  }
+
+  <!-- New posts notification -->
+  @if (refreshService.showNewPostsIndicator()) {
+    <div class="new-posts-banner">
+      <button class="new-posts-btn" (click)="onRefresh()">
+        <lucide-angular [img]="arrowIcon" class="arrow-icon"></lucide-angular>
+        <span>
+          {{ refreshService.getNewPostsCount() }} new post{{ refreshService.getNewPostsCount() !== 1 ? 's' : '' }}
+        </span>
+      </button>
+      <button class="dismiss-btn" (click)="onDismiss()" title="Dismiss">
+        <lucide-angular [img]="refreshIcon"></lucide-angular>
+      </button>
+    </div>
+  }
+
+  <!-- Last refreshed info -->
+  <div class="refresh-info">
+    <span class="last-refreshed">
+      @if (refreshService.getLastRefreshed()) {
+        <lucide-angular [img]="checkIcon" class="check-icon"></lucide-angular>
+        <span>Updated {{ getFormattedTime() }}</span>
+      } @else {
+        <span>Not yet refreshed</span>
+      }
+    </span>
+    
+    <button 
+      class="auto-refresh-toggle" 
+      [class.active]="refreshService.isAutoRefreshEnabled()"
+      (click)="toggleAutoRefresh()"
+      title="Toggle auto-refresh"
+    >
+      <span>Auto-refresh</span>
+      <div class="toggle-switch">
+        <div class="toggle-knob"></div>
+      </div>
+    </button>
+  </div>
+</div>

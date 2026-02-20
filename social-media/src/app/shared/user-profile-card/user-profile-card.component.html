@@ -1,0 +1,89 @@
+<div class="profile-card" [class.position-top]="position === 'top'">
+  @if (isLoading) {
+    <div class="profile-card-loading">
+      <div class="loading-avatar"></div>
+      <div class="loading-info">
+        <div class="loading-line short"></div>
+        <div class="loading-line"></div>
+      </div>
+    </div>
+  } @else if (user) {
+    <div class="profile-card-header">
+      <div class="card-avatar-wrapper">
+        <a [routerLink]="['/profile', user.username]">
+          <img [src]="user.avatar" [alt]="user.name" class="card-avatar" />
+        </a>
+        @if (user.isVerified) {
+          <div class="verified-badge" title="Verified">
+            <lucide-angular [img]="checkIcon"></lucide-angular>
+          </div>
+        }
+      </div>
+      <div class="card-info">
+        <a [routerLink]="['/profile', user.username]" class="card-name">
+          {{ user.name }}
+          @if (user.isVerified) {
+            <lucide-angular [img]="checkIcon" class="inline-check"></lucide-angular>
+          }
+        </a>
+        <p class="card-username">&#64;{{ user.username }}</p>
+      </div>
+    </div>
+
+    <p class="card-bio">{{ user.bio }}</p>
+
+    <div class="card-meta">
+      @if (user.location) {
+        <div class="meta-item">
+          <lucide-angular [img]="locationIcon"></lucide-angular>
+          <span>{{ user.location }}</span>
+        </div>
+      }
+      @if (user.website) {
+        <div class="meta-item">
+          <lucide-angular [img]="linkIcon"></lucide-angular>
+          <a [href]="'https://' + user.website" target="_blank">{{ user.website }}</a>
+        </div>
+      }
+      @if (user.joinedDate) {
+        <div class="meta-item">
+          <lucide-angular [img]="calendarIcon"></lucide-angular>
+          <span>Joined {{ user.joinedDate }}</span>
+        </div>
+      }
+    </div>
+
+    <div class="card-stats">
+      <div class="stat">
+        <span class="stat-value">{{ formatNumber(user.following) }}</span>
+        <span class="stat-label">Following</span>
+      </div>
+      <div class="stat-divider"></div>
+      <div class="stat">
+        <span class="stat-value">{{ formatNumber(user.followers) }}</span>
+        <span class="stat-label">Followers</span>
+      </div>
+    </div>
+
+    <div class="card-actions">
+      <a [routerLink]="['/profile', user.username]" class="btn-secondary">
+        View Profile
+      </a>
+      @if (!isCurrentUser) {
+        <button 
+          class="btn-follow" 
+          [class.following]="user.isFollowing"
+          (click)="toggleFollow()"
+        >
+          @if (user.isFollowing) {
+            <lucide-angular [img]="checkIcon"></lucide-angular>
+            <span>Following</span>
+          } @else {
+            <lucide-angular [img]="followIcon"></lucide-angular>
+            <span>Follow</span>
+          }
+        </button>
+      }
+    </div>
+  }
+</div>

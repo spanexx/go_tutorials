@@ -1,0 +1,82 @@
+@if (showModal()) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <!-- Header -->
+      <div class="modal-header">
+        <div class="search-wrapper">
+          <lucide-angular [img]="searchIcon" class="search-icon"></lucide-angular>
+          <input
+            type="text"
+            class="search-input"
+            placeholder="Type a command or search..."
+            (input)="onSearchInput($event)"
+            [value]="searchQuery()"
+            #searchInput
+          />
+        </div>
+        <button class="close-btn" (click)="closeModal()">
+          <lucide-angular [img]="closeIcon"></lucide-angular>
+        </button>
+      </div>
+
+      <!-- Actions List -->
+      <div class="actions-container">
+        @for (category of actionsService.getActionsByCategory() | keyvalue; track category.key) {
+          <div class="actions-category">
+            <h3 class="category-label">{{ category.key }}</h3>
+            <div class="actions-list">
+              @for (action of category.value; track action.id; let i = $index) {
+                <div
+                  class="action-item"
+                  [class.selected]="selectedIndex() === i"
+                  (mouseenter)="selectAction(action, i)"
+                  (click)="executeAction(action)"
+                >
+                  <div class="action-left">
+                    <div class="action-icon" [ngClass]="getIconClass(action.icon)">
+                      <lucide-angular [img]="commandIcon"></lucide-angular>
+                    </div>
+                    <div class="action-info">
+                      <span class="action-title">{{ action.title }}</span>
+                      @if (action.description) {
+                        <span class="action-description">{{ action.description }}</span>
+                      }
+                    </div>
+                  </div>
+                  <div class="action-right">
+                    @if (action.shortcut) {
+                      <kbd class="shortcut-key">{{ action.shortcut }}</kbd>
+                    }
+                    <lucide-angular [img]="arrowIcon" class="arrow-icon"></lucide-angular>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
+
+        @if (actionsService.getFilteredActions().length === 0) {
+          <div class="no-results">
+            <lucide-angular [img]="searchIcon" class="no-results-icon"></lucide-angular>
+            <p>No results found for "{{ searchQuery() }}"</p>
+          </div>
+        }
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <div class="footer-hints">
+          <span class="hint">
+            <kbd>↑↓</kbd> Navigate
+          </span>
+          <span class="hint">
+            <kbd>↵</kbd> Select
+          </span>
+          <span class="hint">
+            <kbd>esc</kbd> Close
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+}

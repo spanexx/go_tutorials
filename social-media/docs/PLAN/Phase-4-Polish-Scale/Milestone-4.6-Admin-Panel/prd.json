@@ -1,0 +1,108 @@
+{
+  "milestone": "4.6",
+  "title": "Admin Panel",
+  "problem": "Platform administrators need tools to manage users, moderate content, and view platform analytics. An admin panel provides oversight and control capabilities.",
+  "success_metrics": [
+    "Admin users can access admin panel",
+    "User management interface works",
+    "Content moderation tools functional",
+    "Platform analytics dashboard displays data",
+    "Role-based access control implemented"
+  ],
+  "non_goals": [
+    "Advanced reporting (Phase 5)",
+    "Automated moderation (Phase 5)",
+    "Multi-tenant support (Phase 5)"
+  ],
+  "items": [
+    {
+      "id": "4.6.1",
+      "title": "Admin Authentication & Access",
+      "type": "feature",
+      "description": "Create admin role and authentication guard.",
+      "acceptance_criteria": [
+        "Admin role flag in user model",
+        "AdminGuard for admin routes",
+        "Admin login detection",
+        "Unauthorized redirect for non-admins",
+        "Admin menu in navigation (admin only)",
+        "Super admin vs admin roles (optional)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.6.2",
+      "title": "User Management Interface",
+      "type": "feature",
+      "description": "Create user management page for viewing and managing users.",
+      "acceptance_criteria": [
+        "User list with pagination",
+        "Search users by name/email",
+        "Filter by status (active, suspended)",
+        "View user details modal",
+        "Suspend/unsuspend user",
+        "Delete user (with confirmation)",
+        "Export user list (CSV)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.6.3",
+      "title": "Content Moderation",
+      "type": "feature",
+      "description": "Implement content moderation tools for posts and comments.",
+      "acceptance_criteria": [
+        "Reported content queue",
+        "Review reported posts/comments",
+        "Remove content action",
+        "Warn user action",
+        "Ban user action",
+        "Filter by report type",
+        "Bulk actions on selected items"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.6.4",
+      "title": "Platform Analytics",
+      "type": "feature",
+      "description": "Admin dashboard showing platform-wide statistics.",
+      "acceptance_criteria": [
+        "Total users count with growth",
+        "Total posts count with activity",
+        "Daily active users chart",
+        "New signups per day",
+        "Reported content statistics",
+        "Server health metrics (placeholder)",
+        "Date range selector"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.6.5",
+      "title": "Admin Panel Layout",
+      "type": "feature",
+      "description": "Create admin panel layout with navigation and structure.",
+      "acceptance_criteria": [
+        "Admin route guard protected",
+        "Sidebar navigation for admin sections",
+        "Dashboard overview page",
+        "Users management page",
+        "Content moderation page",
+        "Settings page (placeholder)",
+        "Responsive design",
+        "Breadcrumb navigation"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/guards/admin.guard.ts",
+    "src/app/pages/admin/admin.component.ts",
+    "src/app/pages/admin/dashboard/dashboard.component.ts",
+    "src/app/pages/admin/users/users.component.ts",
+    "src/app/pages/admin/moderation/moderation.component.ts",
+    "src/app/shared/services/admin.service.ts"
+  ],
+  "affected_dependencies": []
+}

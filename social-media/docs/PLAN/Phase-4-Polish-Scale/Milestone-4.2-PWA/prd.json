@@ -1,0 +1,104 @@
+{
+  "milestone": "4.2",
+  "title": "PWA & Offline Support",
+  "problem": "Users expect app-like experiences with offline capabilities. Converting SocialHub to a PWA enables installation, offline functionality, and native app feel.",
+  "success_metrics": [
+    "App can be installed on devices",
+    "Works offline with cached content",
+    "Service worker handles updates gracefully",
+    "App shell loads instantly",
+    "Background sync for pending actions"
+  ],
+  "non_goals": [
+    "Native app features (camera, contacts) (Phase 5)",
+    "Advanced background processing (Phase 5)",
+    "Push notifications (requires backend)"
+  ],
+  "items": [
+    {
+      "id": "4.2.1",
+      "title": "Service Worker Configuration",
+      "type": "feature",
+      "description": "Set up Angular service worker for PWA capabilities.",
+      "acceptance_criteria": [
+        "Install @angular/pwa package",
+        "Configure ngsw-config.json",
+        "Define caching strategies for assets",
+        "Cache API responses for offline",
+        "Configure static asset caching",
+        "Update check on app load"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.2.2",
+      "title": "Web App Manifest",
+      "type": "feature",
+      "description": "Create manifest.json for PWA installation.",
+      "acceptance_criteria": [
+        "Manifest with app name, description",
+        "App icons (192x192, 512x512)",
+        "Theme color and background color",
+        "Display mode (standalone)",
+        "Start URL configuration",
+        "Scope definition",
+        "Orientation preference"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.2.3",
+      "title": "Offline Page",
+      "type": "feature",
+      "description": "Create offline fallback page when network unavailable.",
+      "acceptance_criteria": [
+        "Offline page component",
+        "Shows 'You're offline' message",
+        "Display cached content if available",
+        "Retry button to check connection",
+        "Queue pending actions for sync"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.2.4",
+      "title": "Background Sync",
+      "type": "feature",
+      "description": "Queue and sync actions performed while offline.",
+      "acceptance_criteria": [
+        "Queue posts created offline",
+        "Queue likes/reactions offline",
+        "Queue messages sent offline",
+        "Sync when connection restored",
+        "Show pending actions indicator",
+        "Handle sync conflicts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "4.2.5",
+      "title": "App Shell Architecture",
+      "type": "feature",
+      "description": "Optimize app shell for instant loading.",
+      "acceptance_criteria": [
+        "App shell renders immediately",
+        "Skeleton UI while content loads",
+        "Critical CSS inline",
+        "Non-critical CSS lazy loaded",
+        "Fast first paint",
+        "Smooth transitions"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "ngsw-config.json",
+    "manifest.json",
+    "src/app/app.module.ts",
+    "src/app/pages/offline/offline.component.ts",
+    "src/app/shared/services/sync.service.ts"
+  ],
+  "affected_dependencies": [
+    "@angular/service-worker"
+  ]
+}

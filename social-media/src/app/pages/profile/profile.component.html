@@ -1,0 +1,70 @@
+<div class="profile-container">
+  @if (isLoading) {
+    <app-profile-skeleton></app-profile-skeleton>
+  } @else {
+    <div class="profile-header">
+      <div class="cover-image"></div>
+      <div class="profile-info">
+        <img [src]="user.avatar" alt="Profile" class="profile-avatar" />
+        <div class="profile-details">
+          <div class="name-section">
+            <h1>{{ user.name }}</h1>
+            @if (isCurrentUser) {
+              <a [routerLink]="['/profile', user.username, 'edit']" class="edit-btn" title="Edit Profile">
+                <lucide-angular [img]="editIcon"></lucide-angular>
+              </a>
+            }
+          </div>
+          <p class="handle">&#64;{{ user.username }}</p>
+          <p class="bio">{{ user.bio }}</p>
+          
+          <div class="profile-meta">
+            @if (user.location) {
+              <div class="meta-item">
+                <lucide-angular [img]="locationIcon"></lucide-angular>
+                <span>{{ user.location }}</span>
+              </div>
+            }
+            @if (user.website) {
+              <div class="meta-item">
+                <lucide-angular [img]="linkIcon"></lucide-angular>
+                <a href="https://{{ user.website }}" target="_blank">{{ user.website }}</a>
+              </div>
+            }
+            @if (user.joinedDate) {
+              <div class="meta-item">
+                <lucide-angular [img]="calendarIcon"></lucide-angular>
+                <span>Joined {{ user.joinedDate }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="profile-stats">
+            <div class="stat">
+              <p class="stat-value">{{ stats.posts }}</p>
+              <p class="stat-label">Posts</p>
+            </div>
+            <div class="stat">
+              <p class="stat-value">{{ formatNumber(stats.followers) }}</p>
+              <p class="stat-label">Followers</p>
+            </div>
+            <div class="stat">
+              <p class="stat-value">{{ formatNumber(stats.following) }}</p>
+              <p class="stat-label">Following</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile-tabs">
+      <button class="tab active">Posts</button>
+      <button class="tab">Likes</button>
+      <button class="tab">Media</button>
+    </div>
+
+    <div class="profile-content">
+      <p class="empty-message">Posts will appear here</p>
+    </div>
+  }
+</div>
