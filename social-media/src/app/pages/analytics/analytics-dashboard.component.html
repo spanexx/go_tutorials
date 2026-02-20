@@ -74,7 +74,7 @@
         </div>
         <div class="chart-container">
           <div class="bar-chart">
-            @for (day of engagementData; track day.label) {
+            @for (day of engagementData; track day.date) {
               <div class="bar-group">
                 <div class="bars">
                   <div 
@@ -84,8 +84,8 @@
                   ></div>
                   <div 
                     class="bar replies-bar" 
-                    [style.height.%]="(day.replies / getMaxEngagement()) * 100"
-                    [attr.title]="day.replies + ' replies'"
+                    [style.height.%]="(day.comments / getMaxEngagement()) * 100"
+                    [attr.title]="day.comments + ' comments'"
                   ></div>
                   <div 
                     class="bar shares-bar" 
@@ -93,7 +93,7 @@
                     [attr.title]="day.shares + ' shares'"
                   ></div>
                 </div>
-                <span class="bar-label">{{ day.label }}</span>
+                <span class="bar-label">{{ day.date }}</span>
               </div>
             }
           </div>

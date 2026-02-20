@@ -13,6 +13,7 @@ export interface AuthState {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  token?: string;
 }
 
 @Injectable({
@@ -27,6 +28,7 @@ export class AuthService {
 
   constructor() {
     this.loadUserFromStorage();
+    this.loadTokenFromStorage();
   }
 
   private loadUserFromStorage(): void {
@@ -129,10 +131,12 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('socialhub_user');
+    localStorage.removeItem('socialhub_token');
     this.authState.set({
       user: null,
       isAuthenticated: false,
-      isLoading: false
+      isLoading: false,
+      token: undefined
     });
   }
 
@@ -145,6 +149,39 @@ export class AuthService {
         isLoading: false
       });
       localStorage.setItem('socialhub_user', JSON.stringify(updatedUser));
+    }
+  }
+
+  /**
+   * Get the current JWT token
+   * Used by the auth interceptor to attach to API requests
+   */
+  getToken(): string | null {
+    return this.authState().token || null;
+  }
+
+  /**
+   * Set the authentication token
+   * Called after successful login/register
+   */
+  setToken(token: string): void {
+    this.authState.update(state => ({
+      ...state,
+      token
+    }));
+    localStorage.setItem('socialhub_token', token);
+  }
+
+  /**
+   * Load token from localStorage on initialization
+   */
+  private loadTokenFromStorage(): void {
+    const token = localStorage.getItem('socialhub_token');
+    if (token && this.authState().isAuthenticated) {
+      this.authState.update(state => ({
+        ...state,
+        token
+      }));
     }
   }
 }

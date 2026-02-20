@@ -23,9 +23,9 @@
         <div class="results-list">
           @for (user of results.users; track user.username) {
             <a [routerLink]="['/profile', user.username]" class="result-item user-result">
-              <img [src]="user.avatar" [alt]="user.name" class="user-avatar" />
+              <img [src]="user.avatar_url" [alt]="user.display_name" class="user-avatar" />
               <div class="user-info">
-                <p class="user-name">{{ user.name }}</p>
+                <p class="user-name">{{ user.display_name }}</p>
                 <p class="user-handle">&#64;{{ user.username }}</p>
                 @if (user.bio) {
                   <p class="user-bio">{{ getPreviewContent(user.bio) }}</p>

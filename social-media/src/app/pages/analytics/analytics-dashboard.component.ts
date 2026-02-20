@@ -37,9 +37,16 @@ export class AnalyticsDashboardComponent {
     this.metrics = this.analyticsService.getMetrics();
     this.engagementData = this.analyticsService.getEngagementData();
     this.followerGrowth = this.analyticsService.getFollowerGrowth();
-    this.followerGrowthPercent = this.analyticsService.getFollowerGrowthPercentage();
-    this.engagementTrend = this.analyticsService.getEngagementTrend();
+    this.followerGrowthPercent = this.calculateFollowerGrowthPercentage();
+    this.engagementTrend = this.analyticsService.getEngagementTrend(this.engagementData);
     this.topHashtags = this.analyticsService.getTopHashtags();
+  }
+
+  calculateFollowerGrowthPercentage(): number {
+    if (this.followerGrowth.length < 2) return 0;
+    const first = this.followerGrowth[0].count;
+    const last = this.followerGrowth[this.followerGrowth.length - 1].count;
+    return Math.round(((last - first) / first) * 100 * 10) / 10;
   }
 
   getTrendIcon(): any {
@@ -59,11 +66,11 @@ export class AnalyticsDashboardComponent {
   }
 
   getMaxEngagement(): number {
-    return Math.max(...this.engagementData.map(d => d.likes + d.replies + d.shares));
+    return Math.max(...this.engagementData.map(d => d.likes + d.comments + d.shares));
   }
 
   getMaxFollowers(): number {
-    return Math.max(...this.followerGrowth.map(d => d.followers));
+    return Math.max(...this.followerGrowth.map(d => d.count));
   }
 
   formatNumber(num: number): string {
@@ -116,14 +123,14 @@ export class AnalyticsDashboardComponent {
     const height = 150;
     const padding = 20;
     const maxValue = this.getMaxFollowers();
-    const minValue = Math.min(...this.followerGrowth.map(d => d.followers));
+    const minValue = Math.min(...this.followerGrowth.map(d => d.count));
     const range = maxValue - minValue || 1;
-    
+
     return this.followerGrowth.map((data, index) => ({
       x: (index / (this.followerGrowth.length - 1)) * width,
-      y: height - padding - ((data.followers - minValue) / range) * (height - 2 * padding),
+      y: height - padding - ((data.count - minValue) / range) * (height - 2 * padding),
       label: data.date,
-      value: data.followers
+      value: data.count
     }));
   }
 }

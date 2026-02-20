@@ -40,6 +40,15 @@ func NewServer(cfg *config.Config, authService *service.AuthService) *Server {
 	{
 		// Auth handlers
 		authHandler := handlers.NewAuthHandler(authService)
+		
+		// Analytics handlers
+		analyticsHandler := handlers.NewAnalyticsHandler()
+		
+		// Search handlers
+		searchHandler := handlers.NewSearchHandler()
+		
+		// User handlers
+		userHandler := handlers.NewUserHandler(authService)
 
 		// Public routes
 		auth := v1.Group("/auth")
@@ -48,6 +57,37 @@ func NewServer(cfg *config.Config, authService *service.AuthService) *Server {
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/refresh", authHandler.RefreshToken)
 			auth.GET("/verify/:token", authHandler.VerifyEmail)
+		}
+		
+		// Search routes (public)
+		search := v1.Group("/search")
+		{
+			search.GET("", searchHandler.Search)
+		}
+		
+		// Hashtags routes (public)
+		hashtags := v1.Group("/hashtags")
+		{
+			hashtags.GET("/trending", searchHandler.GetTrendingHashtags)
+		}
+		
+		// Users routes (mixed)
+		users := v1.Group("/users")
+		{
+			users.GET("/suggested", searchHandler.GetSuggestedUsers)
+			users.GET("/:username", userHandler.GetUserByUsername)
+			users.GET("/id/:id", userHandler.GetUserByID)
+			users.POST("/:username/follow", userHandler.FollowUser)
+			users.POST("/:username/unfollow", userHandler.UnfollowUser)
+		}
+		
+		// Analytics routes (protected)
+		analytics := v1.Group("/analytics")
+		analytics.Use(middleware.Auth(authService))
+		{
+			analytics.GET("/engagement", analyticsHandler.GetEngagement)
+			analytics.GET("/followers", analyticsHandler.GetFollowers)
+			analytics.GET("/stats", analyticsHandler.GetStats)
 		}
 
 		// Protected routes

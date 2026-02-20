@@ -41,3 +41,135 @@
 
 **RECOMMENDED START:** C.011 (meta-improvement for critic scanner) → C.010 (HTTP infrastructure) → C.012 (backend APIs)
 [2026-02-20 14:28:19] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 14:39:51] [CRITIC] Starting critic agent run. Session=2de6bbc7-5165-4ae4-ab5d-a87d386e91d3 Ref=none
+[2026-02-20 14:39:53] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 14:58:17] [MAIN] Iteration 1 completed. Status=✅ SUCCESS. Summary: COMPLETED: Updated ralph-critic.sh with Angular/TypeScript mock detection patterns MILESTONE: docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase PRD_ITEM: C.011 - Update critic scanner patterns for Angular/TypeScript projects FI
+[2026-02-20 15:00:23] [CRITIC] Starting critic agent run. Session=8d1ae76e-db8b-4895-97ee-38a237953ee7 Ref=none
+[2026-02-20 15:00:25] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 15:07:52] [VALIDATOR] Iteration 1: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 15:07:52] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 15:08:12] [CRITIC] Starting critic agent run. Session=6ae92b12-77db-42e6-9484-e5117b3d1997 Ref=none
+[2026-02-20 15:08:14] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 15:08:54] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 1 (C.011 ✅)
+- Remaining: 11 (all passes=false)
+
+**NO NEW FINDINGS:** Existing backlog is comprehensive. Critic scanner improvements from C.011 are functioning correctly.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.010** (HTTP client module) - Infrastructure for all frontend API integrations
+2. **C.012** (Backend APIs) - Required endpoints for frontend services
+3. **C.008/C.009** (Quick wins) - UUID generation & random avatar ID in Go auth service
+
+**BLOCKERS:** None. C.010 and C.012 are prerequisites for C.001→C.005.
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 15:09:01] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 15:18:11] [MAIN] Iteration 2 completed. Status=✅ SUCCESS. Summary: **Problem**: Angular services lacked HTTP client integration for making API calls to the backend.  **Solution**: Created complete HTTP client infrastructure:  **Components Created**: 1. **auth.interceptor.ts** - Adds JWT Bearer token to all
+[2026-02-20 15:21:53] [VALIDATOR] Iteration 2: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 15:21:53] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 15:24:59] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 2 (C.010 ✅, C.011 ✅)
+- Remaining: 10 (all passes=false)
+
+**PROGRESS:** HTTP client infrastructure now in place (interceptors, base API service, token management). Frontend ready for API integration.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.012** (Backend APIs) - Create Go endpoints: /api/v1/analytics/*, /api/v1/search, /api/v1/users/:username
+2. **C.008/C.009** (Quick wins) - Fix Go UUID generation (google/uuid) & random avatar ID
+3. **C.001** (AnalyticsService) - First frontend service to integrate with backend APIs
+
+**BLOCKERS:** None. C.010 ✅ complete. C.012 is now the critical path for C.001→C.005.
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 15:26:31] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 15:35:28] [MAIN] Iteration 3 completed. Status=✅ SUCCESS. Summary: **Problem**: Frontend services needed backend API endpoints to fetch real data instead of using mocks.  **Solution**: Created comprehensive Go backend API endpoints:  **Handlers Created**: 1. **analytics_handler.go** - Analytics endpoints (
+[2026-02-20 15:37:54] [VALIDATOR] Iteration 3: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 15:37:54] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 15:39:52] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 3 (C.010 ✅, C.011 ✅, C.012 ✅)
+- Remaining: 9 (all passes=false)
+
+**PROGRESS:** All infrastructure prerequisites now complete. Backend APIs exist for analytics, search, and user profiles. Frontend HTTP client ready with interceptors.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.001** (AnalyticsService) - Replace mock engagement/follower data with API calls to /api/v1/analytics/*
+2. **C.002** (SearchService) - Replace mock users/hashtags with /api/v1/search integration
+3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+
+**BLOCKERS:** None. All infrastructure dependencies resolved. Ready for frontend mock replacements.
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 15:40:19] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 16:03:02] [MAIN] Iteration 4 completed. Status=✅ SUCCESS. Summary:  ## Summary  **Problem**: AnalyticsService contained hardcoded mockFollowerGrowth and mockEngagementData arrays that returned static data instead of fetching from backend API.  **Solution**: Updated AnalyticsService to extend BaseApiService
+[2026-02-20 16:11:00] [VALIDATOR] Iteration 4: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 16:11:00] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 16:11:43] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 4 (C.001 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
+- Remaining: 8 (all passes=false)
+
+**PROGRESS:** AnalyticsService now fetches real data from backend. First frontend service fully integrated. Pattern established for remaining services.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.002** (SearchService) - Replace mock users/hashtags with /api/v1/search integration
+2. **C.003** (MentionService) - Replace mock users Map with /api/v1/users endpoint
+3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+
+**BLOCKERS:** None. Same infrastructure supports C.002-C.005.
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 16:11:54] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 16:20:57] [MAIN] Iteration 5 completed. Status=✅ SUCCESS. Summary:  ## Summary  **Problem**: SearchService contained hardcoded mockUsers and mockHashtags arrays. Search results were filtered from static data instead of calling backend search APIs.  **Solution**: Updated SearchService to extend BaseApiServi
+[2026-02-20 16:28:46] [VALIDATOR] Iteration 5: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 16:28:46] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 16:29:35] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 5 (C.001 ✅, C.002 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
+- Remaining: 7 (all passes=false)
+
+**PROGRESS:** SearchService now integrated with backend /api/v1/search. Two frontend services complete (Analytics, Search). Integration pattern proven and repeatable.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.003** (MentionService) - Replace mock users Map with /api/v1/users integration
+2. **C.004** (UserProfileCardComponent) - Replace mock profile loading with /api/v1/users/:username
+3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+
+**BLOCKERS:** None. Same HTTP infrastructure supports remaining frontend integrations.
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 16:29:54] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-20 16:35:53] [MAIN] Iteration 6 completed. Status=✅ SUCCESS. Summary: STATUS: success --- ```  ## Summary  **Problem**: MentionService contained hardcoded mockUsers Map. User mentions were resolved from static data instead of querying backend user directory.  **Solution**: Updated MentionService to extend Bas
+[2026-02-20 16:37:34] [VALIDATOR] Iteration 6: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-20 16:37:34] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 16:40:04] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+
+**MILESTONE STATE:**
+- Total PRD items: 12
+- Completed: 6 (C.001 ✅, C.002 ✅, C.003 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
+- Remaining: 6 (all passes=false)
+
+**PROGRESS:** MentionService integrated with backend /api/v1/users. Three frontend services complete (Analytics, Search, Mention). Integration pattern proven and repeatable.
+
+**RECOMMENDED NEXT ITERATION:**
+1. **C.004** (UserProfileCardComponent) - Replace mock profile loading with /api/v1/users/:username
+2. **C.005** (ProfileComponent) - Replace mock profile data with /api/v1/users/:username
+3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+
+**BLOCKERS:** None. Halfway to milestone completion (6/12 done).
+
+**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+[2026-02-20 16:40:58] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.

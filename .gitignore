@@ -35,3 +35,4 @@ angular.json
 .angular/
 
 social-media/node_modules/
+dist/

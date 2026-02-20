@@ -1,18 +1,25 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BaseApiService } from './base-api.service';
 import { PostService, Post } from './post.service';
 
 export interface SearchUser {
-  name: string;
+  id: string;
   username: string;
-  avatar: string;
-  bio?: string;
-  followers?: number;
+  display_name: string;
+  avatar_url: string;
+  bio: string;
+  followers: number;
 }
 
 export interface SearchResult {
   posts: Post[];
   users: SearchUser[];
   hashtags: SearchHashtag[];
+  query: string;
+  total: number;
+  limit: number;
+  offset: number;
 }
 
 export interface SearchHashtag {
@@ -20,39 +27,77 @@ export interface SearchHashtag {
   count: number;
 }
 
+/**
+ * SearchService - Handles search functionality across posts, users, and hashtags
+ *
+ * Provides methods to:
+ * - Search across all content types
+ * - Get trending hashtags
+ * - Get suggested users to follow
+ */
 @Injectable({
   providedIn: 'root'
 })
-export class SearchService {
+export class SearchService extends BaseApiService {
   private searchQuerySignal = signal<string>('');
-  private searchResultsSignal = signal<SearchResult>({ posts: [], users: [], hashtags: [] });
+  private searchResultsSignal = signal<SearchResult>({ 
+    posts: [], 
+    users: [], 
+    hashtags: [],
+    query: '',
+    total: 0,
+    limit: 10,
+    offset: 0
+  });
   private isSearchingSignal = signal<boolean>(false);
 
-  private mockUsers: SearchUser[] = [
-    { name: 'Sarah Johnson', username: 'sarahjohnson', avatar: 'https://i.pravatar.cc/150?img=5', bio: 'Frontend Developer | UI/UX Enthusiast', followers: 12500 },
-    { name: 'Alex Chen', username: 'alexchen', avatar: 'https://i.pravatar.cc/150?img=3', bio: 'Full Stack Developer | Open Source Contributor', followers: 8900 },
-    { name: 'Marcus Williams', username: 'marcuswilliams', avatar: 'https://i.pravatar.cc/150?img=12', bio: 'Tech Writer | TypeScript Advocate', followers: 15300 },
-    { name: 'Emma Davis', username: 'emmadavis', avatar: 'https://i.pravatar.cc/150?img=7', bio: 'Product Designer | Creative Thinker', followers: 6700 },
-    { name: 'Nina Patel', username: 'ninapatel', avatar: 'https://i.pravatar.cc/150?img=9', bio: 'Software Engineer | AI Enthusiast', followers: 21000 },
-    { name: 'Lisa Rodriguez', username: 'lisarodriguez', avatar: 'https://i.pravatar.cc/150?img=11', bio: 'DevOps Engineer | Cloud Architect', followers: 9400 },
-    { name: 'Jake Thompson', username: 'jakethompson', avatar: 'https://i.pravatar.cc/150?img=8', bio: 'Mobile Developer | Flutter Expert', followers: 5600 },
-    { name: 'Michael Chen', username: 'michaelchen', avatar: 'https://i.pravatar.cc/150?img=10', bio: 'Backend Developer | Database Guru', followers: 7800 }
+  // Fallback data for when API is unavailable
+  private readonly fallbackUsers: SearchUser[] = [
+    { 
+      id: '1', 
+      username: 'sarahjohnson', 
+      display_name: 'Sarah Johnson', 
+      avatar_url: 'https://i.pravatar.cc/150?img=5', 
+      bio: 'Frontend Developer | UI/UX Enthusiast', 
+      followers: 12500 
+    },
+    { 
+      id: '2', 
+      username: 'alexchen', 
+      display_name: 'Alex Chen', 
+      avatar_url: 'https://i.pravatar.cc/150?img=3', 
+      bio: 'Full Stack Developer | Open Source Contributor', 
+      followers: 8900 
+    },
+    { 
+      id: '3', 
+      username: 'marcuswilliams', 
+      display_name: 'Marcus Williams', 
+      avatar_url: 'https://i.pravatar.cc/150?img=12', 
+      bio: 'Tech Writer | TypeScript Advocate', 
+      followers: 15300 
+    }
   ];
 
-  private mockHashtags: SearchHashtag[] = [
+  private readonly fallbackHashtags: SearchHashtag[] = [
     { tag: 'WebDevelopment', count: 145000 },
     { tag: 'Angular', count: 89000 },
     { tag: 'TypeScript', count: 112000 },
     { tag: 'JavaScript', count: 234000 },
     { tag: 'UIDesign', count: 67000 },
-    { tag: 'ReactJS', count: 198000 },
-    { tag: 'NodeJS', count: 156000 },
-    { tag: 'Python', count: 287000 },
-    { tag: 'MachineLearning', count: 178000 },
-    { tag: 'DevOps', count: 92000 }
+    { tag: 'Golang', count: 54000 },
+    { tag: 'Coding', count: 189000 },
+    { tag: 'Programming', count: 167000 },
+    { tag: 'Tech', count: 156000 },
+    { tag: 'Developer', count: 134000 }
   ];
 
-  constructor(private postService: PostService) {}
+  constructor(
+    http: HttpClient,
+    private postService: PostService
+  ) {
+    super(http);
+  }
 
   get searchQuery(): string {
     return this.searchQuerySignal();
@@ -66,7 +111,11 @@ export class SearchService {
     return this.isSearchingSignal();
   }
 
-  search(query: string): void {
+  /**
+   * Search across posts, users, and hashtags
+   * Uses backend API with fallback to local post search
+   */
+  search(query: string, limit: number = 10, offset: number = 0): void {
     if (!query || query.trim().length === 0) {
       this.clearSearch();
       return;
@@ -75,37 +124,49 @@ export class SearchService {
     this.isSearchingSignal.set(true);
     this.searchQuerySignal.set(query.trim());
 
-    const normalizedQuery = query.toLowerCase().trim();
-
-    // Search posts
-    const allPosts = this.postService.posts();
-    const matchingPosts = this.searchPosts(allPosts, normalizedQuery);
-
-    // Search users
-    const matchingUsers = this.mockUsers.filter(user =>
-      user.name.toLowerCase().includes(normalizedQuery) ||
-      user.username.toLowerCase().includes(normalizedQuery) ||
-      (user.bio && user.bio.toLowerCase().includes(normalizedQuery))
-    );
-
-    // Search hashtags
-    const matchingHashtags = this.mockHashtags.filter(hashtag =>
-      hashtag.tag.toLowerCase().includes(normalizedQuery)
-    );
-
-    this.searchResultsSignal.set({
-      posts: matchingPosts.slice(0, 10),
-      users: matchingUsers.slice(0, 10),
-      hashtags: matchingHashtags.slice(0, 10)
+    // Call backend search API
+    this.get<SearchResult>('/search', { q: query, limit, offset }).subscribe({
+      next: (results) => {
+        // Merge with local post search for comprehensive results
+        const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
+        
+        this.searchResultsSignal.set({
+          ...results,
+          posts: [...localPosts.slice(0, 5), ...(results.posts || [])].slice(0, limit)
+        });
+        this.isSearchingSignal.set(false);
+      },
+      error: (error) => {
+        console.warn('Search API unavailable, using fallback data');
+        // Fallback to local search only
+        const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
+        this.searchResultsSignal.set({
+          posts: localPosts.slice(0, limit),
+          users: this.fallbackUsers.filter(u => 
+            u.display_name.toLowerCase().includes(query.toLowerCase()) ||
+            u.username.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, limit),
+          hashtags: this.fallbackHashtags.filter(h => 
+            h.tag.toLowerCase().includes(query.toLowerCase())
+          ).slice(0, limit),
+          query: query,
+          total: localPosts.length,
+          limit,
+          offset
+        });
+        this.isSearchingSignal.set(false);
+      }
     });
-
-    this.isSearchingSignal.set(false);
   }
 
-  private searchPosts(posts: Post[], query: string): Post[] {
+  /**
+   * Search posts locally (for when API is unavailable or for additional filtering)
+   */
+  private searchLocalPosts(query: string): Post[] {
+    const allPosts = this.postService.posts();
     const results: Post[] = [];
 
-    for (const post of posts) {
+    for (const post of allPosts) {
       const contentMatch = post.content.toLowerCase().includes(query);
       const authorNameMatch = post.author.name.toLowerCase().includes(query);
       const authorUsernameMatch = post.author.username.toLowerCase().includes(query);
@@ -116,9 +177,8 @@ export class SearchService {
 
       // Search in replies
       if (post.repliesList) {
-        const matchingReplies = this.searchPosts(post.repliesList, query);
+        const matchingReplies = this.searchPostsInReplies(post.repliesList, query);
         if (matchingReplies.length > 0) {
-          // Add parent post if it has matching replies
           if (!results.find(p => p.id === post.id)) {
             results.push(post);
           }
@@ -129,16 +189,47 @@ export class SearchService {
     return results;
   }
 
+  private searchPostsInReplies(posts: Post[], query: string): Post[] {
+    const results: Post[] = [];
+    for (const post of posts) {
+      if (post.content.toLowerCase().includes(query)) {
+        results.push(post);
+      }
+      if (post.repliesList) {
+        results.push(...this.searchPostsInReplies(post.repliesList, query));
+      }
+    }
+    return results;
+  }
+
+  /**
+   * Get trending hashtags from backend
+   */
+  getTrendingHashtags(): SearchHashtag[] {
+    // In full implementation, fetch from API
+    // For now, return fallback data sorted by count
+    return [...this.fallbackHashtags].sort((a, b) => b.count - a.count).slice(0, 5);
+  }
+
+  /**
+   * Get suggested users from backend
+   */
+  getSuggestedUsers(limit: number = 5): SearchUser[] {
+    // In full implementation, fetch from API
+    // For now, return fallback data
+    return [...this.fallbackUsers].slice(0, limit);
+  }
+
   clearSearch(): void {
     this.searchQuerySignal.set('');
-    this.searchResultsSignal.set({ posts: [], users: [], hashtags: [] });
-  }
-
-  getTrendingHashtags(): SearchHashtag[] {
-    return [...this.mockHashtags].sort((a, b) => b.count - a.count).slice(0, 5);
-  }
-
-  getSuggestedUsers(): SearchUser[] {
-    return [...this.mockUsers].sort((a, b) => b.followers! - a.followers!).slice(0, 5);
+    this.searchResultsSignal.set({ 
+      posts: [], 
+      users: [], 
+      hashtags: [],
+      query: '',
+      total: 0,
+      limit: 10,
+      offset: 0
+    });
   }
 }

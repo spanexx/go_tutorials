@@ -263,20 +263,29 @@ include_exts = {
 
 # Prefer signals that indicate mock/stub behavior.
 patterns = [
-    ("todo", re.compile(r"\\bTODO\\b", re.IGNORECASE)),
-    ("fixme", re.compile(r"\\bFIXME\\b", re.IGNORECASE)),
-    ("xxx", re.compile(r"\\bXXX\\b", re.IGNORECASE)),
-    ("mock", re.compile(r"\\bmock\\b", re.IGNORECASE)),
-    ("stub", re.compile(r"\\bstub\\b", re.IGNORECASE)),
-    ("placeholder", re.compile(r"\\bplaceholder\\b", re.IGNORECASE)),
-    ("not_implemented", re.compile(r"not\\s+implemented|unimplemented", re.IGNORECASE)),
-    ("in_real_impl", re.compile(r"in\\s+real\\s+implementation", re.IGNORECASE)),
+    ("todo", re.compile(r"\bTODO\b", re.IGNORECASE)),
+    ("fixme", re.compile(r"\bFIXME\b", re.IGNORECASE)),
+    ("xxx", re.compile(r"\bXXX\b", re.IGNORECASE)),
+    ("mock", re.compile(r"\bmock\b", re.IGNORECASE)),
+    ("stub", re.compile(r"\bstub\b", re.IGNORECASE)),
+    ("placeholder", re.compile(r"\bplaceholder\b", re.IGNORECASE)),
+    ("not_implemented", re.compile(r"not\s+implemented|unimplemented", re.IGNORECASE)),
+    ("in_real_impl", re.compile(r"in\s+real\s+implementation", re.IGNORECASE)),
 ]
 
-# Extra heuristics for TS/JS.
+# Extra heuristics for TS/JS (Angular/TypeScript specific).
 extra_ts_patterns = [
-    ("throw_not_impl", re.compile(r"throw\\s+new\\s+Error\\(.*not\\s+implemented.*\\)", re.IGNORECASE)),
-    ("return_empty", re.compile(r"return\\s+(of\\(\\s*\\[\\s*\\]\\s*\\)|\\[\\s*\\]\\s*;|null\\s*;|undefined\\s*;)", re.IGNORECASE)),
+    ("throw_not_impl", re.compile(r"throw\s+new\s+Error\(.*not\s+implemented.*\)", re.IGNORECASE)),
+    ("return_empty", re.compile(r"return\s+(of\(\s*\[\s*\]\s*\)|\[\s*\]\s*;|null\s*;|undefined\s*;)", re.IGNORECASE)),
+    # Angular/TypeScript mock patterns
+    ("private_mock", re.compile(r"private\s+mock\w*\s*[:=]")),
+    ("private_mock_array", re.compile(r"private\s+\w*Mock\w*\s*[:=]\s*\[")),
+    ("mock_data_var", re.compile(r"(mockData|mockList|mockItems|mockResults)\s*[:=]")),
+    ("simulate_api", re.compile(r"//\s*(Simulate|simulate)\s+(API|api|call)")),
+    ("mock_comment", re.compile(r"//\s*Mock\s+data")),
+    ("hardcoded_mock", re.compile(r"//\s*[Hh]ardcoded\s+(mock|test|dummy)")),
+    ("setTimeout_mock", re.compile(r"setTimeout\s*\(\s*\(\s*\)\s*=>\s*\{[^}]*mock[^}]*\}")),
+    ("random_mock_data", re.compile(r"Math\.random\(\).*mock|mock.*Math\.random\(\)")),
 ]
 
 findings = []

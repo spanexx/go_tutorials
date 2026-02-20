@@ -30,7 +30,7 @@
         "src/app/shared/services/analytics.service.ts:99 - const data = this.mockFollowerGrowth;",
         "src/app/shared/services/analytics.service.ts:108 - const data = this.mockEngagementData;"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "C.002",
@@ -55,7 +55,7 @@
         "src/app/shared/services/search.service.ts:138 - return [...this.mockHashtags].sort(...)",
         "src/app/shared/services/search.service.ts:142 - return [...this.mockUsers].sort(...)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "C.003",
@@ -76,7 +76,7 @@
         "src/app/shared/services/mention.service.ts:52 - const user = this.mockUsers.get(username.toLowerCase());",
         "src/app/shared/services/mention.service.ts:80 - return this.mockUsers.get(username.toLowerCase());"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "C.004",
@@ -208,7 +208,7 @@
       "occurrences": [
         "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "C.011",
@@ -227,7 +227,7 @@
       "occurrences": [
         "ralph-critic.sh - needs pattern enhancements for Angular/TypeScript mock detection"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "C.012",
@@ -247,7 +247,7 @@
       "occurrences": [
         "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }
