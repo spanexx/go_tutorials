@@ -30,7 +30,7 @@
         "CSS reset and base styles",
         "Variables work in both light and dark modes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.2.2",
@@ -46,7 +46,7 @@
         "Sticky positioning at top",
         "Responsive: search collapses to icon on mobile"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.2.3",
@@ -62,7 +62,7 @@
         "Collapsible on mobile (hamburger menu)",
         "Quick post creation button (C shortcut)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.2.4",
@@ -78,7 +78,7 @@
         "Position: top-right on desktop, bottom on mobile",
         "Smooth enter/exit animations"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.2.5",
@@ -94,7 +94,7 @@
         "Match the layout of actual content",
         "Accessible (aria-busy, aria-label)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.2.6",
@@ -109,17 +109,20 @@
         "All components respect theme variables",
         "Default to system preference on first visit"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [
     "src/styles.scss",
-    "src/app/shared/components/header/header.component.ts",
-    "src/app/shared/components/sidebar/sidebar.component.ts",
-    "src/app/shared/components/toast/toast.component.ts",
+    "src/app/shared/header/header.component.ts",
+    "src/app/shared/header/header.component.html",
+    "src/app/shared/sidebar/sidebar.component.ts",
+    "src/app/shared/sidebar/sidebar.component.html",
+    "src/app/shared/toast-container/toast-container.component.ts",
+    "src/app/shared/toast-container/toast-container.component.html",
     "src/app/shared/services/toast.service.ts",
-    "src/app/shared/components/skeleton-post/skeleton-post.component.ts",
-    "src/app/shared/components/skeleton-profile/skeleton-profile.component.ts"
+    "src/app/shared/skeleton/skeleton.component.ts",
+    "src/app/shared/services/theme.service.ts"
   ],
   "affected_dependencies": [
     "Lucide Angular icons",

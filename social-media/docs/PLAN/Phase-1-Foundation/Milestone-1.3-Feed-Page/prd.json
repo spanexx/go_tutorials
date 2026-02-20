@@ -31,7 +31,7 @@
         "Signal-based state management for posts",
         "Pagination support (offset, limit)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.3.2",
@@ -47,7 +47,7 @@
         "Hover effects on interactive elements",
         "Responsive layout"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.3.3",
@@ -64,7 +64,7 @@
         "Auto-focus on textarea when opened",
         "Keyboard shortcut (C) to open"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.3.4",
@@ -80,7 +80,7 @@
         "Error state with retry button",
         "Refresh button to reload feed"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.3.5",
@@ -96,16 +96,20 @@
         "Smooth scroll behavior",
         "Handle end of feed (no more posts)"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [
-    "src/app/shared/models/post.model.ts",
     "src/app/shared/services/post.service.ts",
-    "src/app/shared/components/post-card/post-card.component.ts",
-    "src/app/shared/components/create-post/create-post.component.ts",
+    "src/app/components/post-card/post-card.component.ts",
+    "src/app/components/post-card/post-card.component.html",
+    "src/app/components/post-card/post-card.component.scss",
+    "src/app/components/create-post/create-post.component.ts",
+    "src/app/components/create-post/create-post.component.html",
+    "src/app/components/create-post/create-post.component.scss",
     "src/app/pages/feed/feed.component.ts",
     "src/app/pages/feed/feed.component.html",
+    "src/app/pages/feed/feed.component.scss",
     "src/app/shared/directives/infinite-scroll.directive.ts"
   ],
   "affected_dependencies": [

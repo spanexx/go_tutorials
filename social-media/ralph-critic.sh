@@ -9,6 +9,8 @@ SESSION_ID=""
 REF_SESSION_ID=""
 PLAN_ROOT="$PLAN_ROOT_DEFAULT"
 MAX_ITEMS=200
+AGENT_MODE=0
+STATIC_SCAN=0
 
 # Accept an optional session-id as the first arg (for symmetry with ralph/validator).
 # Currently not required for the static scan.
@@ -35,12 +37,22 @@ while [ "$#" -gt 0 ]; do
       MAX_ITEMS="$2"
       shift 2
       ;;
+    --agent)
+      AGENT_MODE=1
+      shift
+      ;;
+    --static-scan)
+      STATIC_SCAN=1
+      shift
+      ;;
     -h|--help)
       cat <<EOF
 Usage:
   ./ralph-critic.sh [session-id] [--plan-root PATH] [--max-items N]
   ./ralph-critic.sh --session-id <id> [--plan-root PATH] [--max-items N]
   ./ralph-critic.sh --ref-session-id <id> [--plan-root PATH] [--max-items N]
+  ./ralph-critic.sh --session-id <id> --agent [--plan-root PATH] [--max-items N]
+  ./ralph-critic.sh --static-scan [--plan-root PATH] [--max-items N]
 
 Behavior:
 - Scans the repo for mocked/stubbed implementations (TODO/FIXME/placeholder/etc.)
@@ -48,6 +60,8 @@ Behavior:
 
 Notes:
 - session-id is accepted but not required (scan is static).
+- --agent will also spawn a Qwen critic agent (requires --session-id).
+- Default behavior is agent-based critic (unless --static-scan is provided).
 EOF
       exit 0
       ;;
@@ -62,7 +76,139 @@ export WORKSPACE_DIR
 export PLAN_ROOT
 export MAX_ITEMS
 
-python3 - <<'PY'
+CRITIC_REPORT="$WORKSPACE_DIR/.critic-report.md"
+CHAT_SCRIPT="$WORKSPACE_DIR/ralph-chat.sh"
+
+if [ "$AGENT_MODE" -eq 0 ] && [ "$STATIC_SCAN" -eq 0 ]; then
+  AGENT_MODE=1
+fi
+
+if [ "$AGENT_MODE" -eq 1 ] && [ -z "$SESSION_ID" ]; then
+  if command -v uuidgen >/dev/null 2>&1; then
+    SESSION_ID="$(uuidgen | tr '[:upper:]' '[:lower:]')"
+  else
+    SESSION_ID="critic_$(date +%s)"
+  fi
+fi
+
+run_agent() {
+  local plan_root="$PLAN_ROOT"
+  local ref_session="${REF_SESSION_ID:-}"
+  local milestone_dir="$plan_root/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase"
+
+  local chat_tail=""
+  if [ -f "$CHAT_SCRIPT" ]; then
+    chat_tail="$(bash "$CHAT_SCRIPT" tail 60 || true)"
+  fi
+
+  local prompt
+  prompt="ROLE: Critic / gap-finder
+
+GOAL:
+- Find mocked/stubbed implementations and placeholders in production code.
+- Convert findings into actionable PRD items under docs/PLAN.
+- Leave a concise message for the MAIN agent in the shared chat log.
+
+HARD CONSTRAINTS:
+- You must NOT read the entire repo. Use targeted searches.
+- Focus on production code (avoid tests, docs, generated, node_modules, dist).
+- Keep your final message for MAIN to a short summary + top next actions.
+
+TARGET OUTPUTS:
+1) Ensure this milestone exists and is updated:
+   $milestone_dir
+   - prd.json (items with passes=false)
+   - Progress.md (bookkeeping)
+   - summary.md
+
+2) Post a message to the shared chat log (use the helper):
+   ./ralph-chat.sh post CRITIC "..."
+
+CONTEXT:
+- PLAN ROOT: $plan_root
+- Critic session: $SESSION_ID
+- Reference session: ${ref_session:-none}
+
+AGENT CHAT (last 60 lines):
+$chat_tail
+
+PROCESS:
+- Read existing critic milestone files if present.
+- Use repo search to find likely stubs/mocks/placeholders (Angular services/components + Go backend).
+- Create PRD items that name the exact files and what to implement.
+- Update milestone bookkeeping.
+- Post an actionable note to MAIN in the shared chat.
+
+OUTPUT FORMAT:
+---
+FINDINGS_SUMMARY: ...
+PRD_ITEMS_ADDED: <number>
+TOP_FILES:
+- path
+NEXT_ACTIONS:
+- ...
+---"
+
+  echo "" > "$CRITIC_REPORT"
+  echo "# Critic Agent Report" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+  echo "**Generated**: $(date '+%Y-%m-%d %H:%M:%S')" >> "$CRITIC_REPORT"
+  echo "**Session**: $SESSION_ID" >> "$CRITIC_REPORT"
+  echo "**Reference Session**: ${REF_SESSION_ID:-none}" >> "$CRITIC_REPORT"
+  echo "**Plan Root**: $PLAN_ROOT" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+
+  echo "🧠 Spawning Qwen Critic Agent..."
+  local agent_out
+  if [[ "${1:-}" == "resume" ]]; then
+    agent_out=$(qwen --resume "$SESSION_ID" --yolo -p "$prompt" 2>&1)
+  else
+    agent_out=$(qwen --session-id "$SESSION_ID" --yolo -p "$prompt" 2>&1)
+  fi
+  echo "$agent_out" >> "$CRITIC_REPORT"
+}
+
+if [ "$AGENT_MODE" -eq 1 ]; then
+  if [ -z "$SESSION_ID" ]; then
+    echo "Error: agent mode requires a session id" >&2
+    exit 2
+  fi
+
+  if [ -n "${1:-}" ]; then
+    :
+  fi
+
+  if [ -n "$SESSION_ID" ] && [ "$STATIC_SCAN" -eq 0 ]; then
+    if [ -f "$CHAT_SCRIPT" ]; then
+      bash "$CHAT_SCRIPT" post "CRITIC" "Starting critic agent run. Session=$SESSION_ID Ref=${REF_SESSION_ID:-none}" || true
+    fi
+  fi
+
+  if [ -n "$SESSION_ID" ] && [ "$STATIC_SCAN" -eq 0 ]; then
+    if [[ "$SESSION_ID" =~ ^[a-f0-9-]+$ ]]; then
+      if run_agent resume; then
+        if [ -f "$CHAT_SCRIPT" ]; then
+          bash "$CHAT_SCRIPT" post "CRITIC" "Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog." || true
+        fi
+        echo "✅ Critic agent complete"
+        exit 0
+      else
+        if [ -f "$CHAT_SCRIPT" ]; then
+          bash "$CHAT_SCRIPT" post "CRITIC" "Critic agent failed. See .critic-report.md" || true
+        fi
+        echo "❌ Critic agent failed"
+        exit 1
+      fi
+    fi
+  fi
+fi
+
+if [ "$STATIC_SCAN" -eq 0 ]; then
+  # Agent mode already handled above.
+  exit 0
+fi
+
+CRITIC_SCAN_OUTPUT=$(python3 - <<'PY'
 import json
 import os
 import re
@@ -96,8 +242,10 @@ exclude_dirnames = {
 # But we DO want to scan docs/PLAN? No, it will create self-referential findings.
 exclude_paths_containing = [os.path.join("docs", "PLAN")]
 
-# Exclude the critic script itself to avoid false positives from its own regex patterns.
-exclude_files = {"ralph-critic.sh"}
+# Exclude the critic script itself and progress.md to avoid false positives.
+# - ralph-critic.sh: contains regex patterns that match its own detection logic
+# - progress.md: iteration log that documents past fixes (may contain quoted patterns)
+exclude_files = {"ralph-critic.sh", "progress.md"}
 
 include_exts = {
     ".ts",
@@ -238,6 +386,23 @@ for i, (file, fs) in enumerate(by_file.items(), start=1):
         "passes": False,
     })
 
+# Option B: if the scan yields no actionable items, still generate one PRD item
+# so Ralph has explicit work to do (audit scan coverage + tune patterns).
+if not items:
+    items.append({
+        "id": "C.001",
+        "title": "Audit codebase for stubs/mocks and tune critic scan patterns",
+        "type": "tech_debt",
+        "description": "The automatic critic scan produced 0 findings. Perform a targeted manual audit and improve the critic scanner so it reliably detects stub/mock/placeholder implementations in this repo.",
+        "acceptance_criteria": [
+            "Perform a manual sweep for stub/mock patterns in production code (Angular services/components, Go handlers/services).",
+            "Update ralph-critic.sh patterns to catch this repo's conventions (add at least 3 additional patterns).",
+            "Re-run ./ralph-critic.sh and confirm it produces actionable PRD items when stubs/mocks exist (or explicitly document why none exist).",
+            "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true."
+        ],
+        "passes": False,
+    })
+
 phase_dir = os.path.join(plan_root, "Phase-0-Critic-Backlog")
 milestone_dir = os.path.join(phase_dir, "Milestone-0.1-Unmock-Codebase")
 os.makedirs(milestone_dir, exist_ok=True)
@@ -296,3 +461,11 @@ with open(os.path.join(milestone_dir, "summary.md"), "w", encoding="utf-8") as f
 
 print(f"critic: wrote backlog to {milestone_dir} (items={len(items)}, findings={len(deduped)})")
 PY
+
+)
+
+echo "$CRITIC_SCAN_OUTPUT"
+
+if [ -f "$CHAT_SCRIPT" ]; then
+  bash "$CHAT_SCRIPT" post "CRITIC" "$CRITIC_SCAN_OUTPUT" || true
+fi

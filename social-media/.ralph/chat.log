@@ -11,3 +11,33 @@
 [09:42:16] <ORCHESTRATOR> RX Agent-1 [JOINED]: Worker 1 ready for duty
 [09:42:16] <ORCHESTRATOR> Worker 1 left (died)
 [09:42:18] <ORCHESTRATOR> RX Agent-1 [STARTED]: Starting task: 1.3:1.3.2
+[2026-02-20 14:10:35] [CRITIC] Scan: items=0 findings=0 milestone=/home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase. See .critic-report.md
+[2026-02-20 14:17:18] [CRITIC] Scan: items=1 findings=0 milestone=/home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase. See .critic-report.md
+[2026-02-20 14:25:42] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
+[2026-02-20 14:28:07] [CRITIC] 📊 CRITIC SCAN COMPLETE | Session: 333a6cbf
+
+**FINDINGS:** 12 occurrences across 6 files
+**PRD ITEMS:** 12 actionable items created
+
+**TOP PRIORITY FILES:**
+1. src/app/shared/services/analytics.service.ts - Mock engagement/follower data (6 occurrences)
+2. src/app/shared/services/search.service.ts - Mock users/hashtags (6 occurrences)
+3. src/app/shared/services/mention.service.ts - Mock users map (3 occurrences)
+4. src/app/shared/user-profile-card.component.ts - Mock profile loading (2 occurrences)
+5. src/app/pages/profile/profile.component.ts - Mock profile data (2 occurrences)
+6. backend/internal/service/auth_service.go - Logout placeholder, UUID/avatar generators (3 occurrences)
+7. backend/internal/handlers/auth_handler.go - Email verification TODO (1 occurrence)
+
+**NEXT ACTIONS:**
+1. C.011: Update ralph-critic.sh patterns for Angular/TypeScript mock detection
+2. C.010: Add HTTP client module to Angular services (infrastructure)
+3. C.012: Create backend API endpoints for analytics/search/profiles
+4. C.001→C.009: Replace mocks with real API integrations (frontend + backend)
+
+**MILESTONE UPDATED:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
+- prd.json: 12 items with detailed acceptance criteria
+- Progress.md: Implementation order and bookkeeping log
+- summary.md: Categorized backlog
+
+**RECOMMENDED START:** C.011 (meta-improvement for critic scanner) → C.010 (HTTP infrastructure) → C.012 (backend APIs)
+[2026-02-20 14:28:19] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.

@@ -2,24 +2,252 @@
   "milestone": "0.1",
   "title": "Unmock Codebase",
   "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
-  "generated_at": "2026-02-20T10:59:15Z",
+  "generated_at": "2026-02-20T13:16:24Z",
+  "updated_at": "2026-02-20T14:30:00Z",
   "max_items": 200,
-  "findings_count": 1,
-  "files_with_findings": 1,
+  "findings_count": 12,
+  "files_with_findings": 6,
   "items": [
     {
       "id": "C.001",
-      "title": "Unmock / remove stubs in ralph-critic.sh",
+      "title": "Replace mock data in AnalyticsService with real API integration",
       "type": "tech_debt",
-      "description": "This file contains indicators of mocked/stubbed/placeholder logic that should be implemented properly.",
+      "description": "AnalyticsService contains hardcoded mockFollowerGrowth and mockEngagementData arrays. Methods getEngagementData(), getFollowerGrowth(), getFollowerGrowthPercentage(), and getEngagementTrend() return static data instead of fetching from backend.",
       "acceptance_criteria": [
-        "Replace mocked/stubbed logic with real implementation (no placeholders).",
-        "Remove TODO/FIXME/placeholder markers tied to this behavior.",
-        "Add/update minimal tests or checks appropriate for the touched area.",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true.",
-        "ralph-critic.sh:121 [not_implemented] (\"not_implemented\", re.compile(r\"not\\\\s+implemented|unimplemented\", re.IGNORECASE)),"
+        "Add HTTP client integration to fetch analytics data from backend API",
+        "Replace mockFollowerGrowth and mockEngagementData with HTTP calls",
+        "Add proper error handling for failed API requests",
+        "Update getEngagementData() to return Observable<EngagementData[]>",
+        "Update getFollowerGrowth() to return Observable<FollowerGrowth[]>",
+        "Remove or mark mock data properties as deprecated",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
       ],
-      "passes": true
+      "occurrences": [
+        "src/app/shared/services/analytics.service.ts:34 - private mockFollowerGrowth: FollowerGrowth[] = [...]",
+        "src/app/shared/services/analytics.service.ts:44 - private mockEngagementData: EngagementData[] = [...]",
+        "src/app/shared/services/analytics.service.ts:91 - return this.mockEngagementData;",
+        "src/app/shared/services/analytics.service.ts:95 - return this.mockFollowerGrowth;",
+        "src/app/shared/services/analytics.service.ts:99 - const data = this.mockFollowerGrowth;",
+        "src/app/shared/services/analytics.service.ts:108 - const data = this.mockEngagementData;"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.002",
+      "title": "Replace mock data in SearchService with real API integration",
+      "type": "tech_debt",
+      "description": "SearchService contains hardcoded mockUsers and mockHashtags arrays. Search results are filtered from static data instead of calling backend search APIs.",
+      "acceptance_criteria": [
+        "Add HTTP client integration to fetch search results from backend",
+        "Replace mockUsers and mockHashtags with HTTP API calls",
+        "Update search() method to call real search endpoint",
+        "Implement server-side pagination for search results",
+        "Add debouncing for search queries",
+        "Update getTrendingHashtags() to fetch from backend",
+        "Update getSuggestedUsers() to fetch from backend",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "src/app/shared/services/search.service.ts:31 - private mockUsers: SearchUser[] = [...]",
+        "src/app/shared/services/search.service.ts:42 - private mockHashtags: SearchHashtag[] = [...]",
+        "src/app/shared/services/search.service.ts:85 - const matchingUsers = this.mockUsers.filter(...)",
+        "src/app/shared/services/search.service.ts:92 - const matchingHashtags = this.mockHashtags.filter(...)",
+        "src/app/shared/services/search.service.ts:138 - return [...this.mockHashtags].sort(...)",
+        "src/app/shared/services/search.service.ts:142 - return [...this.mockUsers].sort(...)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.003",
+      "title": "Replace mock data in MentionService with real API integration",
+      "type": "tech_debt",
+      "description": "MentionService contains hardcoded mockUsers Map. User mentions are resolved from static data instead of querying backend user directory.",
+      "acceptance_criteria": [
+        "Add HTTP client integration to fetch user mentions from backend",
+        "Replace mockUsers Map with HTTP API calls",
+        "Update searchUsers() to call real user search endpoint",
+        "Update getUserByUsername() to fetch from backend",
+        "Update getAllUsers() to fetch from backend",
+        "Add caching layer for frequently mentioned users",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "src/app/shared/services/mention.service.ts:15 - private mockUsers: Map<string, MentionedUser> = new Map([...])",
+        "src/app/shared/services/mention.service.ts:52 - const user = this.mockUsers.get(username.toLowerCase());",
+        "src/app/shared/services/mention.service.ts:80 - return this.mockUsers.get(username.toLowerCase());"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.004",
+      "title": "Replace mock data in UserProfileCardComponent with real API integration",
+      "type": "tech_debt",
+      "description": "UserProfileCardComponent.loadUserProfile() contains hardcoded mock data for user profiles with setTimeout simulation. Profile data is generated dynamically with random values instead of fetching from backend.",
+      "acceptance_criteria": [
+        "Add HTTP client integration to fetch user profile from backend API",
+        "Replace setTimeout mock with real HTTP call",
+        "Remove hardcoded profile data generation",
+        "Remove random number generation for followers/following",
+        "Add proper loading and error states",
+        "Implement profile caching to avoid repeated calls",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "src/app/shared/user-profile-card/user-profile-card.component.ts:56 - // Simulate API call with mock data",
+        "src/app/shared/user-profile-card/user-profile-card.component.ts:73 - // Mock data for other users",
+        "src/app/shared/user-profile-card/user-profile-card.component.ts:74-87 - Hardcoded mock user object with random values"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.005",
+      "title": "Replace mock data in ProfileComponent with real API integration",
+      "type": "tech_debt",
+      "description": "ProfileComponent.loadProfile() contains hardcoded mock data for user profiles with setTimeout simulation. Non-current user profiles return static 'John Doe' data.",
+      "acceptance_criteria": [
+        "Add HTTP client integration to fetch user profile from backend API",
+        "Replace setTimeout mock with real HTTP call",
+        "Remove hardcoded 'John Doe' profile data",
+        "Fetch real profile data for non-current users by username/ID",
+        "Add proper loading and error states",
+        "Update stats (posts, followers, following) from real data",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "src/app/pages/profile/profile.component.ts:73 - // Load other user's profile (mock data)",
+        "src/app/pages/profile/profile.component.ts:74-84 - Hardcoded 'John Doe' mock profile"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.006",
+      "title": "Implement email verification in Go backend auth handler",
+      "type": "tech_debt",
+      "description": "VerifyEmail handler in auth_handler.go has a TODO comment acknowledging incomplete implementation. Email verification token validation is not implemented.",
+      "acceptance_criteria": [
+        "Implement token validation logic for email verification",
+        "Add database query to find user by verification token",
+        "Update user's email_verified status in database",
+        "Add token expiration checking",
+        "Return proper error responses for invalid/expired tokens",
+        "Add unit tests for email verification flow",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "backend/internal/handlers/auth_handler.go:247-251 - // In a full implementation, verify the token and update user"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.007",
+      "title": "Implement logout functionality in Go backend auth service",
+      "type": "tech_debt",
+      "description": "AuthService.Logout() is a placeholder that returns nil. JWT token blacklist functionality using Redis is not implemented.",
+      "acceptance_criteria": [
+        "Implement Redis-based token blacklist for logout",
+        "Add token blacklist repository interface",
+        "Update Logout() to add access token to blacklist",
+        "Add TTL for blacklisted tokens (match token expiration)",
+        "Update auth middleware to check token blacklist",
+        "Add unit tests for logout and token blacklist",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "backend/internal/service/auth_service.go:120-123 - // For JWT-based auth, we would add the token to a blacklist in Redis. This is a placeholder for that functionality. return nil"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.008",
+      "title": "Replace UUID generation placeholder in Go auth service",
+      "type": "tech_debt",
+      "description": "generateUUID() uses time-based string instead of proper UUID generation. Comment indicates production UUID library should be used.",
+      "acceptance_criteria": [
+        "Add github.com/google/uuid dependency",
+        "Replace generateUUID() implementation with uuid.New().String()",
+        "Update all user creation to use proper UUIDs",
+        "Add unit tests for UUID generation",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "backend/internal/service/auth_service.go:180-183 - // In production, use github.com/google/uuid. return time.Now().Format(...)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.009",
+      "title": "Replace random avatar ID generator in Go auth service",
+      "type": "tech_debt",
+      "description": "generateRandomAvatarID() returns static '1' instead of random ID. Comment indicates proper random generation should be used.",
+      "acceptance_criteria": [
+        "Implement proper random number generation for avatar selection",
+        "Use crypto/rand or math/rand with proper seeding",
+        "Ensure avatar IDs are within valid range (e.g., 1-70 for pravatar.cc)",
+        "Update user registration to use random avatar generation",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "backend/internal/service/auth_service.go:186-189 - // In production, use proper random generation. return \"1\""
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.010",
+      "title": "Add HTTP client module to Angular services",
+      "type": "infrastructure",
+      "description": "Multiple Angular services need HTTP client integration. Create a shared HTTP client module with interceptors for auth tokens, error handling, and request/response logging.",
+      "acceptance_criteria": [
+        "Create HttpClient module with proper configuration",
+        "Add HTTP interceptor for JWT token injection",
+        "Add HTTP interceptor for error handling",
+        "Add request/response logging interceptor for debugging",
+        "Create base API service class for common methods",
+        "Configure environment-specific API endpoints",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.011",
+      "title": "Update critic scanner patterns for Angular/TypeScript projects",
+      "type": "infrastructure",
+      "description": "The critic scan produced 0 findings initially. Add Angular/TypeScript-specific patterns to ralph-critic.sh to better detect mocks, stubs, and placeholders in this codebase.",
+      "acceptance_criteria": [
+        "Add pattern for 'mock' variable declarations (private mock*, private *Mock)",
+        "Add pattern for hardcoded data arrays/objects used as mocks",
+        "Add pattern for setTimeout simulations",
+        "Add pattern for '// Simulate' or '// Mock' comments",
+        "Add pattern for random data generation in production code",
+        "Test updated patterns against known mock files",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "ralph-critic.sh - needs pattern enhancements for Angular/TypeScript mock detection"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.012",
+      "title": "Create backend API endpoints for analytics, search, and user profiles",
+      "type": "infrastructure",
+      "description": "Frontend services need backend API endpoints that don't exist yet. Create REST API endpoints for analytics data, search functionality, and user profile retrieval.",
+      "acceptance_criteria": [
+        "Create GET /api/v1/analytics/engagement endpoint",
+        "Create GET /api/v1/analytics/followers endpoint",
+        "Create GET /api/v1/search endpoint with query params",
+        "Create GET /api/v1/users/:username endpoint",
+        "Create GET /api/v1/users/suggested endpoint",
+        "Create GET /api/v1/hashtags/trending endpoint",
+        "Add proper authentication and rate limiting",
+        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+      ],
+      "occurrences": [
+        "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
+      ],
+      "passes": false
     }
   ]
 }

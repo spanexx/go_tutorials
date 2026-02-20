@@ -1,0 +1,20 @@
+# Production Configuration
+port: "8080"
+
+database:
+  url: "${DATABASE_URL}"
+  max_open_conns: 100
+  max_idle_conns: 25
+  conn_max_lifetime: 15m
+
+redis:
+  url: "${REDIS_URL}"
+
+jwt:
+  secret: "${JWT_SECRET}"
+  expiry: 15m
+  refresh_expiry: 168h
+
+logging:
+  level: info
+  format: json

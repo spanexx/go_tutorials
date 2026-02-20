@@ -20,4 +20,5 @@ bash "$WORKSPACE_DIR/ralph.sh" \
   --validate-every 1 \
   --validator-session-id "$VALIDATOR_SESSION_ID" \
   --critic \
+  --critic-every 1 \
   --critic-session-id "$CRITIC_SESSION_ID"

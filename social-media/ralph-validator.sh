@@ -102,6 +102,7 @@ WORKSPACE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROGRESS_FILE="$WORKSPACE_DIR/progress.md"
 VALIDATOR_REPORT="$WORKSPACE_DIR/.validator-report.md"
 PLAN_ROOT_DEFAULT="$WORKSPACE_DIR/docs/PLAN"
+CHAT_SCRIPT="$WORKSPACE_DIR/ralph-chat.sh"
 
 # Color codes
 GREEN='\033[0;32m'
@@ -195,13 +196,16 @@ DO NOT:
 
 AUDIT TASK (social-media/workflow/audit-execute.md):
 1. Identify the milestone folder in $PLAN_ROOT_DEFAULT that was most likely worked on recently.
-2. Verify social-media/workflow/execute.md bookkeeping is correct in that milestone:
+2. Verify social-media/workflow/execute.md bookkeeping is correct in that milestone (inside docs/PLAN milestone folder):
    - Progress.md updated
    - prd.json updated (next item passes=true only if fully done)
    - summary.md created/updated if milestone complete
 3. Audit code changes for correctness and completeness (no stubs/placeholders).
 4. Ensure acceptance criteria for the PRD item are met.
 5. Ensure tests/build pass signals are meaningful (if build failed, treat as blocker).
+
+NOTE:
+- Root-level progress.md is a run log produced by ralph.sh; do not treat it as milestone bookkeeping.
 
 
 Just because it works doesn't mean it's good. It might be stubbed, incomplete, or not follow best practices. Be critical and thorough.
@@ -338,5 +342,9 @@ echo "   Build: $BUILD_STATUS"
 echo "   Status: $REPORT_STATUS"
 echo "   Report: .validator-report.md"
 echo ""
+
+if [ -f "$CHAT_SCRIPT" ]; then
+  bash "$CHAT_SCRIPT" post "VALIDATOR" "Iteration $MAIN_ITERATION: Status=$REPORT_STATUS Build=$BUILD_STATUS Playwright=$PLAYWRIGHT_STATUS" || true
+fi
 
 exit $EXIT_CODE

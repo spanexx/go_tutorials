@@ -31,6 +31,7 @@ WORKSPACE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}" )" && pwd)"
 PROGRESS_FILE="$WORKSPACE_DIR/progress.md"
 VALIDATOR_SCRIPT="$WORKSPACE_DIR/ralph-validator.sh"
 CRITIC_SCRIPT="$WORKSPACE_DIR/ralph-critic.sh"
+CHAT_SCRIPT="$WORKSPACE_DIR/ralph-chat.sh"
 TIMESTAMP=$(date '+%Y-%m-%d %H:%M:%S')
 PLAN_ROOT_DEFAULT="$WORKSPACE_DIR/docs/PLAN"
 
@@ -40,6 +41,7 @@ CRITIC_ONLY=0
 CRITIC_SESSION_ID=""
 VALIDATOR_SESSION_ID=""
 CRITIC_BEFORE=0
+CRITIC_EVERY=0
 
 # Parse args after iterations
 ARGS=("${@:2}")
@@ -86,6 +88,17 @@ while [ $idx -lt ${#ARGS[@]} ]; do
             RUN_CRITIC=1
             CRITIC_BEFORE=1
             idx=$((idx + 1))
+            continue
+            ;;
+        --critic-every)
+            next_idx=$((idx + 1))
+            if [ $next_idx -ge ${#ARGS[@]} ]; then
+                echo -e "${RED}Error: --critic-every requires a value${NC}"
+                exit 1
+            fi
+            CRITIC_EVERY="${ARGS[$next_idx]}"
+            RUN_CRITIC=1
+            idx=$((idx + 2))
             continue
             ;;
         --critic-only)
@@ -147,6 +160,28 @@ if [ ! -f "$VALIDATOR_SCRIPT" ]; then
     VALIDATE_EVERY=0
 fi
 
+# Check chat helper exists
+if [ ! -f "$CHAT_SCRIPT" ]; then
+    echo -e "${YELLOW}⚠️  Warning: Chat script not found at $CHAT_SCRIPT${NC}"
+fi
+
+post_chat() {
+  local role="$1"
+  shift
+  local msg="$*"
+
+  if [ -f "$CHAT_SCRIPT" ]; then
+    bash "$CHAT_SCRIPT" post "$role" "$msg" || true
+  fi
+}
+
+tail_chat() {
+  local n="${1:-60}"
+  if [ -f "$CHAT_SCRIPT" ]; then
+    bash "$CHAT_SCRIPT" tail "$n" || true
+  fi
+}
+
 run_critic() {
     if [ ! -f "$CRITIC_SCRIPT" ]; then
         echo -e "${YELLOW}⚠️  Warning: Critic script not found at $CRITIC_SCRIPT${NC}"
@@ -157,16 +192,26 @@ run_critic() {
     echo -e "${MAGENTA}🧪 Running critic scan (mock/stub/TODO -> PLAN backlog)...${NC}"
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
 
-    # Critic runs in its own session by default.
-    # If user provides a session id, derive a unique id for this run to avoid collisions.
+    # Critic runs as an agent by default (it will create/update docs/PLAN and post to .ralph/chat.log).
     if [ -n "$CRITIC_SESSION_ID" ]; then
-        bash "$CRITIC_SCRIPT" --session-id "${CRITIC_SESSION_ID}_run"
+        bash "$CRITIC_SCRIPT" --session-id "${CRITIC_SESSION_ID}" --agent
     else
-        bash "$CRITIC_SCRIPT"
+        bash "$CRITIC_SCRIPT" --agent
     fi
 
     echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
     echo -e "${MAGENTA}🧪 Critic scan completed${NC}"
+}
+
+log_critic_result() {
+  local iter="$1"
+  local status="$2"
+
+  {
+    echo ""
+    echo "#### Critic Result (Iteration $iter): $status"
+    echo ""
+  } >> "$PROGRESS_FILE"
 }
 
 # Critic-only: run critic and exit
@@ -199,6 +244,13 @@ if [ "$VALIDATE_EVERY" -gt 0 ]; then
 else
     echo "🔍 Validation: Disabled"
 fi
+if [ "$CRITIC_EVERY" -gt 0 ]; then
+    echo "🧪 Critic: Every $CRITIC_EVERY iterations"
+elif [ $RUN_CRITIC -eq 1 ]; then
+    echo "🧪 Critic: Enabled"
+else
+    echo "🧪 Critic: Disabled"
+fi
 echo ""
 
 # Main loop
@@ -226,6 +278,8 @@ for ((i=1; i<=ITERATIONS; i++)); do
   fi
   echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
   
+  CHAT_CONTEXT="$(tail_chat 60)"
+
   # Prompt for qwen
   PROMPT="Follow the repo workflow: /execute
 
@@ -240,9 +294,15 @@ TASK:
    - Read README.md, tasks.md, prd.json, Progress.md
    - Pick the next prd.json item top-to-bottom where passes=false
    - Implement it end-to-end (no placeholders)
-   - Update Progress.md and mark the implemented prd.json item passes=true
+   - Update the milestone's Progress.md and mark the implemented prd.json item passes=true
 3. Run the smallest relevant checks (and repo defaults if applicable).
 4. Summarize what you did.
+
+NOTE:
+- $PROGRESS_FILE is a run log written by ralph.sh. Do not treat it as milestone bookkeeping.
+
+AGENT CHAT (last 60 lines):
+$CHAT_CONTEXT
 
 OUTPUT FORMAT:
 ---
@@ -289,6 +349,8 @@ STATUS: [success/failed]
   
   echo -e "${GREEN}✅ Iteration $i completed${NC}"
   echo -e "${GREEN}📝 Logged to progress.md${NC}"
+
+  post_chat "MAIN" "Iteration $i completed. Status=$STATUS. Summary: $(echo "$SUMMARY" | tr '\n' ' ' | head -c 240)"
   
   # Check if validation should run
   SHOULD_VALIDATE=0
@@ -330,6 +392,22 @@ STATUS: [success/failed]
     echo -e "${BLUE}📌 Main session will continue with next iteration${NC}"
     echo ""
   fi
+
+  # Critic inside loop (after validator)
+  SHOULD_CRITIC=0
+  if [ "$CRITIC_EVERY" -gt 0 ] && [ $((i % CRITIC_EVERY)) -eq 0 ]; then
+    SHOULD_CRITIC=1
+  fi
+
+  if [ $SHOULD_CRITIC -eq 1 ]; then
+    echo -e "${MAGENTA}🧪 Running critic scan...${NC}"
+    if run_critic; then
+      log_critic_result "$i" "✅ PASSED"
+    else
+      log_critic_result "$i" "⚠️  FAILED"
+    fi
+    echo ""
+  fi
   
   # Wait before next
   if [ $i -lt $ITERATIONS ]; then
@@ -341,7 +419,8 @@ STATUS: [success/failed]
 done
 
 # Default behavior: if --critic is provided, run it after the main loop.
-if [ $RUN_CRITIC -eq 1 ] && [ $CRITIC_BEFORE -eq 0 ]; then
+# If --critic-every is set, the critic already ran inside the loop.
+if [ $RUN_CRITIC -eq 1 ] && [ $CRITIC_BEFORE -eq 0 ] && [ "$CRITIC_EVERY" -eq 0 ]; then
   run_critic
 fi
 
