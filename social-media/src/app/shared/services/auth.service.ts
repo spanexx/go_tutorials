@@ -1,4 +1,6 @@
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BaseApiService } from './base-api.service';
 
 export interface User {
   id: string;
@@ -16,17 +18,46 @@ export interface AuthState {
   token?: string;
 }
 
+export interface LoginResponse {
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    display_name: string;
+    avatar_url: string;
+    bio: string;
+  };
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
+export interface RegisterResponse {
+  user: {
+    id: string;
+    email: string;
+    username: string;
+    display_name: string;
+    avatar_url: string;
+    bio: string;
+  };
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class AuthService extends BaseApiService {
   private authState = signal<AuthState>({
     user: null,
     isAuthenticated: false,
-    isLoading: true
+    isLoading: false
   });
 
-  constructor() {
+  constructor(http: HttpClient) {
+    super(http);
     this.loadUserFromStorage();
     this.loadTokenFromStorage();
   }
@@ -69,63 +100,99 @@ export class AuthService {
     return this.authState().isLoading;
   }
 
+  /**
+   * Login user with email and password
+   * Calls backend API and stores token
+   */
   login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        if (email && password.length >= 6) {
+      console.log('[AUTH-SERVICE] Login called with email:', email);
+      this.authState.update(state => ({ ...state, isLoading: true }));
+
+      this.post<LoginResponse>('/auth/login', { email, password }).subscribe({
+        next: (response) => {
+          console.log('[AUTH-SERVICE] Login response received:', response.user);
           const user: User = {
-            id: '1',
-            email,
-            username: email.split('@')[0],
-            name: email.split('@')[0].replace('.', ' '),
-            avatar: 'https://i.pravatar.cc/150?img=1'
+            id: response.user.id,
+            email: response.user.email,
+            username: response.user.username,
+            name: response.user.display_name,
+            avatar: response.user.avatar_url,
+            bio: response.user.bio
           };
 
           this.authState.set({
             user,
             isAuthenticated: true,
-            isLoading: false
+            isLoading: false,
+            token: response.access_token
           });
 
+          console.log('[AUTH-SERVICE] User state updated, storing in localStorage');
           localStorage.setItem('socialhub_user', JSON.stringify(user));
+          localStorage.setItem('socialhub_token', response.access_token);
+
           resolve({ success: true });
-        } else {
-          resolve({ 
-            success: false, 
-            error: password.length < 6 ? 'Password must be at least 6 characters' : 'Invalid credentials' 
-          });
+        },
+        error: (error) => {
+          console.error('[AUTH-SERVICE] Login error:', error);
+          this.authState.update(state => ({ ...state, isLoading: false }));
+          const errorMessage = error.error?.error || 'Login failed';
+          resolve({ success: false, error: errorMessage });
         }
-      }, 800);
+      });
     });
   }
 
-  register(name: string, email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  /**
+   * Register new user
+   * Calls backend API and stores token
+   */
+  register(name: string, email: string, password: string, username?: string): Promise<{ success: boolean; error?: string }> {
     return new Promise((resolve) => {
-      setTimeout(() => {
-        if (name && email && password.length >= 6) {
+      console.log('[AUTH-SERVICE] Register called with email:', email);
+      this.authState.update(state => ({ ...state, isLoading: true }));
+
+      // Use provided username or generate one if not provided
+      const finalUsername = username || email.split('@')[0].replace(/[^a-zA-Z0-9]/g, '');
+
+      this.post<RegisterResponse>('/auth/register', {
+        email,
+        password,
+        username: finalUsername,
+        display_name: name
+      }).subscribe({
+        next: (response) => {
+          console.log('[AUTH-SERVICE] Registration response received:', response.user);
           const user: User = {
-            id: Date.now().toString(),
-            email,
-            username: email.split('@')[0],
-            name,
-            avatar: 'https://i.pravatar.cc/150?img=1'
+            id: response.user.id,
+            email: response.user.email,
+            username: response.user.username,
+            name: response.user.display_name,
+            avatar: response.user.avatar_url,
+            bio: response.user.bio
           };
 
           this.authState.set({
             user,
             isAuthenticated: true,
-            isLoading: false
+            isLoading: false,
+            token: response.access_token
           });
 
+          console.log('[AUTH-SERVICE] User state updated, storing in localStorage');
           localStorage.setItem('socialhub_user', JSON.stringify(user));
+          localStorage.setItem('socialhub_token', response.access_token);
+
           resolve({ success: true });
-        } else {
-          resolve({ 
-            success: false, 
-            error: password.length < 6 ? 'Password must be at least 6 characters' : 'All fields are required' 
-          });
+        },
+        error: (error) => {
+          console.error('[AUTH-SERVICE] Registration error:', error);
+          this.authState.update(state => ({ ...state, isLoading: false }));
+          const errorMessage = error.error?.error || 'Registration failed';
+          resolve({ success: false, error: errorMessage });
         }
-      }, 800);
+      });
     });
   }
 
@@ -183,5 +250,43 @@ export class AuthService {
         token
       }));
     }
+  }
+
+  /**
+   * Verify email address with token
+   */
+  verifyEmail(token: string) {
+    return this.post('/auth/verify-email', { token });
+  }
+
+  /**
+   * Resend verification email
+   */
+  resendVerificationEmail(email: string) {
+    return this.post('/auth/resend-verification', { email });
+  }
+
+  /**
+   * Request password reset
+   */
+  forgotPassword(email: string) {
+    return this.post('/auth/forgot-password', { email });
+  }
+
+  /**
+   * Reset password with token
+   */
+  resetPassword(token: string, newPassword: string) {
+    return this.post('/auth/reset-password', {
+      token,
+      new_password: newPassword
+    });
+  }
+
+  /**
+   * Get the current user
+   */
+  getCurrentUser(): User | null {
+    return this.authState().user;
   }
 }

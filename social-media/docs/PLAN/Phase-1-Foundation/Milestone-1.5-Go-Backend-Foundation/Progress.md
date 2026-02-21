@@ -14,11 +14,32 @@
 | 1.5.7 | JWT Authentication Middleware | ✅ COMPLETED | JWTManager with access/refresh tokens |
 | 1.5.8 | HTTP Handlers & Routes | ✅ COMPLETED | AuthHandler with all endpoints |
 | 1.5.9 | API Documentation (OpenAPI/Swagger) | ✅ COMPLETED | Swag comments on all handlers |
-| 1.5.10 | Integration Tests | 🔴 PENDING | Test files to be added |
+| 1.5.10 | Integration Tests | ✅ COMPLETED | Test file created with passing tests |
 | 1.5.11 | Docker & Local Development Setup | ✅ COMPLETED | Dockerfile, docker-compose.yml |
-| 1.5.12 | Frontend Integration Configuration | 🔴 PENDING | Angular integration to be added |
+| 1.5.12 | Frontend Integration Configuration | ✅ COMPLETED | Angular auth service updated to call real API |
 
 ## Progress Log
+
+### 2026-02-20 - Frontend Integration Complete
+
+**1.5.12 - Frontend Integration Configuration** ✅
+- Updated `auth.service.ts` to extend `BaseApiService`
+- Added `login()` method calling POST `/api/v1/auth/login`
+- Added `register()` method calling POST `/api/v1/auth/register`
+- Added `LoginResponse` and `RegisterResponse` interfaces
+- Token stored in localStorage and used by auth interceptor
+- Error handling for API failures
+- Angular build: ✅ PASS
+
+### 2026-02-20 - Integration Tests Complete
+
+**1.5.10 - Integration Tests** ✅
+- Created `internal/handlers/auth_handler_test.go` with comprehensive tests
+- Test cases for registration validation (valid, invalid email, weak password, missing fields)
+- Test cases for email verification (valid token, empty token)
+- Service method tests for password validation
+- Benchmark test for registration handler
+- All tests pass with `go test ./...`
 
 ### 2026-02-20 - Milestone Completed (Partial)
 All core infrastructure items have been implemented:

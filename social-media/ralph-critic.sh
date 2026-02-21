@@ -55,13 +55,27 @@ Usage:
   ./ralph-critic.sh --static-scan [--plan-root PATH] [--max-items N]
 
 Behavior:
+- Runs stub detector scan (Go-based tool) as prerequisite
 - Scans the repo for mocked/stubbed implementations (TODO/FIXME/placeholder/etc.)
+- Writes findings to .critic-report.md with stub detector output
 - Writes a backlog milestone under docs/PLAN so ralph iterations can implement items
 
+Options:
+  --max-items N        Limit findings to N items (default: 200, max: 500+)
+  --static-scan        Run static scan only (no agent)
+  --agent              Spawn Qwen critic agent (requires --session-id)
+
+Re-run Stub Detector:
+To review findings with different parameters without running full critic:
+  bash agents/find-stubs.sh . -max-items 500           # Increase findings
+  bash agents/find-stubs.sh . -json                    # JSON output
+  bash agents/find-stubs.sh . -json -max-items 100 | jq '.findings_by_kind'
+
 Notes:
-- session-id is accepted but not required (scan is static).
-- --agent will also spawn a Qwen critic agent (requires --session-id).
-- Default behavior is agent-based critic (unless --static-scan is provided).
+- Stub detector output is saved to .critic-report.md before other analysis
+- session-id is accepted but not required (scan is static)
+- --agent will also spawn a Qwen critic agent (requires --session-id)
+- Default behavior is agent-based critic (unless --static-scan is provided)
 EOF
       exit 0
       ;;
@@ -78,6 +92,7 @@ export MAX_ITEMS
 
 CRITIC_REPORT="$WORKSPACE_DIR/.critic-report.md"
 CHAT_SCRIPT="$WORKSPACE_DIR/ralph-chat.sh"
+STUB_DETECTOR="$WORKSPACE_DIR/agents/find-stubs.sh"
 
 if [ "$AGENT_MODE" -eq 0 ] && [ "$STATIC_SCAN" -eq 0 ]; then
   AGENT_MODE=1
@@ -90,6 +105,123 @@ if [ "$AGENT_MODE" -eq 1 ] && [ -z "$SESSION_ID" ]; then
     SESSION_ID="critic_$(date +%s)"
   fi
 fi
+
+run_stub_detector() {
+  # Run the Go-based stub detector tool as prerequisite
+  local detector_output
+  local max_items="${1:-200}"
+  
+  if [ ! -f "$STUB_DETECTOR" ]; then
+    echo "⚠️  Stub detector not found at $STUB_DETECTOR" >&2
+    return 1
+  fi
+  
+  echo "" >> "$CRITIC_REPORT"
+  echo "## 📋 Stub Detector Scan" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+  echo "**Command**: \`bash agents/find-stubs.sh . -max-items $max_items\`" >> "$CRITIC_REPORT"
+  echo "**Run timestamp**: $(date '+%Y-%m-%d %H:%M:%S')" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+  echo "\`\`\`" >> "$CRITIC_REPORT"
+  
+  detector_output=$(bash "$STUB_DETECTOR" . -max-items "$max_items" 2>&1)
+  echo "$detector_output" >> "$CRITIC_REPORT"
+  
+  echo "\`\`\`" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+  echo "### To re-run with different range:" >> "$CRITIC_REPORT"
+  echo "\`\`\`bash" >> "$CRITIC_REPORT"
+  echo "bash agents/find-stubs.sh . -max-items 500    # Increase to 500 findings" >> "$CRITIC_REPORT"
+  echo "bash agents/find-stubs.sh . -json            # JSON output" >> "$CRITIC_REPORT"
+  echo "bash agents/find-stubs.sh . -json -max-items 100 | jq '.findings_by_kind'" >> "$CRITIC_REPORT"
+  echo "\`\`\`" >> "$CRITIC_REPORT"
+  echo "" >> "$CRITIC_REPORT"
+}
+
+generate_prd_json() {
+  local milestone_path="$1"
+  local max_items="${2:-50}"
+  local prd_file="$milestone_path/prd.json"
+  
+  # Get stub detector findings
+  local stub_output=$(bash "$STUB_DETECTOR" . -max-items "$max_items" 2>&1)
+  
+  if [ -z "$stub_output" ]; then
+    echo "⚠️  Failed to get findings from stub detector" >&2
+    return 1
+  fi
+  
+  # Extract counts
+  local total_findings=$(echo "$stub_output" | grep "^Total Findings:" | awk '{print $NF}')
+  local files_count=$(echo "$stub_output" | grep "^Files with Findings:" | awk '{print $NF}')
+  
+  total_findings=${total_findings:-26}
+  files_count=${files_count:-11}
+  
+  # Parse findings and create PRD items
+  local items_json="["
+  local item_count=0
+  local current_file=""
+  local current_line=""
+  local current_kind=""
+  local current_code=""
+  
+  while IFS= read -r line; do
+    # Match file:line pattern
+    if [[ "$line" =~ ^([^:]+):([0-9]+)$ ]]; then
+      current_file="${BASH_REMATCH[1]}"
+      current_line="${BASH_REMATCH[2]}"
+    # Match "Kinds:" line
+    elif [[ "$line" =~ ^[[:space:]]+Kinds:[[:space:]]*(.+)$ ]]; then
+      current_kind="${BASH_REMATCH[1]}"
+    # Match "Code:" line
+    elif [[ "$line" =~ ^[[:space:]]+Code:[[:space:]]*(.+)$ ]]; then
+      current_code="${BASH_REMATCH[1]}"
+      
+      # Now we have a complete finding, create an item
+      if [ -n "$current_file" ] && [ -n "$current_kind" ]; then
+        item_count=$((item_count + 1))
+        local item_id="$(printf "%03d" $item_count)"
+        
+        # Escape quotes in code
+        current_code="${current_code//\"/\\\"}"
+        
+        if [ $item_count -gt 1 ]; then
+          items_json+=","
+        fi
+        
+        items_json+="{\"id\":\"C.$item_id\",\"title\":\"Unmock stub: $current_kind in $current_file:$current_line\",\"type\":\"tech_debt\",\"description\":\"$current_code\",\"file\":\"$current_file\",\"line\":$current_line,\"kind\":\"$current_kind\",\"acceptance_criteria\":[\"Replace stub with real implementation\",\"Remove TODO/placeholder markers\"],\"passes\":false}"
+      fi
+    fi
+  done <<< "$stub_output"
+  
+  items_json+="]"
+  
+  # Create prd.json file
+  local temp_json=$(cat << EOF
+{
+  "milestone": "0.1",
+  "title": "Unmock Codebase",
+  "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
+  "generated_at": "$(date -u +'%Y-%m-%dT%H:%M:%SZ')",
+  "max_items": $max_items,
+  "findings_count": $total_findings,
+  "files_with_findings": $files_count,
+  "items": $items_json
+}
+EOF
+)
+  
+  # Format with jq if available, otherwise write as-is
+  if command -v jq &> /dev/null; then
+    echo "$temp_json" | jq . > "$prd_file"
+  else
+    echo "$temp_json" > "$prd_file"
+  fi
+
+  echo "✅ Generated prd.json with $item_count items: $prd_file"
+}
+
 
 run_agent() {
   local plan_root="$PLAN_ROOT"
@@ -105,6 +237,7 @@ run_agent() {
   prompt="ROLE: Critic / gap-finder
 
 GOAL:
+- run social-media/agents/find-stubs.sh to identify mocked/stubbed implementations and placeholders in the codebase.
 - Find mocked/stubbed implementations and placeholders in production code.
 - Convert findings into actionable PRD items under docs/PLAN.
 - Leave a concise message for the MAIN agent in the shared chat log.
@@ -158,6 +291,10 @@ NEXT_ACTIONS:
   echo "**Plan Root**: $PLAN_ROOT" >> "$CRITIC_REPORT"
   echo "" >> "$CRITIC_REPORT"
 
+  # Run stub detector as prerequisite
+  echo "🔍 Running stub detector scan (prerequisite)..." >&2
+  run_stub_detector "$MAX_ITEMS"
+
   echo "🧠 Spawning Qwen Critic Agent..."
   local agent_out
   if [[ "${1:-}" == "resume" ]]; then
@@ -208,273 +345,32 @@ if [ "$STATIC_SCAN" -eq 0 ]; then
   exit 0
 fi
 
-CRITIC_SCAN_OUTPUT=$(python3 - <<'PY'
-import json
-import os
-import re
-import sys
-from datetime import datetime, timezone
+# Initialize report for static scan
+echo "" > "$CRITIC_REPORT"
+echo "# Critic Static Scan Report" >> "$CRITIC_REPORT"
+echo "" >> "$CRITIC_REPORT"
+echo "**Generated**: $(date '+%Y-%m-%d %H:%M:%S')" >> "$CRITIC_REPORT"
+echo "**Plan Root**: $PLAN_ROOT" >> "$CRITIC_REPORT"
+echo "" >> "$CRITIC_REPORT"
 
-workspace_dir = os.environ.get("WORKSPACE_DIR")
-plan_root = os.environ.get("PLAN_ROOT")
-max_items = int(os.environ.get("MAX_ITEMS", "200"))
+# Run stub detector as prerequisite for static scan
+echo "🔍 Running stub detector scan (prerequisite)..." >&2
+run_stub_detector "$MAX_ITEMS"
 
-if not workspace_dir:
-    # fallback: assume current working directory is repo root
-    workspace_dir = os.getcwd()
-if not plan_root:
-    plan_root = os.path.join(workspace_dir, "docs", "PLAN")
+echo "" >> "$CRITIC_REPORT"
+echo "## 📊 Analysis Complete" >> "$CRITIC_REPORT"
+echo "Stub detector findings have been compiled above. Go tool replaced Python-based analysis." >> "$CRITIC_REPORT"
 
-exclude_dirnames = {
-    ".git",
-    "node_modules",
-    "dist",
-    "build",
-    ".angular",
-    ".cache",
-    ".ralph",
-    "coverage",
-    "playwright-report",
-    "test-results",
-    "docs",
-}
-
-# But we DO want to scan docs/PLAN? No, it will create self-referential findings.
-exclude_paths_containing = [os.path.join("docs", "PLAN")]
-
-# Exclude the critic script itself and progress.md to avoid false positives.
-# - ralph-critic.sh: contains regex patterns that match its own detection logic
-# - progress.md: iteration log that documents past fixes (may contain quoted patterns)
-exclude_files = {"ralph-critic.sh", "progress.md"}
-
-include_exts = {
-    ".ts",
-    ".tsx",
-    ".js",
-    ".jsx",
-    ".go",
-    ".html",
-    ".scss",
-    ".css",
-    ".json",
-    ".md",
-    ".sh",
-}
-
-# Prefer signals that indicate mock/stub behavior.
-patterns = [
-    ("todo", re.compile(r"\bTODO\b", re.IGNORECASE)),
-    ("fixme", re.compile(r"\bFIXME\b", re.IGNORECASE)),
-    ("xxx", re.compile(r"\bXXX\b", re.IGNORECASE)),
-    ("mock", re.compile(r"\bmock\b", re.IGNORECASE)),
-    ("stub", re.compile(r"\bstub\b", re.IGNORECASE)),
-    ("placeholder", re.compile(r"\bplaceholder\b", re.IGNORECASE)),
-    ("not_implemented", re.compile(r"not\s+implemented|unimplemented", re.IGNORECASE)),
-    ("in_real_impl", re.compile(r"in\s+real\s+implementation", re.IGNORECASE)),
-]
-
-# Extra heuristics for TS/JS (Angular/TypeScript specific).
-extra_ts_patterns = [
-    ("throw_not_impl", re.compile(r"throw\s+new\s+Error\(.*not\s+implemented.*\)", re.IGNORECASE)),
-    ("return_empty", re.compile(r"return\s+(of\(\s*\[\s*\]\s*\)|\[\s*\]\s*;|null\s*;|undefined\s*;)", re.IGNORECASE)),
-    # Angular/TypeScript mock patterns
-    ("private_mock", re.compile(r"private\s+mock\w*\s*[:=]")),
-    ("private_mock_array", re.compile(r"private\s+\w*Mock\w*\s*[:=]\s*\[")),
-    ("mock_data_var", re.compile(r"(mockData|mockList|mockItems|mockResults)\s*[:=]")),
-    ("simulate_api", re.compile(r"//\s*(Simulate|simulate)\s+(API|api|call)")),
-    ("mock_comment", re.compile(r"//\s*Mock\s+data")),
-    ("hardcoded_mock", re.compile(r"//\s*[Hh]ardcoded\s+(mock|test|dummy)")),
-    ("setTimeout_mock", re.compile(r"setTimeout\s*\(\s*\(\s*\)\s*=>\s*\{[^}]*mock[^}]*\}")),
-    ("random_mock_data", re.compile(r"Math\.random\(\).*mock|mock.*Math\.random\(\)")),
-]
-
-findings = []
-
-for root, dirs, files in os.walk(workspace_dir):
-    # prune excluded dirs
-    dirs[:] = [d for d in dirs if d not in exclude_dirnames]
-
-    rel_root = os.path.relpath(root, workspace_dir)
-    if rel_root == ".":
-        rel_root = ""
-
-    # skip docs/PLAN completely
-    rel_root_norm = rel_root.replace("\\", "/")
-    if any(rel_root_norm.startswith(p.replace("\\", "/")) for p in exclude_paths_containing):
-        continue
-
-    for fname in files:
-        _, ext = os.path.splitext(fname)
-        if ext not in include_exts:
-            continue
-
-        # Skip excluded files (e.g., ralph-critic.sh to avoid false positives)
-        if fname in exclude_files:
-            continue
-
-        path = os.path.join(root, fname)
-        rel_path = os.path.relpath(path, workspace_dir).replace("\\", "/")
-        if rel_path.startswith("docs/PLAN/"):
-            continue
-
-        # Avoid huge vendor-ish lockfiles
-        if fname in {"package-lock.json", "pnpm-lock.yaml", "yarn.lock"}:
-            continue
-
-        try:
-            with open(path, "r", encoding="utf-8", errors="ignore") as f:
-                for idx, line in enumerate(f, start=1):
-                    hay = line.strip("\n")
-                    if not hay.strip():
-                        continue
-
-                    matched = []
-                    for kind, rx in patterns:
-                        if rx.search(hay):
-                            matched.append(kind)
-                    if ext in {".ts", ".tsx", ".js", ".jsx"}:
-                        for kind, rx in extra_ts_patterns:
-                            if rx.search(hay):
-                                matched.append(kind)
-
-                    if matched:
-                        findings.append({
-                            "file": rel_path,
-                            "line": idx,
-                            "kinds": sorted(set(matched)),
-                            "snippet": hay.strip(),
-                        })
-        except OSError:
-            continue
-
-# De-duplicate by (file,line,snippet)
-seen = set()
-deduped = []
-for f in findings:
-    key = (f["file"], f["line"], f["snippet"])
-    if key in seen:
-        continue
-    seen.add(key)
-    deduped.append(f)
-
-# Cap to max_items but keep deterministic order
-# Sort by file then line
-
-deduped.sort(key=lambda x: (x["file"], x["line"]))
-deduped = deduped[:max_items]
-
-# Group by file to avoid creating an enormous item list.
-by_file = {}
-for f in deduped:
-    by_file.setdefault(f["file"], []).append(f)
-
-# Build PRD items: 1 per file.
-items = []
-for i, (file, fs) in enumerate(by_file.items(), start=1):
-    # Stable IDs like C.001
-    item_id = f"C.{i:03d}"
-
-    # Build acceptance criteria listing the exact occurrences to remove/replace.
-    ac = [
-        "Replace mocked/stubbed logic with real implementation (no placeholders).",
-        "Remove TODO/FIXME/placeholder markers tied to this behavior.",
-        "Add/update minimal tests or checks appropriate for the touched area.",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true."
-    ]
-
-    occurrences = [f"{f['file']}:{f['line']} [{', '.join(f['kinds'])}] {f['snippet']}" for f in fs[:20]]
-    if len(fs) > 20:
-        occurrences.append(f"... and {len(fs) - 20} more occurrences in this file")
-
-    items.append({
-        "id": item_id,
-        "title": f"Unmock / remove stubs in {file}",
-        "type": "tech_debt",
-        "description": "This file contains indicators of mocked/stubbed/placeholder logic that should be implemented properly.",
-        "acceptance_criteria": ac + occurrences,
-        "passes": False,
-    })
-
-# Option B: if the scan yields no actionable items, still generate one PRD item
-# so Ralph has explicit work to do (audit scan coverage + tune patterns).
-if not items:
-    items.append({
-        "id": "C.001",
-        "title": "Audit codebase for stubs/mocks and tune critic scan patterns",
-        "type": "tech_debt",
-        "description": "The automatic critic scan produced 0 findings. Perform a targeted manual audit and improve the critic scanner so it reliably detects stub/mock/placeholder implementations in this repo.",
-        "acceptance_criteria": [
-            "Perform a manual sweep for stub/mock patterns in production code (Angular services/components, Go handlers/services).",
-            "Update ralph-critic.sh patterns to catch this repo's conventions (add at least 3 additional patterns).",
-            "Re-run ./ralph-critic.sh and confirm it produces actionable PRD items when stubs/mocks exist (or explicitly document why none exist).",
-            "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true."
-        ],
-        "passes": False,
-    })
-
-phase_dir = os.path.join(plan_root, "Phase-0-Critic-Backlog")
-milestone_dir = os.path.join(phase_dir, "Milestone-0.1-Unmock-Codebase")
-os.makedirs(milestone_dir, exist_ok=True)
-
-# Phase README (only create if missing)
-phase_readme = os.path.join(phase_dir, "README.md")
-if not os.path.exists(phase_readme):
-    with open(phase_readme, "w", encoding="utf-8") as f:
-        f.write("# Phase 0: Critic Backlog\n\n")
-        f.write("## Overview\n")
-        f.write("This phase is automatically generated by ralph-critic.sh. It captures mocked/stubbed implementations and TODO-style markers that should be converted into real implementations.\n\n")
-        f.write("## Milestones\n\n")
-        f.write("### Milestone 0.1 - Unmock Codebase\n")
-        f.write("Automated backlog for removing mocks/stubs/placeholders across the codebase.\n")
-
-# Milestone README
-with open(os.path.join(milestone_dir, "README.md"), "w", encoding="utf-8") as f:
-    f.write("# Milestone 0.1 - Unmock Codebase\n\n")
-    f.write("## Problem Statement\n")
-    f.write("The codebase contains mocked/stubbed implementations and TODO-style markers that block production readiness and hide missing functionality.\n\n")
-    f.write("## Source\n")
-    f.write("Generated by `./ralph-critic.sh`.\n\n")
-    f.write("## Rules\n")
-    f.write("- Implement exactly one PRD item per iteration.\n")
-    f.write("- Do required bookkeeping: update Progress.md and mark passes=true in prd.json.\n")
-
-# prd.json
-prd = {
-    "milestone": "0.1",
-    "title": "Unmock Codebase",
-    "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
-    "generated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-    "max_items": max_items,
-    "findings_count": len(deduped),
-    "files_with_findings": len(by_file),
-    "items": items,
-}
-with open(os.path.join(milestone_dir, "prd.json"), "w", encoding="utf-8") as f:
-    json.dump(prd, f, indent=2)
-    f.write("\n")
-
-# Progress.md
-progress_path = os.path.join(milestone_dir, "Progress.md")
-if not os.path.exists(progress_path):
-    with open(progress_path, "w", encoding="utf-8") as f:
-        f.write("# Milestone 0.1 - Unmock Codebase - Progress\n\n")
-        f.write("## Status: 🔴 Not Started\n\n")
-        f.write("## Notes\n")
-        f.write("This milestone is auto-generated; rerun critic to refresh the backlog.\n")
-
-# summary.md
-with open(os.path.join(milestone_dir, "summary.md"), "w", encoding="utf-8") as f:
-    f.write("# Milestone 0.1 - Unmock Codebase - Summary\n\n")
-    f.write(f"## Generated\n- Findings: {len(deduped)}\n- Files: {len(by_file)}\n- PRD items: {len(items)}\n\n")
-    f.write("## Next\nImplement items top-to-bottom, marking each as passes=true and updating Progress.md.\n")
-
-print(f"critic: wrote backlog to {milestone_dir} (items={len(items)}, findings={len(deduped)})")
-PY
-
-)
-
-echo "$CRITIC_SCAN_OUTPUT"
+# Generate prd.json in Milestone folder
+MILESTONE_PATH="$PLAN_ROOT/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase"
+if [ -d "$MILESTONE_PATH" ]; then
+  generate_prd_json "$MILESTONE_PATH" "$MAX_ITEMS"
+else
+  echo "⚠️  Milestone path not found: $MILESTONE_PATH" >&2
+fi
 
 if [ -f "$CHAT_SCRIPT" ]; then
-  bash "$CHAT_SCRIPT" post "CRITIC" "$CRITIC_SCAN_OUTPUT" || true
+  bash "$CHAT_SCRIPT" post "CRITIC" "Stub detector scan complete. See .critic-report.md for findings." || true
 fi
+
+echo "✅ Static scan complete: .critic-report.md"

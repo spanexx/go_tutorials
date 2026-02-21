@@ -27,7 +27,7 @@
         "Signal-based reaction counts per post",
         "Optimistic UI updates"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.1.2",
@@ -43,7 +43,7 @@
         "Compact design fitting in post card",
         "Accessible with keyboard"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.1.3",
@@ -57,7 +57,7 @@
         "Visual feedback on interaction",
         "Update post stats in real-time"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.1.4",
@@ -71,7 +71,7 @@
         "Click to see who reacted (Phase 3)",
         "Positioned at top of reaction bar"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

@@ -1,0 +1,195 @@
+{
+  "milestone": "1.6",
+  "title": "Email Service Integration",
+  "problem": "The authentication system requires email functionality for user verification, password reset, and notifications. Currently, no email infrastructure exists in the backend, blocking critical auth flows like email verification and password recovery.",
+  "success_metrics": [
+    "SMTP client integrated and tested with Ethereal Email (dev)",
+    "Welcome email sent on user registration",
+    "Email verification flow functional with token-based verification",
+    "Password reset emails with secure tokens",
+    "HTML + plain text email templates",
+    "Email queue/async processing for reliability",
+    "Rate limiting on email endpoints (prevent abuse)"
+  ],
+  "non_goals": [
+    "Production mail provider integration (SendGrid, Mailgun) - Phase 3",
+    "Email analytics/open tracking - Phase 3",
+    "Marketing email campaigns - Phase 4",
+    "Multi-language email templates - Phase 3",
+    "Attachments in emails - Phase 3"
+  ],
+  "items": [
+    {
+      "id": "1.6.1",
+      "title": "Email Service Infrastructure",
+      "type": "infrastructure",
+      "description": "Set up SMTP client and email service abstraction in Go backend.",
+      "acceptance_criteria": [
+        "internal/email/email_service.go with EmailService interface",
+        "SMTP configuration in Config struct (host, port, username, password, from_address)",
+        "Ethereal Email auto-generation for dev environment (no manual signup)",
+        "Support for both HTML and plain text email bodies",
+        "Email service initialization in main.go",
+        "Test email sending capability verified"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.2",
+      "title": "Email Templates System",
+      "type": "feature",
+      "description": "Create template system for auth-related emails.",
+      "acceptance_criteria": [
+        "internal/email/templates/ directory",
+        "Base template with branding (SocialHub logo, colors)",
+        "Welcome email template (subject: Welcome to SocialHub!)",
+        "Email verification template with token link",
+        "Password reset template with reset link",
+        "Plain text fallbacks for all templates",
+        "Template caching for performance"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.3",
+      "title": "Welcome Email on Registration",
+      "type": "feature",
+      "description": "Send welcome email when users successfully register.",
+      "acceptance_criteria": [
+        "Welcome email triggered after successful registration",
+        "Email includes user's name, welcome message, next steps",
+        "Link to complete profile setup",
+        "Async email sending (non-blocking registration response)",
+        "Error handling (log failed emails, don't fail registration)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.4",
+      "title": "Email Verification Flow",
+      "type": "feature",
+      "description": "Implement complete email verification system with tokens.",
+      "acceptance_criteria": [
+        "Verification token generation (secure random, 24h expiry)",
+        "users table migration: add email_verified, email_verification_token, email_verification_expires",
+        "Verification email sent on registration (if enabled) or on demand",
+        "POST /api/v1/auth/verify-email endpoint with token validation",
+        "POST /api/v1/auth/resend-verification endpoint (rate limited)",
+        "Token invalidation after successful verification",
+        "Update auth middleware to check email_verified status (optional enforcement)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.5",
+      "title": "Password Reset via Email",
+      "type": "feature",
+      "description": "Allow users to reset passwords via secure email tokens.",
+      "acceptance_criteria": [
+        "POST /api/v1/auth/forgot-password endpoint (accepts email)",
+        "Reset token generation (secure random, 1h expiry)",
+        "users table migration: add password_reset_token, password_reset_expires",
+        "Password reset email with secure link",
+        "POST /api/v1/auth/reset-password endpoint (token + new password)",
+        "Token validation and expiration checking",
+        "Password validation (same rules as registration)",
+        "Clear all reset tokens after successful reset",
+        "Rate limiting: max 3 reset requests per email per hour"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.6",
+      "title": "Async Email Queue",
+      "type": "infrastructure",
+      "description": "Implement background email processing for reliability.",
+      "acceptance_criteria": [
+        "Email queue using Redis (lightweight task queue)",
+        "internal/email/queue.go with QueueEmail method",
+        "Background worker goroutine processing email queue",
+        "Retry logic: 3 attempts with exponential backoff",
+        "Failed email logging and dead letter queue",
+        "Graceful shutdown handling (finish in-flight emails)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.7",
+      "title": "Email Testing & Dev Tools",
+      "type": "test",
+      "description": "Provide tools for testing emails in development.",
+      "acceptance_criteria": [
+        "Ethereal Email credentials auto-printed on server startup",
+        "GET /api/v1/admin/test-email endpoint (dev only, sends test email)",
+        "Email preview endpoint for template testing",
+        "Documentation: how to view sent emails (Ethereal web inbox)",
+        "Environment variable to disable emails (EMAIL_ENABLED=false)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.8",
+      "title": "Rate Limiting & Security",
+      "type": "security",
+      "description": "Prevent email abuse and ensure security.",
+      "acceptance_criteria": [
+        "Rate limiting on email-sending endpoints (Resend: 1 per 60s per email)",
+        "Rate limiting on password reset (3 per hour per IP)",
+        "Token entropy: minimum 32 bytes random",
+        "HTTPS-only verification/reset links in production",
+        "Audit logging: log all email sends with metadata"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.9",
+      "title": "Frontend Email Flow Integration",
+      "type": "integration",
+      "description": "Update Angular frontend to handle email flows.",
+      "acceptance_criteria": [
+        "Verify email banner on feed if email not verified",
+        "Resend verification button with cooldown",
+        "Password reset page: email input -> confirmation -> new password",
+        "Toast notifications for email-related actions",
+        "Links in emails direct to Angular routes with token handling"
+      ],
+      "passes": true
+    },
+    {
+      "id": "1.6.10",
+      "title": "Email Integration Tests",
+      "type": "test",
+      "description": "Comprehensive tests for email functionality.",
+      "acceptance_criteria": [
+        "internal/email/email_service_test.go",
+        "Mock SMTP server for testing (using Ethereal or mock)",
+        "Tests: send email, template rendering, token generation",
+        "Integration tests for verification flow end-to-end",
+        "Integration tests for password reset flow",
+        "Test coverage >80% for email package"
+      ],
+      "passes": true
+    }
+  ],
+  "affected_files": [
+    "backend/internal/email/email_service.go",
+    "backend/internal/email/templates/",
+    "backend/internal/handlers/auth_handler.go",
+    "backend/internal/service/auth_service.go",
+    "backend/internal/config/config.go",
+    "backend/internal/repository/users.sql",
+    "backend/migrations/000002_add_email_fields.up.sql",
+    "backend/migrations/000002_add_email_fields.down.sql",
+    "backend/cmd/auth-service/main.go",
+    "backend/.env.example",
+    "src/app/pages/auth/verify-email/verify-email.component.ts",
+    "src/app/pages/auth/forgot-password/forgot-password.component.ts",
+    "src/app/pages/auth/reset-password/reset-password.component.ts",
+    "src/app/shared/services/auth.service.ts"
+  ],
+  "affected_dependencies": [
+    "Go: github.com/jordan-wright/email",
+    "Go: github.com/google/uuid (for tokens)",
+    "Angular: Router for token parameter handling"
+  ]
+}

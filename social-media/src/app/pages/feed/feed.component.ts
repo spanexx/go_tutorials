@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThreadComponent } from '../../components/thread/thread.component';
+import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { CreatePostComponent } from '../../components/create-post/create-post.component';
 import { LucideAngularModule, Hash } from 'lucide-angular';
 import { PostService, Post } from '../../shared/services/post.service';
@@ -15,7 +15,7 @@ import { LoadingIndicatorComponent } from '../../shared/loading-indicator/loadin
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, ThreadComponent, CreatePostComponent, LucideAngularModule, PostSkeletonComponent, SkeletonComponent, RefreshIndicatorComponent, InfiniteScrollDirective, LoadingIndicatorComponent],
+  imports: [CommonModule, PostCardComponent, CreatePostComponent, LucideAngularModule, PostSkeletonComponent, SkeletonComponent, RefreshIndicatorComponent, InfiniteScrollDirective, LoadingIndicatorComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.scss']
 })

@@ -44,9 +44,9 @@
         }
       } @else {
         @for (post of posts; track post.id) {
-          <app-thread
+          <app-post-card
             [post]="post"
-          ></app-thread>
+          ></app-post-card>
         }
       }
     </div>

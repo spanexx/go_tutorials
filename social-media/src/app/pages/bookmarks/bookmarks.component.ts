@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ThreadComponent } from '../../components/thread/thread.component';
+import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { LucideAngularModule, Bookmark, Plus, Folder } from 'lucide-angular';
 import { PostService, Post } from '../../shared/services/post.service';
 import { BookmarkCollectionService, BookmarkCollection } from '../../shared/services/bookmark-collection.service';
@@ -9,7 +9,7 @@ import { CollectionModalComponent } from '../../shared/collection-modal/collecti
 @Component({
   selector: 'app-bookmarks',
   standalone: true,
-  imports: [CommonModule, ThreadComponent, LucideAngularModule, CollectionModalComponent],
+  imports: [CommonModule, PostCardComponent, LucideAngularModule, CollectionModalComponent],
   templateUrl: './bookmarks.component.html',
   styleUrls: ['./bookmarks.component.scss']
 })
@@ -25,7 +25,7 @@ export class BookmarksComponent {
   constructor(
     private postService: PostService,
     public collectionService: BookmarkCollectionService
-  ) {}
+  ) { }
 
   get collections(): BookmarkCollection[] {
     return this.collectionService.getCollections();

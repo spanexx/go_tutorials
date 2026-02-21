@@ -53,6 +53,18 @@ Create user profile pages (view and edit), profile cards, and user information m
 
 Establish the Go backend foundation with Auth Service, PostgreSQL database, JWT authentication, and core API infrastructure. Enables real authentication for subsequent phases.
 
+### Milestone 1.6 - Email Service Integration
+**Status:** Ready for Implementation
+**Dependencies:** Milestone 1.5 (Go Backend Foundation)
+
+Implement email service infrastructure for authentication flows including welcome emails, email verification, and password reset. Uses Ethereal Email for development testing.
+
+- SMTP client with Ethereal Email (dev)
+- Email templates (HTML + text) for welcome, verification, password reset
+- Async email queue with Redis
+- Rate limiting and security measures
+- Frontend integration for verification and password reset flows
+
 ## Success Criteria
 - Users can register, login, and logout (mock initially, real API ready)
 - Authenticated routes are protected

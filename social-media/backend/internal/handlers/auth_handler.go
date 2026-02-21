@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -73,11 +75,14 @@ type UserResponse struct {
 // @Failure 409 {object} map[string]string
 // @Router /api/v1/auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
+	log.Println("[AUTH] Register attempt starting")
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("[AUTH] Register request binding failed: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("[AUTH] Register request received for email: %s, username: %s", req.Email, req.Username)
 
 	input := service.RegisterInput{
 		Email:       req.Email,
@@ -88,6 +93,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	user, err := h.authService.Register(c.Request.Context(), input)
 	if err != nil {
+		log.Printf("[AUTH] Register failed for email %s: %v", req.Email, err)
 		switch err {
 		case service.ErrUserExists:
 			c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
@@ -96,10 +102,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		}
 		return
 	}
+	log.Printf("[AUTH] Register successful for user: %s (ID: %s)", user.Email, user.ID)
 
 	// Generate tokens
+	log.Printf("[AUTH] Generating JWT tokens for new user: %s", user.ID)
 	tokens, err := h.jwtManager.GenerateTokenPair(user.ID, user.Email, user.Username)
 	if err != nil {
+		log.Printf("[AUTH] Token generation failed: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
@@ -133,11 +142,14 @@ func (h *AuthHandler) Register(c *gin.Context) {
 // @Failure 401 {object} map[string]string
 // @Router /api/v1/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
+	log.Println("[AUTH] Login attempt starting")
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("[AUTH] Login request binding failed: %v", err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
+	log.Printf("[AUTH] Login request received for email: %s", req.Email)
 
 	input := service.LoginInput{
 		Email:    req.Email,
@@ -146,13 +158,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	user, err := h.authService.Login(c.Request.Context(), input)
 	if err != nil {
+		log.Printf("[AUTH] Login failed for email %s: %v", req.Email, err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
+	log.Printf("[AUTH] Login successful for user: %s (ID: %s)", user.Email, user.ID)
 
 	// Generate tokens
+	log.Printf("[AUTH] Generating JWT tokens for user: %s", user.ID)
 	tokens, err := h.jwtManager.GenerateTokenPair(user.ID, user.Email, user.Username)
 	if err != nil {
+		log.Printf("[AUTH] Token generation failed: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
@@ -170,7 +186,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		RefreshToken: tokens.RefreshToken,
 		ExpiresIn:    tokens.ExpiresIn,
 	}
-
+	log.Println("[AUTH] Login response prepared, sending to client")
 	c.JSON(http.StatusOK, response)
 }
 
@@ -182,8 +198,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 // @Success 200 {object} map[string]string
 // @Router /api/v1/auth/logout [post]
 func (h *AuthHandler) Logout(c *gin.Context) {
-	userID := c.GetString("user_id")
-	if err := h.authService.Logout(c.Request.Context(), userID); err != nil {
+	// Get the token from Authorization header
+	authHeader := c.GetHeader("Authorization")
+	token := ""
+	if parts := strings.Split(authHeader, " "); len(parts) == 2 && parts[0] == "Bearer" {
+		token = parts[1]
+	}
+
+	// Logout with token blacklisting (15 min expiry matches access token expiry)
+	if err := h.authService.Logout(c.Request.Context(), token, 15*time.Minute); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to logout"})
 		return
 	}
@@ -250,8 +273,16 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 		return
 	}
 
-	// In a full implementation, verify the token and update user
-	c.JSON(http.StatusOK, gin.H{"message": "Email verified successfully"})
+	// Verify the token and update user's email verified status
+	if err := h.authService.VerifyEmailToken(c.Request.Context(), token); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message":  "Email verified successfully",
+		"verified": true,
+	})
 }
 
 // GetCurrentUser gets current authenticated user
@@ -322,4 +353,114 @@ func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, response)
+}
+
+// ResendVerificationRequest represents resend verification request
+type ResendVerificationRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+// ResendVerification resends verification email
+// @Summary Resend verification email
+// @Description Resend verification email to user
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body ResendVerificationRequest true "Email address"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /api/v1/auth/resend-verification [post]
+func (h *AuthHandler) ResendVerification(c *gin.Context) {
+	var req ResendVerificationRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.authService.ResendVerificationEmail(c.Request.Context(), req.Email); err != nil {
+		switch err.Error() {
+		case "email service not available":
+			c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Email service not available"})
+		case "user not found":
+			c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		case "email already verified":
+			c.JSON(http.StatusConflict, gin.H{"error": "Email already verified"})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Verification email sent"})
+}
+
+// ForgotPasswordRequest represents forgot password request
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+
+// ForgotPassword initiates password reset flow
+// @Summary Forgot password
+// @Description Send password reset email
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body ForgotPasswordRequest true "Email address"
+// @Success 200 {object} map[string]string
+// @Router /api/v1/auth/forgot-password [post]
+func (h *AuthHandler) ForgotPassword(c *gin.Context) {
+	var req ForgotPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	// Get client IP address
+	ip := c.ClientIP()
+
+	// Always return success to prevent email enumeration
+	if err := h.authService.RequestPasswordReset(c.Request.Context(), req.Email, ip); err != nil {
+		// Log error but don't expose to user
+		log.Printf("Password reset error: %v", err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "If an account exists with that email, a password reset link has been sent"})
+}
+
+// ResetPasswordRequest represents reset password request
+type ResetPasswordRequest struct {
+	Token       string `json:"token" binding:"required"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+// ResetPassword resets user password with token
+// @Summary Reset password
+// @Description Reset password with token from email
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body ResetPasswordRequest true "Token and new password"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /api/v1/auth/reset-password [post]
+func (h *AuthHandler) ResetPassword(c *gin.Context) {
+	var req ResetPasswordRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if err := h.authService.ResetPassword(c.Request.Context(), req.Token, req.NewPassword); err != nil {
+		switch err.Error() {
+		case "token required":
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Token is required"})
+		case "invalid or expired token":
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired reset token"})
+		default:
+			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"message": "Password reset successfully"})
 }

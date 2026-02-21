@@ -7,25 +7,26 @@
 
     <form (ngSubmit)="onSubmit()" class="auth-form">
       @if (error) {
-        <div class="error-message">
-          {{ error }}
-        </div>
+      <div class="error-message">
+        {{ error }}
+      </div>
       }
 
       <div class="form-group">
         <label for="name">Full Name</label>
         <div class="input-wrapper">
           <lucide-angular [img]="userIcon" class="input-icon"></lucide-angular>
-          <input
-            id="name"
-            type="text"
-            class="form-input"
-            placeholder="Enter your name"
-            [(ngModel)]="name"
-            name="name"
-            autocomplete="name"
-            [disabled]="isLoading"
-          />
+          <input id="name" type="text" class="form-input" placeholder="Enter your name" [(ngModel)]="name" name="name"
+            autocomplete="name" [disabled]="isLoading" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <div class="input-wrapper">
+          <lucide-angular [img]="userIcon" class="input-icon"></lucide-angular>
+          <input id="username" type="text" class="form-input" placeholder="Choose a username" [(ngModel)]="username"
+            name="username" autocomplete="username" [disabled]="isLoading" />
         </div>
       </div>
 
@@ -33,16 +34,8 @@
         <label for="email">Email</label>
         <div class="input-wrapper">
           <lucide-angular [img]="mailIcon" class="input-icon"></lucide-angular>
-          <input
-            id="email"
-            type="email"
-            class="form-input"
-            placeholder="Enter your email"
-            [(ngModel)]="email"
-            name="email"
-            autocomplete="email"
-            [disabled]="isLoading"
-          />
+          <input id="email" type="email" class="form-input" placeholder="Enter your email" [(ngModel)]="email"
+            name="email" autocomplete="email" [disabled]="isLoading" />
         </div>
       </div>
 
@@ -50,54 +43,29 @@
         <label for="password">Password</label>
         <div class="input-wrapper">
           <lucide-angular [img]="lockIcon" class="input-icon"></lucide-angular>
-          <input
-            id="password"
-            [type]="showPassword ? 'text' : 'password'"
-            class="form-input"
-            placeholder="Create a password"
-            [(ngModel)]="password"
-            name="password"
-            autocomplete="new-password"
-            [disabled]="isLoading"
-          />
-          <button
-            type="button"
-            class="password-toggle"
-            (click)="togglePasswordVisibility()"
-            tabindex="-1"
-          >
+          <input id="password" [type]="showPassword ? 'text' : 'password'" class="form-input"
+            placeholder="Create a password" [(ngModel)]="password" name="password" autocomplete="new-password"
+            [disabled]="isLoading" />
+          <button type="button" class="password-toggle" (click)="togglePasswordVisibility()" tabindex="-1">
             <lucide-angular [img]="showPassword ? eyeOffIcon : eyeIcon" class="toggle-icon"></lucide-angular>
           </button>
         </div>
-        <p class="form-hint">Must be at least 6 characters</p>
+        <p class="form-hint">Must be at least 6 characters and contain uppercase, lowercase, and a digit</p>
       </div>
 
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
         <div class="input-wrapper">
           <lucide-angular [img]="lockIcon" class="input-icon"></lucide-angular>
-          <input
-            id="confirmPassword"
-            [type]="showConfirmPassword ? 'text' : 'password'"
-            class="form-input"
-            [class.error]="passwordMatchError"
-            placeholder="Confirm your password"
-            [(ngModel)]="confirmPassword"
-            name="confirmPassword"
-            autocomplete="new-password"
-            [disabled]="isLoading"
-          />
-          <button
-            type="button"
-            class="password-toggle"
-            (click)="toggleConfirmPasswordVisibility()"
-            tabindex="-1"
-          >
+          <input id="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'" class="form-input"
+            [class.error]="passwordMatchError" placeholder="Confirm your password" [(ngModel)]="confirmPassword"
+            name="confirmPassword" autocomplete="new-password" [disabled]="isLoading" />
+          <button type="button" class="password-toggle" (click)="toggleConfirmPasswordVisibility()" tabindex="-1">
             <lucide-angular [img]="showConfirmPassword ? eyeOffIcon : eyeIcon" class="toggle-icon"></lucide-angular>
           </button>
         </div>
         @if (passwordMatchError) {
-          <p class="form-error">Passwords do not match</p>
+        <p class="form-error">Passwords do not match</p>
         }
       </div>
 
@@ -110,11 +78,11 @@
 
       <button type="submit" class="submit-btn" [disabled]="!isFormValid">
         @if (isLoading) {
-          <span class="loading-spinner"></span>
-          <span>Creating account...</span>
+        <span class="loading-spinner"></span>
+        <span>Creating account...</span>
         } @else {
-          <lucide-angular [img]="registerIcon" class="btn-icon"></lucide-angular>
-          <span>Create account</span>
+        <lucide-angular [img]="registerIcon" class="btn-icon"></lucide-angular>
+        <span>Create account</span>
         }
       </button>
     </form>

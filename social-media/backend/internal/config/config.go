@@ -24,6 +24,18 @@ type Config struct {
 	JWTExpiry  time.Duration
 	RefreshExpiry time.Duration
 
+	// Email configuration
+	EmailEnabled     bool
+	EmailHost        string
+	EmailPort        int
+	EmailUsername    string
+	EmailPassword    string
+	EmailFromName    string
+	EmailFromAddress string
+
+	// Frontend configuration
+	FrontendURL string
+
 	// Environment
 	Env string
 }
@@ -44,6 +56,18 @@ func Load() (*Config, error) {
 		JWTSecret:     getEnv("JWT_SECRET", "dev-secret-key-change-in-production"),
 		JWTExpiry:     getEnvDuration("JWT_EXPIRY", 15*time.Minute),
 		RefreshExpiry: getEnvDuration("REFRESH_EXPIRY", 7*24*time.Hour),
+
+		// Email configuration (Ethereal Email defaults for development)
+		EmailEnabled:     getEnvBool("EMAIL_ENABLED", true),
+		EmailHost:        getEnv("EMAIL_HOST", "smtp.ethereal.email"),
+		EmailPort:        getEnvInt("EMAIL_PORT", 587),
+		EmailUsername:    getEnv("EMAIL_USERNAME", ""),
+		EmailPassword:    getEnv("EMAIL_PASSWORD", ""),
+		EmailFromName:    getEnv("EMAIL_FROM_NAME", "SocialHub"),
+		EmailFromAddress: getEnv("EMAIL_FROM_ADDRESS", "noreply@socialhub.example.com"),
+
+		// Frontend configuration
+		FrontendURL:      getEnv("FRONTEND_URL", "http://localhost:4200"),
 
 		// Environment
 		Env: getEnv("ENV", "development"),
@@ -88,6 +112,16 @@ func getEnvInt(key string, defaultValue int) int {
 	return defaultValue
 }
 
+// getEnvBool gets environment variable as bool with default fallback
+func getEnvBool(key string, defaultValue bool) bool {
+	if value := os.Getenv(key); value != "" {
+		if boolValue, err := strconv.ParseBool(value); err == nil {
+			return boolValue
+		}
+	}
+	return defaultValue
+}
+
 // logConfig logs the configuration (excluding secrets)
 func logConfig(cfg *Config) {
 	log.Printf("Configuration loaded:")
@@ -97,4 +131,10 @@ func logConfig(cfg *Config) {
 	log.Printf("  JWT Expiry: %v", cfg.JWTExpiry)
 	log.Printf("  Refresh Expiry: %v", cfg.RefreshExpiry)
 	log.Printf("  Environment: %s", cfg.Env)
+	log.Printf("  Frontend URL: %s", cfg.FrontendURL)
+	log.Printf("  Email Enabled: %v", cfg.EmailEnabled)
+	if cfg.EmailEnabled {
+		log.Printf("  Email Host: %s:%d", cfg.EmailHost, cfg.EmailPort)
+		log.Printf("  Email From: %s <%s>", cfg.EmailFromName, cfg.EmailFromAddress)
+	}
 }

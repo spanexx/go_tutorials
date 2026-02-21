@@ -1,175 +1,300 @@
-[Fri Feb 20 09:40:33 AM CET 2026] Chat system initialized
-[09:40:33] <Agent-1:JOINED> Worker 1 ready for duty
-[09:40:33] <Agent-1:STARTED> Starting task: 1.3:1.3.1
-[09:40:33] <ORCHESTRATOR> Worker 1 joined the team
-[09:40:33] <ORCHESTRATOR> RX Agent-1 [JOINED]: Worker 1 ready for duty
-[09:40:36] <ORCHESTRATOR> RX Agent-1 [STARTED]: Starting task: 1.3:1.3.1
-[09:42:13] <ORCHESTRATOR> Worker 1 left (died)
-[09:42:13] <Agent-1:JOINED> Worker 1 ready for duty
-[09:42:13] <Agent-1:STARTED> Starting task: 1.3:1.3.2
-[09:42:14] <ORCHESTRATOR> Worker 1 joined the team
-[09:42:16] <ORCHESTRATOR> RX Agent-1 [JOINED]: Worker 1 ready for duty
-[09:42:16] <ORCHESTRATOR> Worker 1 left (died)
-[09:42:18] <ORCHESTRATOR> RX Agent-1 [STARTED]: Starting task: 1.3:1.3.2
-[2026-02-20 14:10:35] [CRITIC] Scan: items=0 findings=0 milestone=/home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase. See .critic-report.md
-[2026-02-20 14:17:18] [CRITIC] Scan: items=1 findings=0 milestone=/home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase. See .critic-report.md
-[2026-02-20 14:25:42] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 14:28:07] [CRITIC] 📊 CRITIC SCAN COMPLETE | Session: 333a6cbf
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
 
-**FINDINGS:** 12 occurrences across 6 files
-**PRD ITEMS:** 12 actionable items created
+**MILESTONE 1.6 STATUS:** COMPLETE - 10/10 items (all passes=true) - READY FOR ARCHIVAL
 
-**TOP PRIORITY FILES:**
-1. src/app/shared/services/analytics.service.ts - Mock engagement/follower data (6 occurrences)
-2. src/app/shared/services/search.service.ts - Mock users/hashtags (6 occurrences)
-3. src/app/shared/services/mention.service.ts - Mock users map (3 occurrences)
-4. src/app/shared/user-profile-card.component.ts - Mock profile loading (2 occurrences)
-5. src/app/pages/profile/profile.component.ts - Mock profile data (2 occurrences)
-6. backend/internal/service/auth_service.go - Logout placeholder, UUID/avatar generators (3 occurrences)
-7. backend/internal/handlers/auth_handler.go - Email verification TODO (1 occurrence)
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- Phase-1 Milestone 1.6: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 5 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (4 items passes=false)
+  4. activity.service.ts (notification feed) → Phase-3 candidate
+  5. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, constants)
 
-**NEXT ACTIONS:**
-1. C.011: Update ralph-critic.sh patterns for Angular/TypeScript mock detection
-2. C.010: Add HTTP client module to Angular services (infrastructure)
-3. C.012: Create backend API endpoints for analytics/search/profiles
-4. C.001→C.009: Replace mocks with real API integrations (frontend + backend)
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): 4 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
 
-**MILESTONE UPDATED:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-- prd.json: 12 items with detailed acceptance criteria
-- Progress.md: Implementation order and bookkeeping log
-- summary.md: Categorized backlog
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
 
-**RECOMMENDED START:** C.011 (meta-improvement for critic scanner) → C.010 (HTTP infrastructure) → C.012 (backend APIs)
-[2026-02-20 14:28:19] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 14:39:51] [CRITIC] Starting critic agent run. Session=2de6bbc7-5165-4ae4-ab5d-a87d386e91d3 Ref=none
-[2026-02-20 14:39:53] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 14:58:17] [MAIN] Iteration 1 completed. Status=✅ SUCCESS. Summary: COMPLETED: Updated ralph-critic.sh with Angular/TypeScript mock detection patterns MILESTONE: docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase PRD_ITEM: C.011 - Update critic scanner patterns for Angular/TypeScript projects FI
-[2026-02-20 15:00:23] [CRITIC] Starting critic agent run. Session=8d1ae76e-db8b-4895-97ee-38a237953ee7 Ref=none
-[2026-02-20 15:00:25] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 15:07:52] [VALIDATOR] Iteration 1: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 15:07:52] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 15:08:12] [CRITIC] Starting critic agent run. Session=6ae92b12-77db-42e6-9484-e5117b3d1997 Ref=none
-[2026-02-20 15:08:14] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 15:08:54] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/comment.service.ts (mock comments - Phase-2.2)
+- src/app/shared/services/hashtag.service.ts (mock hashtags - Phase-2.3)
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 1 (C.011 ✅)
-- Remaining: 11 (all passes=false)
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. ✅ Phase-1 Milestone 1.6 ready for archival
+3. 📌 Continue Phase-2 milestones (2.1, 2.3, 2.6)
+4. 🎯 No new critic action required
 
-**NO NEW FINDINGS:** Existing backlog is comprehensive. Critic scanner improvements from C.011 are functioning correctly.
+**BLOCKERS:** None
+[2026-02-21 04:39:32] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 04:45:58] [MAIN] Iteration 25 completed. Status=✅ SUCCESS. Summary:  **Mention Pipe (mention.pipe.ts):** - Regex: `/(?<!\S)@([a-zA-Z0-9][a-zA-Z0-9._]{0,29})(?!\w)/g` - Username format: 1-30 chars, starts with letter/number - Supports: letters, numbers, dots, underscores - Case-insensitive matching - Prevent
+[2026-02-21 04:50:20] [VALIDATOR] Iteration 25: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 04:50:20] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 04:51:05] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.010** (HTTP client module) - Infrastructure for all frontend API integrations
-2. **C.012** (Backend APIs) - Required endpoints for frontend services
-3. **C.008/C.009** (Quick wins) - UUID generation & random avatar ID in Go auth service
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
 
-**BLOCKERS:** None. C.010 and C.012 are prerequisites for C.001→C.005.
+**MILESTONE 1.6 STATUS:** COMPLETE - 10/10 items (all passes=true) - READY FOR ARCHIVAL
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 15:09:01] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 15:18:11] [MAIN] Iteration 2 completed. Status=✅ SUCCESS. Summary: **Problem**: Angular services lacked HTTP client integration for making API calls to the backend.  **Solution**: Created complete HTTP client infrastructure:  **Components Created**: 1. **auth.interceptor.ts** - Adds JWT Bearer token to all
-[2026-02-20 15:21:53] [VALIDATOR] Iteration 2: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 15:21:53] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 15:24:59] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- Phase-1 Milestone 1.6: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 5 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (4 items passes=false)
+  4. activity.service.ts (notification feed) → Phase-3 candidate
+  5. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, constants)
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 2 (C.010 ✅, C.011 ✅)
-- Remaining: 10 (all passes=false)
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): 4 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
 
-**PROGRESS:** HTTP client infrastructure now in place (interceptors, base API service, token management). Frontend ready for API integration.
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.012** (Backend APIs) - Create Go endpoints: /api/v1/analytics/*, /api/v1/search, /api/v1/users/:username
-2. **C.008/C.009** (Quick wins) - Fix Go UUID generation (google/uuid) & random avatar ID
-3. **C.001** (AnalyticsService) - First frontend service to integrate with backend APIs
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/comment.service.ts (mock comments - Phase-2.2)
+- src/app/shared/services/hashtag.service.ts (mock hashtags - Phase-2.3)
 
-**BLOCKERS:** None. C.010 ✅ complete. C.012 is now the critical path for C.001→C.005.
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. ✅ Phase-1 Milestone 1.6 ready for archival
+3. 📌 Continue Phase-2 milestones (2.1, 2.3, 2.6)
+4. 🎯 No new critic action required
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 15:26:31] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 15:35:28] [MAIN] Iteration 3 completed. Status=✅ SUCCESS. Summary: **Problem**: Frontend services needed backend API endpoints to fetch real data instead of using mocks.  **Solution**: Created comprehensive Go backend API endpoints:  **Handlers Created**: 1. **analytics_handler.go** - Analytics endpoints (
-[2026-02-20 15:37:54] [VALIDATOR] Iteration 3: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 15:37:54] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 15:39:52] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**BLOCKERS:** None
+[2026-02-21 04:51:15] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 04:59:18] [MAIN] Iteration 26 completed. Status=✅ SUCCESS. Summary: - Card design with border and background  **Styling:** - Uses CSS variables (design tokens) for theming - Top 3 items have accent background - Hover effects on all clickable items - Trending badge with accent color - Loading spinner animati
+[2026-02-21 05:01:13] [VALIDATOR] Iteration 26: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 05:01:13] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 05:01:59] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 3 (C.010 ✅, C.011 ✅, C.012 ✅)
-- Remaining: 9 (all passes=false)
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
 
-**PROGRESS:** All infrastructure prerequisites now complete. Backend APIs exist for analytics, search, and user profiles. Frontend HTTP client ready with interceptors.
+**MILESTONE 1.6 STATUS:** COMPLETE - 10/10 items (all passes=true) - READY FOR ARCHIVAL
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.001** (AnalyticsService) - Replace mock engagement/follower data with API calls to /api/v1/analytics/*
-2. **C.002** (SearchService) - Replace mock users/hashtags with /api/v1/search integration
-3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- Phase-1 Milestone 1.6: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 5 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (4 items passes=false)
+  4. activity.service.ts (notification feed) → Phase-3 candidate
+  5. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, pipe protection code)
 
-**BLOCKERS:** None. All infrastructure dependencies resolved. Ready for frontend mock replacements.
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): 4 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 15:40:19] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 16:03:02] [MAIN] Iteration 4 completed. Status=✅ SUCCESS. Summary:  ## Summary  **Problem**: AnalyticsService contained hardcoded mockFollowerGrowth and mockEngagementData arrays that returned static data instead of fetching from backend API.  **Solution**: Updated AnalyticsService to extend BaseApiService
-[2026-02-20 16:11:00] [VALIDATOR] Iteration 4: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 16:11:00] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 16:11:43] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 4 (C.001 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
-- Remaining: 8 (all passes=false)
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/comment.service.ts (mock comments - Phase-2.2)
+- src/app/shared/services/hashtag.service.ts (mock hashtags - Phase-2.3)
 
-**PROGRESS:** AnalyticsService now fetches real data from backend. First frontend service fully integrated. Pattern established for remaining services.
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. ✅ Phase-1 Milestone 1.6 ready for archival
+3. 📌 Continue Phase-2 milestones (2.1, 2.3, 2.6)
+4. 🎯 No new critic action required
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.002** (SearchService) - Replace mock users/hashtags with /api/v1/search integration
-2. **C.003** (MentionService) - Replace mock users Map with /api/v1/users endpoint
-3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+**BLOCKERS:** None
+[2026-02-21 05:02:11] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:14:00] [MAIN] Iteration 27 completed. Status=✅ SUCCESS. Summary: - **Methods:** `updateSuggestions()`, `selectHashtag()`, `navigateUp/Down()`, `selectCurrent()`, `close()`, `handleKeydown()`  **Regex Pattern:** ```typescript // Matches: #angular, #TypeScript, #web_dev at end of text const hashtagMatch = 
+[2026-02-21 05:15:50] [VALIDATOR] Iteration 27: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 05:15:50] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 05:16:42] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
 
-**BLOCKERS:** None. Same infrastructure supports C.002-C.005.
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 16:11:54] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 16:20:57] [MAIN] Iteration 5 completed. Status=✅ SUCCESS. Summary:  ## Summary  **Problem**: SearchService contained hardcoded mockUsers and mockHashtags arrays. Search results were filtered from static data instead of calling backend search APIs.  **Solution**: Updated SearchService to extend BaseApiServi
-[2026-02-20 16:28:46] [VALIDATOR] Iteration 5: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 16:28:46] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 16:29:35] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**MILESTONE 1.6 STATUS:** COMPLETE - 10/10 items (all passes=true) - READY FOR ARCHIVAL
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 5 (C.001 ✅, C.002 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
-- Remaining: 7 (all passes=false)
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- Phase-1 Milestone 1.6: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 5 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (4 items passes=false)
+  4. activity.service.ts (notification feed) → Phase-3 candidate
+  5. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, pipe protection code)
 
-**PROGRESS:** SearchService now integrated with backend /api/v1/search. Two frontend services complete (Analytics, Search). Integration pattern proven and repeatable.
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): 4 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.003** (MentionService) - Replace mock users Map with /api/v1/users integration
-2. **C.004** (UserProfileCardComponent) - Replace mock profile loading with /api/v1/users/:username
-3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
 
-**BLOCKERS:** None. Same HTTP infrastructure supports remaining frontend integrations.
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/comment.service.ts (mock comments - Phase-2.2)
+- src/app/shared/services/hashtag.service.ts (mock hashtags - Phase-2.3)
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 16:29:54] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
-[2026-02-20 16:35:53] [MAIN] Iteration 6 completed. Status=✅ SUCCESS. Summary: STATUS: success --- ```  ## Summary  **Problem**: MentionService contained hardcoded mockUsers Map. User mentions were resolved from static data instead of querying backend user directory.  **Solution**: Updated MentionService to extend Bas
-[2026-02-20 16:37:34] [VALIDATOR] Iteration 6: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
-[2026-02-20 16:37:34] [CRITIC] Starting critic agent run. Session=333a6cbf-c6af-4498-a310-feb20be44cf9 Ref=none
-[2026-02-20 16:40:04] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: 333a6cbf-c6af-4498-a310-feb20be44cf9
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. ✅ Phase-1 Milestone 1.6 ready for archival
+3. 📌 Continue Phase-2 milestones (2.1, 2.3, 2.6)
+4. 🎯 No new critic action required
 
-**MILESTONE STATE:**
-- Total PRD items: 12
-- Completed: 6 (C.001 ✅, C.002 ✅, C.003 ✅, C.010 ✅, C.011 ✅, C.012 ✅)
-- Remaining: 6 (all passes=false)
+**BLOCKERS:** None
+[2026-02-21 05:16:53] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:20:51] [MAIN] Iteration 28 completed. Status=✅ SUCCESS. Summary:  | Item | Status | Description | |------|--------|-------------| | 2.3.1 | ✅ | Hashtag Parsing & Linking | | 2.3.2 | ✅ | Hashtag Page | | 2.3.3 | ✅ | Mention Parsing & Linking | | 2.3.4 | ✅ | Trending Hashtags | | 2.3.5 | ✅ | Hash
+[2026-02-21 05:24:32] [VALIDATOR] Iteration 28: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 05:24:32] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 05:25:25] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
 
-**PROGRESS:** MentionService integrated with backend /api/v1/users. Three frontend services complete (Analytics, Search, Mention). Integration pattern proven and repeatable.
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
 
-**RECOMMENDED NEXT ITERATION:**
-1. **C.004** (UserProfileCardComponent) - Replace mock profile loading with /api/v1/users/:username
-2. **C.005** (ProfileComponent) - Replace mock profile data with /api/v1/users/:username
-3. **C.008/C.009** (Quick wins) - Fix Go UUID generation & random avatar ID in auth_service.go
+**MILESTONE 1.6 STATUS:** COMPLETE - 10/10 items (all passes=true) - READY FOR ARCHIVAL
 
-**BLOCKERS:** None. Halfway to milestone completion (6/12 done).
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- Phase-1 Milestone 1.6: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 5 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2 (Completed)
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (Completed iteration 28)
+  4. activity.service.ts (notification feed) → Phase-3 candidate
+  5. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, pipe protection code)
 
-**MILESTONE PATH:** docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase/
-[2026-02-20 16:40:58] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): Completed (iteration 28)
+- Milestone 2.4 (Sharing/Activity): 5 items with passes=false
+- Milestone 2.5 (Social Graph): 5 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
+
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
+
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/comment.service.ts (mock comments - Phase-2.2 Completed)
+- src/app/shared/services/hashtag.service.ts (mock hashtags - Phase-2.3 Completed)
+
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. ✅ Phase-1 Milestone 1.6 ready for archival
+3. 📌 Continue Phase-2 milestones (2.1, 2.4, 2.5, 2.6)
+4. 🎯 No new critic action required
+
+**BLOCKERS:** None
+[2026-02-21 05:25:36] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:36:03] [MAIN] Iteration 29 completed. Status=✅ SUCCESS. Summary:  **Methods:** - `getPlatforms()` - Get all available share platforms - `getShareUrl(platformId, postUrl, text)` - Get share URL for platform - `sharePost(postId, platformId, postUrl, text)` - Share to platform with popup - `copyLink(postId,
+[2026-02-21 05:37:48] [CRITIC] Starting critic agent run. Session=9174253d-5123-451c-9c7c-5e91ead58794 Ref=none
+[2026-02-21 05:37:51] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:39:09] [VALIDATOR] Iteration 29: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 05:39:09] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 05:40:00] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
+
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
+
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 6 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1 & 2.6
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2 (Completed)
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (Completed)
+  4. share.service.ts (share functionality) → Phase-2 Milestone 2.4 (4 items passes=false)
+  5. activity.service.ts (notification feed) → Phase-3 candidate
+  6. analytics.service.ts (fallback data) → Intentional offline support
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, pipe protection code)
+
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): Completed
+- Milestone 2.4 (Sharing/Activity): 4 items with passes=false
+- Milestone 2.5 (Social Graph): 5 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
+
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
+
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1/2.6)
+- src/app/shared/services/share.service.ts (mock shares - Phase-2.4)
+- src/app/shared/services/activity.service.ts (mock activities - Phase-3)
+
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. 📌 Continue Phase-2 milestones (2.1, 2.4, 2.5, 2.6)
+3. 🎯 No new critic action required
+
+**BLOCKERS:** None
+[2026-02-21 05:40:11] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:53:56] [MAIN] Iteration 30 completed. Status=✅ SUCCESS. Summary:  **Styling:** - Backdrop with fade-in animation - Modal with slide-up animation - Platform-specific colors on hover - Disabled state for placeholder options - Responsive grid layouts - Accessible with aria labels  **Integration:** - Uses Sh
+[2026-02-21 05:55:48] [VALIDATOR] Iteration 30: Status=✅ VALIDATION OK Build=✅ PASS Playwright=✅ Playwright ready
+[2026-02-21 05:55:48] [CRITIC] Starting critic agent run. Session=be275788-0e5c-4b52-96f5-500bca4f3d8f Ref=none
+[2026-02-21 05:56:48] [CRITIC] 📋 CRITIC STATUS UPDATE | Session: be275788-0e5c-4b52-96f5-500bca4f3d8f
+
+**MILESTONE 0.1 STATUS:** COMPLETE - 12/12 items (all passes=true) - READY FOR ARCHIVAL
+
+**FINDINGS SUMMARY:**
+- Phase-0 Milestone 0.1: Zero items with passes=false (verified)
+- All backend placeholders resolved
+- 6 frontend mocks remain (all intentional, already tracked in Phase-2):
+  1. reaction.service.ts (post reactions) → Phase-2 Milestone 2.1
+  2. comment.service.ts (comments/replies) → Phase-2 Milestone 2.2 (Completed)
+  3. hashtag.service.ts (trending hashtags) → Phase-2 Milestone 2.3 (Completed)
+  4. share.service.ts (share functionality) → Phase-2 Milestone 2.4 (3 items passes=false)
+  5. activity.service.ts (notification feed) → Phase-3 candidate
+  6. analytics.service.ts (fallback data) → Intentional offline support
+- Share-modal component has Phase 3 placeholders (expected)
+- All other matches: Legitimate UI placeholders (HTML inputs, CSS styles, pipe protection code)
+
+**PHASE-2 STATUS:**
+- Milestone 2.1 (Post Reactions): 3 items with passes=false
+- Milestone 2.2 (Comments/Replies): Completed
+- Milestone 2.3 (Hashtags & Mentions): Completed
+- Milestone 2.4 (Sharing/Activity): 3 items with passes=false (share modal completed iteration 30)
+- Milestone 2.5 (Social Graph): 5 items with passes=false
+- Milestone 2.6 (Posts Service API): 14 items with passes=false
+
+**PRD_ITEMS_ADDED:** 0 (all mocks already tracked in Phase-2)
+
+**TOP_FILES:**
+- src/app/shared/services/reaction.service.ts (mock reactions - Phase-2.1)
+- src/app/shared/services/share.service.ts (mock shares - Phase-2.4)
+- src/app/shared/services/activity.service.ts (mock activities - Phase-3)
+
+**NEXT_ACTIONS:**
+1. ✅ Phase-0 Milestone 0.1 ready for archival
+2. 📌 Continue Phase-2 milestones (2.1, 2.4, 2.5, 2.6)
+3. 🎯 No new critic action required
+
+**BLOCKERS:** None
+[2026-02-21 05:57:01] [CRITIC] Critic agent finished. See .critic-report.md and updated docs/PLAN Phase-0 backlog.
+[2026-02-21 05:58:14] [CRITIC] critic: wrote backlog to /home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase (items=1, findings=15)
+[2026-02-21 05:58:56] [CRITIC] critic: wrote backlog to /home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase (items=1, findings=10)
+[2026-02-21 06:05:22] [CRITIC] critic: wrote backlog to /home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase (items=3, findings=50)
+[2026-02-21 06:07:21] [CRITIC] critic: wrote backlog to /home/spanexx/Shared/Learn/go_tutorials/social-media/docs/PLAN/Phase-0-Critic-Backlog/Milestone-0.1-Unmock-Codebase (items=3, findings=50)
+[2026-02-21 06:12:10] [CRITIC] Stub detector scan complete. See .critic-report.md for findings.
+[2026-02-21 06:13:47] [CRITIC] Stub detector scan complete. See .critic-report.md for findings.
+[2026-02-21 06:18:21] [CRITIC] Stub detector scan complete. See .critic-report.md for findings.
+[2026-02-21 06:20:14] [CRITIC] Stub detector scan complete. See .critic-report.md for findings.

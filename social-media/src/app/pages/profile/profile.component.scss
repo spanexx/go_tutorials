@@ -8,105 +8,126 @@
     border: 1px solid hsl(var(--border));
     border-radius: var(--radius);
     overflow: hidden;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px -5px hsl(var(--foreground) / 0.05);
 
     .cover-image {
-      height: 200px;
-      background: linear-gradient(135deg, hsl(var(--accent)) 0%, hsl(var(--accent) / 0.7) 100%);
+      height: 220px;
+      background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+      position: relative;
+
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(circle at top right, hsl(var(--primary) / 0.2), transparent 50%),
+          radial-gradient(circle at bottom left, hsl(var(--accent) / 0.2), transparent 50%);
+      }
     }
 
     .profile-info {
       position: relative;
-      padding: 0 1.5rem 1.5rem;
+      padding: 0 2rem 2rem;
 
       .profile-avatar {
-        width: 120px;
-        height: 120px;
+        width: 140px;
+        height: 140px;
         border-radius: 50%;
-        border: 4px solid hsl(var(--card));
+        border: 6px solid hsl(var(--card));
         object-fit: cover;
-        margin-top: -60px;
+        margin-top: -70px;
         background: hsl(var(--background));
+        box-shadow: 0 8px 16px -4px hsl(var(--foreground) / 0.1);
+        position: relative;
+        z-index: 10;
       }
 
       .profile-details {
-        margin-top: 1rem;
+        margin-top: 1.25rem;
 
         .name-section {
           display: flex;
           align-items: center;
-          gap: 0.75rem;
-          margin-bottom: 0.5rem;
+          justify-content: space-between;
+          margin-bottom: 0.25rem;
 
           h1 {
-            font-size: 1.75rem;
-            font-weight: 700;
+            font-size: 2.25rem;
+            font-weight: 800;
+            letter-spacing: -0.025em;
             color: hsl(var(--foreground));
             margin: 0;
           }
 
           .edit-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            padding: 0.625rem 1.25rem;
+            border-radius: calc(var(--radius) - 0.25rem);
             border: 1px solid hsl(var(--border));
             background: hsl(var(--card));
-            color: hsl(var(--muted-foreground));
+            color: hsl(var(--foreground));
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 0.625rem;
+            font-size: 0.875rem;
+            font-weight: 600;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
 
             &:hover {
               background: hsl(var(--accent));
               border-color: hsl(var(--accent));
               color: hsl(var(--accent-foreground));
+              transform: translateY(-1px);
+              box-shadow: 0 4px 12px -2px hsl(var(--accent) / 0.3);
             }
 
             lucide-angular {
-              width: 18px;
-              height: 18px;
+              width: 16px;
+              height: 16px;
             }
           }
         }
 
         .handle {
           color: hsl(var(--muted-foreground));
-          font-size: 0.95rem;
-          margin: 0 0 0.75rem 0;
+          font-size: 1.1rem;
+          font-weight: 500;
+          margin: 0 0 1.25rem 0;
         }
 
         .bio {
           color: hsl(var(--foreground));
-          font-size: 1rem;
+          font-size: 1.05rem;
           line-height: 1.6;
-          margin: 0 0 1rem 0;
-          max-width: 600px;
+          margin: 0 0 1.5rem 0;
+          max-width: 650px;
         }
 
         .profile-meta {
           display: flex;
           flex-wrap: wrap;
-          gap: 1rem;
-          margin-bottom: 1.25rem;
+          gap: 1.5rem;
+          margin-bottom: 1.75rem;
 
           .meta-item {
             display: flex;
             align-items: center;
-            gap: 0.375rem;
-            font-size: 0.875rem;
+            gap: 0.5rem;
+            font-size: 0.9rem;
             color: hsl(var(--muted-foreground));
+            font-weight: 500;
 
             lucide-angular {
-              width: 16px;
-              height: 16px;
+              width: 18px;
+              height: 18px;
+              stroke-width: 2;
             }
 
             a {
-              color: hsl(var(--accent));
+              color: hsl(var(--primary));
               text-decoration: none;
+              font-weight: 600;
 
               &:hover {
                 text-decoration: underline;
@@ -117,23 +138,25 @@
 
         .profile-stats {
           display: flex;
-          gap: 2rem;
-          padding: 1.25rem 0;
-          border-top: 1px solid hsl(var(--border));
-          border-bottom: 1px solid hsl(var(--border));
+          gap: 3rem;
+          padding: 1.5rem 0;
+          border-top: 1px solid hsl(var(--border) / 0.6);
 
           .stat {
-            text-align: center;
+            display: flex;
+            align-items: baseline;
+            gap: 0.375rem;
 
             .stat-value {
-              font-size: 1.5rem;
-              font-weight: 700;
+              font-size: 1.25rem;
+              font-weight: 800;
               color: hsl(var(--foreground));
-              margin: 0 0 0.25rem 0;
+              margin: 0;
             }
 
             .stat-label {
-              font-size: 0.875rem;
+              font-size: 0.9rem;
+              font-weight: 500;
               color: hsl(var(--muted-foreground));
               margin: 0;
             }
@@ -145,28 +168,40 @@
 
   .profile-tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-bottom: 1.5rem;
-    border-bottom: 1px solid hsl(var(--border));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 0 0.5rem;
+    border-bottom: 1px solid hsl(var(--border) / 0.6);
 
     .tab {
-      padding: 0.75rem 1.5rem;
+      padding: 1rem 1.5rem;
       background: transparent;
       border: none;
       border-bottom: 2px solid transparent;
       color: hsl(var(--muted-foreground));
-      font-size: 0.95rem;
-      font-weight: 500;
+      font-size: 1rem;
+      font-weight: 600;
       cursor: pointer;
-      transition: all 0.15s ease;
+      transition: all 0.2s ease;
+      position: relative;
 
       &:hover {
         color: hsl(var(--foreground));
       }
 
       &.active {
-        color: hsl(var(--accent));
-        border-bottom-color: hsl(var(--accent));
+        color: hsl(var(--primary));
+
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: -1px;
+          left: 0;
+          right: 0;
+          height: 2px;
+          background: hsl(var(--primary));
+          border-radius: 999px;
+        }
       }
     }
   }
@@ -175,11 +210,13 @@
     .empty-message {
       text-align: center;
       color: hsl(var(--muted-foreground));
-      font-size: 0.95rem;
-      padding: 3rem;
+      font-size: 1rem;
+      font-weight: 500;
+      padding: 5rem 2rem;
       background: hsl(var(--card));
       border-radius: var(--radius);
       border: 1px solid hsl(var(--border));
+      box-shadow: inset 0 2px 4px 0 hsl(var(--foreground) / 0.02);
     }
   }
 }

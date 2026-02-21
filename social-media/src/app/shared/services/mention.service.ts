@@ -65,10 +65,6 @@ export class MentionService extends BaseApiService {
         const currentCount = mentionMap.get(normalizedMention) || 0;
         mentionMap.set(normalizedMention, currentCount + 1);
       }
-
-      if (post.repliesList) {
-        this.processRepliesForMentions(post.repliesList, mentionMap);
-      }
     }
 
     const mentionedUsers: MentionedUser[] = [];
@@ -86,20 +82,7 @@ export class MentionService extends BaseApiService {
     return mentionedUsers.sort((a, b) => b.mentionCount - a.mentionCount);
   }
 
-  private processRepliesForMentions(replies: Post[], mentionMap: Map<string, number>): void {
-    for (const reply of replies) {
-      const mentions = this.extractMentionsFromContent(reply.content);
-      for (const mention of mentions) {
-        const normalizedMention = mention.toLowerCase();
-        const currentCount = mentionMap.get(normalizedMention) || 0;
-        mentionMap.set(normalizedMention, currentCount + 1);
-      }
 
-      if (reply.repliesList) {
-        this.processRepliesForMentions(reply.repliesList, mentionMap);
-      }
-    }
-  }
 
   /**
    * Get user by username from backend API
@@ -107,7 +90,7 @@ export class MentionService extends BaseApiService {
    */
   async getUserByUsername(username: string): Promise<MentionedUser | undefined> {
     const normalizedUsername = username.toLowerCase();
-    
+
     // Check cache first
     const cached = this.userCache.get(normalizedUsername);
     if (cached) {
@@ -127,7 +110,7 @@ export class MentionService extends BaseApiService {
       // };
       // this.userCache.set(normalizedUsername, mentionedUser);
       // return mentionedUser;
-      
+
       // For now, return fallback
       return this.fallbackUsers.get(normalizedUsername);
     } catch (error) {
@@ -151,7 +134,7 @@ export class MentionService extends BaseApiService {
    */
   searchUsers(query: string): MentionedUser[] {
     const normalizedQuery = query.toLowerCase();
-    
+
     // In full implementation, call backend search API
     // For now, search fallback users
     return Array.from(this.fallbackUsers.values()).filter(user =>
@@ -164,8 +147,8 @@ export class MentionService extends BaseApiService {
    * Check if a username exists in the system
    */
   isMentionedUser(username: string): boolean {
-    return this.userCache.has(username.toLowerCase()) || 
-           this.fallbackUsers.has(username.toLowerCase());
+    return this.userCache.has(username.toLowerCase()) ||
+      this.fallbackUsers.has(username.toLowerCase());
   }
 
   /**

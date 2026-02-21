@@ -2,14 +2,14 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, Hash, TrendingUp } from 'lucide-angular';
-import { ThreadComponent } from '../../components/thread/thread.component';
+import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { HashtagService, HashtagInfo } from '../../shared/services/hashtag.service';
 import { Post } from '../../shared/services/post.service';
 
 @Component({
   selector: 'app-hashtag',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, ThreadComponent],
+  imports: [CommonModule, RouterModule, LucideAngularModule, PostCardComponent],
   templateUrl: './hashtag.component.html',
   styleUrls: ['./hashtag.component.scss']
 })
@@ -25,7 +25,7 @@ export class HashtagComponent {
   constructor(
     private route: ActivatedRoute,
     private hashtagService: HashtagService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {

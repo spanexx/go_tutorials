@@ -27,7 +27,7 @@
         "Generate shareable URLs with post ID",
         "Copy to clipboard functionality"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.4.2",
@@ -43,7 +43,7 @@
         "Embed code option (placeholder)",
         "Close button and click-outside-to-close"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.4.3",

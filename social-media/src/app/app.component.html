@@ -1,8 +1,8 @@
 <div class="app-container">
-  <app-header></app-header>
+  <app-header *ngIf="isAuthenticated"></app-header>
   <div class="main-content">
-    <app-sidebar></app-sidebar>
-    <main class="content-area">
+    <app-sidebar *ngIf="isAuthenticated"></app-sidebar>
+    <main class="content-area" [class.full-width]="!isAuthenticated">
       <router-outlet></router-outlet>
     </main>
   </div>

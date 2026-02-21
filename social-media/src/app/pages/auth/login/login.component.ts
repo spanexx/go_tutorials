@@ -50,15 +50,18 @@ export class LoginComponent {
 
     this.isLoading = true;
     this.error = '';
+    console.log('[AUTH-CLIENT] Login form submitted for:', this.email);
 
     const result = await this.authService.login(this.email, this.password);
 
     this.isLoading = false;
 
     if (result.success) {
+      console.log('[AUTH-CLIENT] Login successful, redirecting to feed');
       this.toastService.success('Welcome back!', 'You have successfully logged in.');
       this.router.navigate(['/feed']);
     } else {
+      console.error('[AUTH-CLIENT] Login failed:', result.error);
       this.toastService.error('Login failed', result.error || 'Please check your credentials and try again.');
     }
   }

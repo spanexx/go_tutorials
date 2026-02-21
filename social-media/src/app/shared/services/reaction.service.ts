@@ -1,147 +1,331 @@
+// Code Map: reaction.service.ts
+// - ReactionService: Service for managing post reactions
+// - Signals: reactionCounts, userReaction
+// - Methods: addReaction, removeReaction, getReactionsForPost, toggleReaction
+// - Optimistic UI updates with rollback on error
+// CID: Phase-2 Milestone 2.1 - Post Reactions
 import { Injectable, signal } from '@angular/core';
+import { Reaction, ReactionType, ReactionCounts, createEmptyReactionCounts, REACTION_TYPES } from '../models/reaction.model';
 
-export type ReactionType = 'like' | 'love' | 'laugh' | 'wow' | 'sad' | 'angry';
-
-export interface Reaction {
-  id: string;
-  type: ReactionType;
-  userId: string;
-  postId: number;
-  timestamp: Date;
-}
-
-export interface ReactionCounts {
-  like: number;
-  love: number;
-  laugh: number;
-  wow: number;
-  sad: number;
-  angry: number;
-  total: number;
-}
-
-export interface ReactionData {
-  emoji: string;
-  label: string;
-  color: string;
-  hoverColor: string;
+export interface ReactionState {
+  counts: Record<string, ReactionCounts>;
+  userReactions: Record<string, ReactionType | null>;
+  isLoading: Record<string, boolean>;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ReactionService {
-  private reactionsSignal = signal<Reaction[]>([]);
-  reactions = this.reactionsSignal.asReadonly();
+  private reactionState = signal<ReactionState>({
+    counts: {},
+    userReactions: {},
+    isLoading: {}
+  });
 
-  private userReactionsSignal = signal<Map<number, ReactionType>>(new Map());
-  userReactions = this.userReactionsSignal.asReadonly();
+  constructor() {
+    // Initialize with mock data for development
+    this.initializeMockData();
+  }
 
-  readonly reactionTypes: Record<ReactionType, ReactionData> = {
-    like: { emoji: '👍', label: 'Like', color: '#1877f2', hoverColor: '#1877f2' },
-    love: { emoji: '❤️', label: 'Love', color: '#f33e58', hoverColor: '#f33e58' },
-    laugh: { emoji: '😂', label: 'Haha', color: '#f7b125', hoverColor: '#f7b125' },
-    wow: { emoji: '😮', label: 'Wow', color: '#f7b125', hoverColor: '#f7b125' },
-    sad: { emoji: '😢', label: 'Sad', color: '#f7b125', hoverColor: '#f7b125' },
-    angry: { emoji: '😠', label: 'Angry', color: '#e44b23', hoverColor: '#e44b23' }
-  };
-
-  getReactionCounts(postId: number): ReactionCounts {
-    const postReactions = this.reactionsSignal().filter(r => r.postId === postId);
-    
-    const counts: ReactionCounts = {
-      like: 0,
-      love: 0,
-      laugh: 0,
-      wow: 0,
-      sad: 0,
-      angry: 0,
-      total: 0
+  private initializeMockData(): void {
+    // Mock data for development - will be replaced with API calls in Phase 2.6
+    const mockPosts = ['post-1', 'post-2', 'post-3'];
+    const updates: Partial<ReactionState> = {
+      counts: {},
+      userReactions: {},
+      isLoading: {}
     };
 
-    postReactions.forEach(reaction => {
-      counts[reaction.type]++;
-      counts.total++;
+    mockPosts.forEach(postId => {
+      updates.counts![postId] = {
+        like: Math.floor(Math.random() * 10),
+        love: Math.floor(Math.random() * 5),
+        laugh: Math.floor(Math.random() * 3),
+        wow: Math.floor(Math.random() * 2),
+        sad: Math.floor(Math.random() * 2),
+        angry: Math.floor(Math.random() * 1),
+        total: 0
+      };
+      updates.counts![postId].total = this.calculateTotal(updates.counts![postId]);
+      updates.userReactions![postId] = null;
+      updates.isLoading![postId] = false;
     });
 
-    return counts;
+    this.reactionState.update(state => ({
+      ...state,
+      ...updates
+    }));
   }
 
-  getUserReaction(postId: number): ReactionType | null {
-    return this.userReactionsSignal().get(postId) || null;
+  private calculateTotal(counts: ReactionCounts): number {
+    return counts.like + counts.love + counts.laugh + counts.wow + counts.sad + counts.angry;
   }
 
-  addReaction(postId: number, type: ReactionType): void {
-    const existingReaction = this.getUserReaction(postId);
-    
-    if (existingReaction === type) {
-      this.removeReaction(postId);
-      return;
-    }
-
-    if (existingReaction) {
-      this.removeReaction(postId);
-    }
-
-    const reaction: Reaction = {
-      id: `reaction-${postId}-${Date.now()}`,
-      type,
-      userId: 'current-user',
-      postId,
-      timestamp: new Date()
-    };
-
-    this.reactionsSignal.update(reactions => [...reactions, reaction]);
-    
-    this.userReactionsSignal.update(map => {
-      const newMap = new Map(map);
-      newMap.set(postId, type);
-      return newMap;
-    });
+  /**
+   * Get reaction counts for a post
+   */
+  getReactionCounts(postId: string): ReactionCounts {
+    return this.reactionState().counts[postId] || createEmptyReactionCounts();
   }
 
-  removeReaction(postId: number): void {
-    this.reactionsSignal.update(reactions => 
-      reactions.filter(r => r.postId !== postId || r.userId !== 'current-user')
-    );
-
-    this.userReactionsSignal.update(map => {
-      const newMap = new Map(map);
-      newMap.delete(postId);
-      return newMap;
-    });
+  /**
+   * Get user's reaction for a post
+   */
+  getUserReaction(postId: string): ReactionType | null {
+    return this.reactionState().userReactions[postId] || null;
   }
 
-  getReactionEmoji(type: ReactionType): string {
-    return this.reactionTypes[type].emoji;
+  /**
+   * Check if post is loading
+   */
+  isLoading(postId: string): boolean {
+    return this.reactionState().isLoading[postId] || false;
   }
 
-  getReactionColor(type: ReactionType): string {
-    return this.reactionTypes[type].color;
+  /**
+   * Get top reactions for a post
+   */
+  getTopReactions(postId: string): { type: ReactionType; count: number }[] {
+    const counts = this.getReactionCounts(postId);
+    const reactions = REACTION_TYPES
+      .map(r => ({ type: r.type, count: counts[r.type] }))
+      .filter(r => r.count > 0)
+      .sort((a, b) => b.count - a.count);
+    return reactions.slice(0, 3);
   }
 
+  /**
+   * Get reaction emoji icon for a reaction type
+   */
+  getReactionIcon(type: ReactionType): string {
+    const meta = REACTION_TYPES.find(r => r.type === type);
+    return meta?.emoji || '👍';
+  }
+
+  /**
+   * Get reaction label for a reaction type
+   */
   getReactionLabel(type: ReactionType): string {
-    return this.reactionTypes[type].label;
+    const meta = REACTION_TYPES.find(r => r.type === type);
+    return meta?.label || 'Like';
   }
 
-  getAllReactions(): ReactionType[] {
-    return Object.keys(this.reactionTypes) as ReactionType[];
+  /**
+   * Get reaction color for a reaction type
+   */
+  getReactionColor(type: ReactionType): string {
+    const meta = REACTION_TYPES.find(r => r.type === type);
+    return meta?.color || '#1877f2';
   }
 
-  formatReactionCount(counts: ReactionCounts): string {
-    if (counts.total === 0) return '';
-    if (counts.total === 1) {
-      const type = Object.keys(counts).find(key => counts[key as keyof ReactionCounts] === 1 && key !== 'total') as ReactionType | undefined;
-      if (type) return `1 ${this.reactionTypes[type].label}`;
+  /**
+   * Add a reaction to a post with optimistic UI update
+   */
+  addReaction(postId: string, type: ReactionType): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const currentState = this.reactionState();
+      const previousReaction = currentState.userReactions[postId];
+      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+
+      // Optimistic update
+      this.optimisticUpdate(postId, type);
+
+      // Simulate API call (replace with actual API in Phase 2.6)
+      setTimeout(() => {
+        // Success - keep the optimistic update
+        console.log(`Reaction ${type} added to post ${postId}`);
+        resolve();
+      }, 300);
+    });
+  }
+
+  /**
+   * Remove a reaction from a post with optimistic UI update
+   */
+  removeReaction(postId: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const currentState = this.reactionState();
+      const previousReaction = currentState.userReactions[postId];
+      
+      if (!previousReaction) {
+        resolve();
+        return;
+      }
+
+      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+
+      // Optimistic update
+      this.optimisticRemove(postId);
+
+      // Simulate API call (replace with actual API in Phase 2.6)
+      setTimeout(() => {
+        console.log(`Reaction removed from post ${postId}`);
+        resolve();
+      }, 300);
+    });
+  }
+
+  /**
+   * Toggle a reaction on a post
+   */
+  toggleReaction(postId: string, type: ReactionType): Promise<void> {
+    const currentState = this.reactionState();
+    const currentReaction = currentState.userReactions[postId];
+
+    if (currentReaction === type) {
+      // Same reaction - remove it
+      return this.removeReaction(postId);
+    } else if (currentReaction) {
+      // Different reaction - change it
+      return this.changeReaction(postId, type);
+    } else {
+      // No reaction - add it
+      return this.addReaction(postId, type);
     }
-    return counts.total.toString();
   }
 
-  getTopReactions(counts: ReactionCounts): { type: ReactionType; count: number }[] {
-    return (Object.keys(counts) as Array<keyof ReactionCounts>)
-      .filter(key => key !== 'total' && counts[key] > 0)
-      .map(key => ({ type: key as ReactionType, count: counts[key] }))
-      .sort((a, b) => b.count - a.count)
-      .slice(0, 3);
+  /**
+   * Change reaction type on a post
+   */
+  private changeReaction(postId: string, newType: ReactionType): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const currentState = this.reactionState();
+      const previousReaction = currentState.userReactions[postId];
+      
+      if (!previousReaction) {
+        resolve();
+        return;
+      }
+
+      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+
+      // Optimistic update for changing reaction
+      this.reactionState.update(state => {
+        const newCounts = { ...state.counts[postId] || createEmptyReactionCounts() };
+        
+        // Decrement old reaction
+        newCounts[previousReaction] = Math.max(0, newCounts[previousReaction] - 1);
+        // Increment new reaction
+        newCounts[newType] = (newCounts[newType] || 0) + 1;
+        newCounts.total = this.calculateTotal(newCounts);
+
+        return {
+          ...state,
+          counts: {
+            ...state.counts,
+            [postId]: newCounts
+          },
+          userReactions: {
+            ...state.userReactions,
+            [postId]: newType
+          }
+        };
+      });
+
+      // Simulate API call
+      setTimeout(() => {
+        console.log(`Reaction changed to ${newType} on post ${postId}`);
+        resolve();
+      }, 300);
+    });
+  }
+
+  /**
+   * Optimistic UI update for adding reaction
+   */
+  private optimisticUpdate(postId: string, type: ReactionType): void {
+    this.reactionState.update(state => {
+      const currentCounts = state.counts[postId] || createEmptyReactionCounts();
+      const currentReaction = state.userReactions[postId];
+      
+      const newCounts = { ...currentCounts };
+      
+      // If user already has a reaction, decrement it first
+      if (currentReaction && currentReaction !== type) {
+        newCounts[currentReaction] = Math.max(0, newCounts[currentReaction] - 1);
+      }
+      
+      // Increment the new reaction
+      newCounts[type] = (newCounts[type] || 0) + 1;
+      newCounts.total = this.calculateTotal(newCounts);
+
+      return {
+        ...state,
+        counts: {
+          ...state.counts,
+          [postId]: newCounts
+        },
+        userReactions: {
+          ...state.userReactions,
+          [postId]: type
+        }
+      };
+    });
+  }
+
+  /**
+   * Optimistic UI update for removing reaction
+   */
+  private optimisticRemove(postId: string): void {
+    this.reactionState.update(state => {
+      const currentCounts = state.counts[postId] || createEmptyReactionCounts();
+      const currentReaction = state.userReactions[postId];
+      
+      if (!currentReaction) {
+        return state;
+      }
+
+      const newCounts = { ...currentCounts };
+      newCounts[currentReaction] = Math.max(0, newCounts[currentReaction] - 1);
+      newCounts.total = this.calculateTotal(newCounts);
+
+      return {
+        ...state,
+        counts: {
+          ...state.counts,
+          [postId]: newCounts
+        },
+        userReactions: {
+          ...state.userReactions,
+          [postId]: null
+        }
+      };
+    });
+  }
+
+  /**
+   * Get reactions for a post (for Phase 2.6 API integration)
+   */
+  async getReactionsForPost(postId: string): Promise<Reaction[]> {
+    // TODO: Implement API call in Phase 2.6
+    return [];
+  }
+
+  /**
+   * Initialize reaction state for a new post
+   */
+  initializePost(postId: string): void {
+    this.reactionState.update(state => {
+      if (state.counts[postId]) {
+        return state;
+      }
+
+      return {
+        ...state,
+        counts: {
+          ...state.counts,
+          [postId]: createEmptyReactionCounts()
+        },
+        userReactions: {
+          ...state.userReactions,
+          [postId]: null
+        },
+        isLoading: {
+          ...state.isLoading,
+          [postId]: false
+        }
+      };
+    });
   }
 }

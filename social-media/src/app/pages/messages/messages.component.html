@@ -1,0 +1,124 @@
+<div class="messages-container">
+    <div class="messages-header">
+        <div class="header-left">
+            <h1>Messages</h1>
+        </div>
+        <button class="compose-btn">
+            <lucide-angular [img]="editIcon"></lucide-angular>
+        </button>
+    </div>
+
+    <div class="messages-layout">
+        <aside class="conversations-list">
+            <div class="search-box">
+                <lucide-angular [img]="searchIcon" class="search-icon"></lucide-angular>
+                <input type="text" placeholder="Search direct messages..." />
+            </div>
+            <div class="conversation-scroll">
+                <div class="conversation-item active">
+                    <div class="avatar-wrapper">
+                        <img src="https://i.pravatar.cc/150?img=10" alt="Sarah Johnson" />
+                        <span class="status-indicator online"></span>
+                    </div>
+                    <div class="conversation-info">
+                        <div class="info-top">
+                            <p class="conversation-name">Sarah Johnson</p>
+                            <span class="timestamp">2m</span>
+                        </div>
+                        <p class="conversation-preview">That sounds great! Let's meet...</p>
+                    </div>
+                </div>
+                <div class="conversation-item">
+                    <div class="avatar-wrapper">
+                        <img src="https://i.pravatar.cc/150?img=11" alt="Alex Chen" />
+                    </div>
+                    <div class="conversation-info">
+                        <div class="info-top">
+                            <p class="conversation-name">Alex Chen</p>
+                            <span class="timestamp">1h</span>
+                        </div>
+                        <p class="conversation-preview">Thanks for your help with the project</p>
+                    </div>
+                </div>
+                <div class="conversation-item">
+                    <div class="avatar-wrapper">
+                        <img src="https://i.pravatar.cc/150?img=12" alt="Emma Davis" />
+                        <span class="status-indicator online"></span>
+                    </div>
+                    <div class="conversation-info">
+                        <div class="info-top">
+                            <p class="conversation-name">Emma Davis</p>
+                            <span class="timestamp">3h</span>
+                        </div>
+                        <p class="conversation-preview">See you at the conference!</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="messages-main">
+            <header class="chat-header">
+                <div class="chat-user">
+                    <div class="avatar-wrapper sm">
+                        <img src="https://i.pravatar.cc/150?img=10" alt="Sarah Johnson" />
+                        <span class="status-indicator online"></span>
+                    </div>
+                    <div class="user-meta">
+                        <p class="chat-name">Sarah Johnson</p>
+                        <p class="chat-status">Active Now</p>
+                    </div>
+                </div>
+                <div class="chat-actions">
+                    <button class="action-btn" title="Call">
+                        <lucide-angular [img]="phoneIcon"></lucide-angular>
+                    </button>
+                    <button class="action-btn" title="Video">
+                        <lucide-angular [img]="videoIcon"></lucide-angular>
+                    </button>
+                    <button class="action-btn" title="Info">
+                        <lucide-angular [img]="infoIcon"></lucide-angular>
+                    </button>
+                </div>
+            </header>
+
+            <div class="messages-list">
+                <div class="date-divider">Today</div>
+                <div class="message other">
+                    <img src="https://i.pravatar.cc/150?img=10" class="mini-avatar" />
+                    <div class="message-content">
+                        <p>Hey! How are you doing?</p>
+                        <span class="msg-time">10:30 AM</span>
+                    </div>
+                </div>
+                <div class="message own">
+                    <div class="message-content">
+                        <p>Hi Sarah! Doing great, thanks for asking</p>
+                        <span class="msg-time">10:32 AM</span>
+                    </div>
+                </div>
+                <div class="message other">
+                    <img src="https://i.pravatar.cc/150?img=10" class="mini-avatar" />
+                    <div class="message-content">
+                        <p>That sounds great! Let's meet up soon</p>
+                        <span class="msg-time">10:35 AM</span>
+                    </div>
+                </div>
+            </div>
+
+            <footer class="message-input-area">
+                <div class="input-container">
+                    <button class="attach-btn">
+                        <lucide-angular [img]="plusIcon"></lucide-angular>
+                    </button>
+                    <input type="text" placeholder="Type a message..." />
+                    <button class="emoji-btn">
+                        <lucide-angular [img]="smileIcon"></lucide-angular>
+                    </button>
+                </div>
+                <button class="send-btn">
+                    <lucide-angular [img]="sendIcon"></lucide-angular>
+                </button>
+            </footer>
+        </main>
+    </div>
+</div>

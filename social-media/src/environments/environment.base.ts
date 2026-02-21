@@ -26,7 +26,7 @@ export interface FeatureFlags {
 
 export const baseEnvironment: EnvironmentConfig = {
   production: false,
-  apiUrl: 'http://localhost:8080/api',
+  apiUrl: 'http://localhost:3000/api',
   apiVersion: 'v1',
   appName: 'SocialHub',
   appVersion: '1.0.0',

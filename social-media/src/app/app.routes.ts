@@ -11,6 +11,9 @@ import { SettingsComponent } from './pages/settings/settings.component';
 import { HashtagComponent } from './pages/hashtag/hashtag.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
+import { VerifyEmailComponent } from './pages/auth/verify-email/verify-email.component';
+import { ForgotPasswordComponent } from './pages/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './pages/auth/reset-password/reset-password.component';
 import { AnalyticsDashboardComponent } from './pages/analytics/analytics-dashboard.component';
 import { NotFoundComponent } from './pages/errors/not-found/not-found.component';
 import { ErrorPageComponent } from './pages/errors/error-page/error-page.component';
@@ -20,6 +23,9 @@ export const routes: Routes = [
   { path: '', redirectTo: 'feed', pathMatch: 'full' },
   { path: 'login', component: LoginComponent, canActivate: [guestGuard] },
   { path: 'register', component: RegisterComponent, canActivate: [guestGuard] },
+  { path: 'verify-email', component: VerifyEmailComponent },
+  { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [guestGuard] },
+  { path: 'reset-password', component: ResetPasswordComponent, canActivate: [guestGuard] },
   { path: 'feed', component: FeedComponent, canActivate: [authGuard] },
   { path: 'profile/:id', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'profile/:id/edit', component: ProfileEditComponent, canActivate: [authGuard] },

@@ -6,7 +6,9 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 	"github.com/socialhub/auth-service/internal/config"
+	"github.com/socialhub/auth-service/internal/email"
 	"github.com/socialhub/auth-service/internal/handlers"
 	"github.com/socialhub/auth-service/internal/middleware"
 	"github.com/socialhub/auth-service/internal/service"
@@ -22,7 +24,7 @@ type Server struct {
 }
 
 // NewServer creates a new HTTP server
-func NewServer(cfg *config.Config, authService *service.AuthService) *Server {
+func NewServer(cfg *config.Config, authService *service.AuthService, redisClient *redis.Client, emailService *email.EmailService) *Server {
 	router := gin.Default()
 
 	// Apply middleware
@@ -40,15 +42,26 @@ func NewServer(cfg *config.Config, authService *service.AuthService) *Server {
 	{
 		// Auth handlers
 		authHandler := handlers.NewAuthHandler(authService)
-		
+
+		// Admin handlers (for email testing)
+		adminHandler := handlers.NewAdminHandler(emailService)
+
 		// Analytics handlers
 		analyticsHandler := handlers.NewAnalyticsHandler()
-		
+
 		// Search handlers
 		searchHandler := handlers.NewSearchHandler()
-		
+
 		// User handlers
 		userHandler := handlers.NewUserHandler(authService)
+
+		// Admin routes (development only)
+		admin := v1.Group("/admin")
+		{
+			admin.POST("/test-email", adminHandler.SendTestEmail)
+			admin.POST("/preview-email", adminHandler.PreviewEmail)
+			admin.GET("/email-config", adminHandler.GetEmailConfig)
+		}
 
 		// Public routes
 		auth := v1.Group("/auth")
@@ -56,7 +69,10 @@ func NewServer(cfg *config.Config, authService *service.AuthService) *Server {
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/refresh", authHandler.RefreshToken)
-			auth.GET("/verify/:token", authHandler.VerifyEmail)
+			auth.POST("/verify-email", authHandler.VerifyEmail)
+			auth.POST("/resend-verification", authHandler.ResendVerification)
+			auth.POST("/forgot-password", authHandler.ForgotPassword)
+			auth.POST("/reset-password", authHandler.ResetPassword)
 		}
 		
 		// Search routes (public)

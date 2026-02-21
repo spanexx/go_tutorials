@@ -29,7 +29,7 @@
         "Signal-based comment state per post",
         "Comment count tracking"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.2.2",
@@ -45,7 +45,7 @@
         "Nested replies indicator",
         "Collapsible nested threads"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.2.3",
@@ -60,7 +60,7 @@
         "Sort by oldest/newest toggle",
         "Collapse/expand all threads button"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.2.4",
@@ -76,7 +76,7 @@
         "Auto-focus when opening reply",
         "Keyboard shortcut (R to reply)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.2.5",
@@ -90,7 +90,7 @@
         "Show more replies for long threads",
         "Maintain context when replying deep in thread"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

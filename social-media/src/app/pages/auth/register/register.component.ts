@@ -22,6 +22,7 @@ export class RegisterComponent {
   registerIcon = UserPlus;
 
   name = '';
+  username = '';
   email = '';
   password = '';
   confirmPassword = '';
@@ -35,20 +36,21 @@ export class RegisterComponent {
     private authService: AuthService,
     private toastService: ToastService,
     private router: Router
-  ) {}
+  ) { }
 
   get isFormValid(): boolean {
     return this.name.trim().length > 0 &&
-           this.email.trim().length > 0 &&
-           this.password.length >= 6 &&
-           this.password === this.confirmPassword &&
-           this.agreeToTerms &&
-           !this.isLoading;
+      this.username.trim().length > 0 &&
+      this.email.trim().length > 0 &&
+      this.password.length >= 6 &&
+      this.password === this.confirmPassword &&
+      this.agreeToTerms &&
+      !this.isLoading;
   }
 
   get passwordMatchError(): boolean {
-    return this.confirmPassword.length > 0 && 
-           this.password !== this.confirmPassword;
+    return this.confirmPassword.length > 0 &&
+      this.password !== this.confirmPassword;
   }
 
   togglePasswordVisibility(): void {
@@ -71,15 +73,18 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.error = '';
+    console.log('[AUTH-CLIENT] Registration form submitted for:', this.email);
 
-    const result = await this.authService.register(this.name, this.email, this.password);
+    const result = await this.authService.register(this.name, this.email, this.password, this.username);
 
     this.isLoading = false;
 
     if (result.success) {
+      console.log('[AUTH-CLIENT] Registration successful, redirecting to feed');
       this.toastService.success('Account created!', 'Welcome to SocialHub. You are now logged in.');
       this.router.navigate(['/feed']);
     } else {
+      console.error('[AUTH-CLIENT] Registration failed:', result.error);
       this.toastService.error('Registration failed', result.error || 'Please try again with different credentials.');
     }
   }

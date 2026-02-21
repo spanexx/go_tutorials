@@ -2,252 +2,220 @@
   "milestone": "0.1",
   "title": "Unmock Codebase",
   "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
-  "generated_at": "2026-02-20T13:16:24Z",
-  "updated_at": "2026-02-20T14:30:00Z",
-  "max_items": 200,
-  "findings_count": 12,
-  "files_with_findings": 6,
+  "generated_at": "2026-02-21T05:20:14Z",
+  "max_items": 15,
+  "findings_count": 15,
+  "files_with_findings": 7,
   "items": [
     {
       "id": "C.001",
-      "title": "Replace mock data in AnalyticsService with real API integration",
+      "title": "Unmock stub: for_now in backend/internal/handlers/analytics_handler.go:48",
       "type": "tech_debt",
-      "description": "AnalyticsService contains hardcoded mockFollowerGrowth and mockEngagementData arrays. Methods getEngagementData(), getFollowerGrowth(), getFollowerGrowthPercentage(), and getEngagementTrend() return static data instead of fetching from backend.",
+      "description": "// For now, return sample data structure",
+      "file": "backend/internal/handlers/analytics_handler.go",
+      "line": 48,
+      "kind": "for_now",
       "acceptance_criteria": [
-        "Add HTTP client integration to fetch analytics data from backend API",
-        "Replace mockFollowerGrowth and mockEngagementData with HTTP calls",
-        "Add proper error handling for failed API requests",
-        "Update getEngagementData() to return Observable<EngagementData[]>",
-        "Update getFollowerGrowth() to return Observable<FollowerGrowth[]>",
-        "Remove or mark mock data properties as deprecated",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "src/app/shared/services/analytics.service.ts:34 - private mockFollowerGrowth: FollowerGrowth[] = [...]",
-        "src/app/shared/services/analytics.service.ts:44 - private mockEngagementData: EngagementData[] = [...]",
-        "src/app/shared/services/analytics.service.ts:91 - return this.mockEngagementData;",
-        "src/app/shared/services/analytics.service.ts:95 - return this.mockFollowerGrowth;",
-        "src/app/shared/services/analytics.service.ts:99 - const data = this.mockFollowerGrowth;",
-        "src/app/shared/services/analytics.service.ts:108 - const data = this.mockEngagementData;"
-      ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.002",
-      "title": "Replace mock data in SearchService with real API integration",
+      "title": "Unmock stub: for_now in backend/internal/handlers/search_handler.go:66",
       "type": "tech_debt",
-      "description": "SearchService contains hardcoded mockUsers and mockHashtags arrays. Search results are filtered from static data instead of calling backend search APIs.",
+      "description": "// For now, return sample results based on query",
+      "file": "backend/internal/handlers/search_handler.go",
+      "line": 66,
+      "kind": "for_now",
       "acceptance_criteria": [
-        "Add HTTP client integration to fetch search results from backend",
-        "Replace mockUsers and mockHashtags with HTTP API calls",
-        "Update search() method to call real search endpoint",
-        "Implement server-side pagination for search results",
-        "Add debouncing for search queries",
-        "Update getTrendingHashtags() to fetch from backend",
-        "Update getSuggestedUsers() to fetch from backend",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "src/app/shared/services/search.service.ts:31 - private mockUsers: SearchUser[] = [...]",
-        "src/app/shared/services/search.service.ts:42 - private mockHashtags: SearchHashtag[] = [...]",
-        "src/app/shared/services/search.service.ts:85 - const matchingUsers = this.mockUsers.filter(...)",
-        "src/app/shared/services/search.service.ts:92 - const matchingHashtags = this.mockHashtags.filter(...)",
-        "src/app/shared/services/search.service.ts:138 - return [...this.mockHashtags].sort(...)",
-        "src/app/shared/services/search.service.ts:142 - return [...this.mockUsers].sort(...)"
-      ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.003",
-      "title": "Replace mock data in MentionService with real API integration",
+      "title": "Unmock stub: for_now in backend/internal/handlers/user_handler.go:54",
       "type": "tech_debt",
-      "description": "MentionService contains hardcoded mockUsers Map. User mentions are resolved from static data instead of querying backend user directory.",
+      "description": "// For now, return sample profile data",
+      "file": "backend/internal/handlers/user_handler.go",
+      "line": 54,
+      "kind": "for_now",
       "acceptance_criteria": [
-        "Add HTTP client integration to fetch user mentions from backend",
-        "Replace mockUsers Map with HTTP API calls",
-        "Update searchUsers() to call real user search endpoint",
-        "Update getUserByUsername() to fetch from backend",
-        "Update getAllUsers() to fetch from backend",
-        "Add caching layer for frequently mentioned users",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "src/app/shared/services/mention.service.ts:15 - private mockUsers: Map<string, MentionedUser> = new Map([...])",
-        "src/app/shared/services/mention.service.ts:52 - const user = this.mockUsers.get(username.toLowerCase());",
-        "src/app/shared/services/mention.service.ts:80 - return this.mockUsers.get(username.toLowerCase());"
-      ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.004",
-      "title": "Replace mock data in UserProfileCardComponent with real API integration",
+      "title": "Unmock stub: for_now in src/app/shared/services/analytics.service.ts:99",
       "type": "tech_debt",
-      "description": "UserProfileCardComponent.loadUserProfile() contains hardcoded mock data for user profiles with setTimeout simulation. Profile data is generated dynamically with random values instead of fetching from backend.",
+      "description": "// For now, return fallback data",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 99,
+      "kind": "for_now",
       "acceptance_criteria": [
-        "Add HTTP client integration to fetch user profile from backend API",
-        "Replace setTimeout mock with real HTTP call",
-        "Remove hardcoded profile data generation",
-        "Remove random number generation for followers/following",
-        "Add proper loading and error states",
-        "Implement profile caching to avoid repeated calls",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "src/app/shared/user-profile-card/user-profile-card.component.ts:56 - // Simulate API call with mock data",
-        "src/app/shared/user-profile-card/user-profile-card.component.ts:73 - // Mock data for other users",
-        "src/app/shared/user-profile-card/user-profile-card.component.ts:74-87 - Hardcoded mock user object with random values"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.005",
-      "title": "Replace mock data in ProfileComponent with real API integration",
+      "title": "Unmock stub: in_full_impl in src/app/shared/services/analytics.service.ts:100",
       "type": "tech_debt",
-      "description": "ProfileComponent.loadProfile() contains hardcoded mock data for user profiles with setTimeout simulation. Non-current user profiles return static 'John Doe' data.",
+      "description": "// In full implementation, this would call the API and cache the result",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 100,
+      "kind": "in_full_impl",
       "acceptance_criteria": [
-        "Add HTTP client integration to fetch user profile from backend API",
-        "Replace setTimeout mock with real HTTP call",
-        "Remove hardcoded 'John Doe' profile data",
-        "Fetch real profile data for non-current users by username/ID",
-        "Add proper loading and error states",
-        "Update stats (posts, followers, following) from real data",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "src/app/pages/profile/profile.component.ts:73 - // Load other user's profile (mock data)",
-        "src/app/pages/profile/profile.component.ts:74-84 - Hardcoded 'John Doe' mock profile"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.006",
-      "title": "Implement email verification in Go backend auth handler",
+      "title": "Unmock stub: for_now in src/app/shared/services/analytics.service.ts:112",
       "type": "tech_debt",
-      "description": "VerifyEmail handler in auth_handler.go has a TODO comment acknowledging incomplete implementation. Email verification token validation is not implemented.",
+      "description": "// For now, return fallback data",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 112,
+      "kind": "for_now",
       "acceptance_criteria": [
-        "Implement token validation logic for email verification",
-        "Add database query to find user by verification token",
-        "Update user's email_verified status in database",
-        "Add token expiration checking",
-        "Return proper error responses for invalid/expired tokens",
-        "Add unit tests for email verification flow",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "backend/internal/handlers/auth_handler.go:247-251 - // In a full implementation, verify the token and update user"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.007",
-      "title": "Implement logout functionality in Go backend auth service",
+      "title": "Unmock stub: in_full_impl in src/app/shared/services/analytics.service.ts:113",
       "type": "tech_debt",
-      "description": "AuthService.Logout() is a placeholder that returns nil. JWT token blacklist functionality using Redis is not implemented.",
+      "description": "// In full implementation, this would call the API and cache the result",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 113,
+      "kind": "in_full_impl",
       "acceptance_criteria": [
-        "Implement Redis-based token blacklist for logout",
-        "Add token blacklist repository interface",
-        "Update Logout() to add access token to blacklist",
-        "Add TTL for blacklisted tokens (match token expiration)",
-        "Update auth middleware to check token blacklist",
-        "Add unit tests for logout and token blacklist",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "backend/internal/service/auth_service.go:120-123 - // For JWT-based auth, we would add the token to a blacklist in Redis. This is a placeholder for that functionality. return nil"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.008",
-      "title": "Replace UUID generation placeholder in Go auth service",
+      "title": "Unmock stub: in_full_impl in src/app/shared/services/analytics.service.ts:121",
       "type": "tech_debt",
-      "description": "generateUUID() uses time-based string instead of proper UUID generation. Comment indicates production UUID library should be used.",
+      "description": "// In full implementation, fetch from API",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 121,
+      "kind": "in_full_impl",
       "acceptance_criteria": [
-        "Add github.com/google/uuid dependency",
-        "Replace generateUUID() implementation with uuid.New().String()",
-        "Update all user creation to use proper UUIDs",
-        "Add unit tests for UUID generation",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "backend/internal/service/auth_service.go:180-183 - // In production, use github.com/google/uuid. return time.Now().Format(...)"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.009",
-      "title": "Replace random avatar ID generator in Go auth service",
+      "title": "Unmock stub: in_full_impl in src/app/shared/services/analytics.service.ts:228",
       "type": "tech_debt",
-      "description": "generateRandomAvatarID() returns static '1' instead of random ID. Comment indicates proper random generation should be used.",
+      "description": "// In full implementation, fetch from API and cache results",
+      "file": "src/app/shared/services/analytics.service.ts",
+      "line": 228,
+      "kind": "in_full_impl",
       "acceptance_criteria": [
-        "Implement proper random number generation for avatar selection",
-        "Use crypto/rand or math/rand with proper seeding",
-        "Ensure avatar IDs are within valid range (e.g., 1-70 for pravatar.cc)",
-        "Update user registration to use random avatar generation",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
-      ],
-      "occurrences": [
-        "backend/internal/service/auth_service.go:186-189 - // In production, use proper random generation. return \"1\""
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
       "passes": false
     },
     {
       "id": "C.010",
-      "title": "Add HTTP client module to Angular services",
-      "type": "infrastructure",
-      "description": "Multiple Angular services need HTTP client integration. Create a shared HTTP client module with interceptors for auth tokens, error handling, and request/response logging.",
+      "title": "Unmock stub: mock in src/app/shared/services/comment.service.ts:22",
+      "type": "tech_debt",
+      "description": "// Mock data for development - will be replaced with API calls in Phase 2.6",
+      "file": "src/app/shared/services/comment.service.ts",
+      "line": 22,
+      "kind": "mock",
       "acceptance_criteria": [
-        "Create HttpClient module with proper configuration",
-        "Add HTTP interceptor for JWT token injection",
-        "Add HTTP interceptor for error handling",
-        "Add request/response logging interceptor for debugging",
-        "Create base API service class for common methods",
-        "Configure environment-specific API endpoints",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
-      ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.011",
-      "title": "Update critic scanner patterns for Angular/TypeScript projects",
-      "type": "infrastructure",
-      "description": "The critic scan produced 0 findings initially. Add Angular/TypeScript-specific patterns to ralph-critic.sh to better detect mocks, stubs, and placeholders in this codebase.",
+      "title": "Unmock stub: mock in src/app/shared/services/hashtag.service.ts:83",
+      "type": "tech_debt",
+      "description": "// Mock implementation - return empty array",
+      "file": "src/app/shared/services/hashtag.service.ts",
+      "line": 83,
+      "kind": "mock",
       "acceptance_criteria": [
-        "Add pattern for 'mock' variable declarations (private mock*, private *Mock)",
-        "Add pattern for hardcoded data arrays/objects used as mocks",
-        "Add pattern for setTimeout simulations",
-        "Add pattern for '// Simulate' or '// Mock' comments",
-        "Add pattern for random data generation in production code",
-        "Test updated patterns against known mock files",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "ralph-critic.sh - needs pattern enhancements for Angular/TypeScript mock detection"
-      ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.012",
-      "title": "Create backend API endpoints for analytics, search, and user profiles",
-      "type": "infrastructure",
-      "description": "Frontend services need backend API endpoints that don't exist yet. Create REST API endpoints for analytics data, search functionality, and user profile retrieval.",
+      "title": "Unmock stub: mock in src/app/shared/services/hashtag.service.ts:206",
+      "type": "tech_debt",
+      "description": "// Mock implementation",
+      "file": "src/app/shared/services/hashtag.service.ts",
+      "line": 206,
+      "kind": "mock",
       "acceptance_criteria": [
-        "Create GET /api/v1/analytics/engagement endpoint",
-        "Create GET /api/v1/analytics/followers endpoint",
-        "Create GET /api/v1/search endpoint with query params",
-        "Create GET /api/v1/users/:username endpoint",
-        "Create GET /api/v1/users/suggested endpoint",
-        "Create GET /api/v1/hashtags/trending endpoint",
-        "Add proper authentication and rate limiting",
-        "Update docs/PLAN bookkeeping: Progress.md and mark this PRD item passes=true"
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "occurrences": [
-        "Required by: analytics.service.ts, search.service.ts, mention.service.ts, user-profile-card.component.ts, profile.component.ts"
+      "passes": false
+    },
+    {
+      "id": "C.013",
+      "title": "Unmock stub: mock in src/app/shared/services/hashtag.service.ts:222",
+      "type": "tech_debt",
+      "description": "posts: [], // Mock - will be populated from API in Phase 2.6",
+      "file": "src/app/shared/services/hashtag.service.ts",
+      "line": 222,
+      "kind": "mock",
+      "acceptance_criteria": [
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
       ],
-      "passes": true
+      "passes": false
+    },
+    {
+      "id": "C.014",
+      "title": "Unmock stub: in_full_impl in src/app/shared/services/mention.service.ts:119",
+      "type": "tech_debt",
+      "description": "// In full implementation, call backend API",
+      "file": "src/app/shared/services/mention.service.ts",
+      "line": 119,
+      "kind": "in_full_impl",
+      "acceptance_criteria": [
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
+      ],
+      "passes": false
+    },
+    {
+      "id": "C.015",
+      "title": "Unmock stub: for_now in src/app/shared/services/mention.service.ts:131",
+      "type": "tech_debt",
+      "description": "// For now, return fallback",
+      "file": "src/app/shared/services/mention.service.ts",
+      "line": 131,
+      "kind": "for_now",
+      "acceptance_criteria": [
+        "Replace stub with real implementation",
+        "Remove TODO/placeholder markers"
+      ],
+      "passes": false
     }
   ]
 }

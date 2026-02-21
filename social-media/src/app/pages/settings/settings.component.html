@@ -1,167 +1,169 @@
 <div class="settings-container">
-  <div class="settings-header">
+  <header class="settings-header">
     <h1>Settings</h1>
     <p class="subtitle">Manage your account settings and preferences</p>
-  </div>
+  </header>
 
   <div class="settings-content">
     <!-- Appearance Section -->
     <section class="settings-section">
-      <div class="section-header">
+      <header class="section-header">
         <lucide-angular [img]="paletteIcon" class="section-icon"></lucide-angular>
         <h2>Appearance</h2>
-      </div>
+      </header>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Theme</h3>
-          <p>Choose your preferred theme</p>
-        </div>
-        <div class="theme-options">
-          <button 
-            class="theme-btn" 
-            [class.active]="currentTheme === 'light'"
-            (click)="setTheme('light')">
-            <lucide-angular [img]="sunIcon" class="theme-icon"></lucide-angular>
-            <span>Light</span>
-          </button>
-          <button 
-            class="theme-btn" 
-            [class.active]="currentTheme === 'dark'"
-            (click)="setTheme('dark')">
-            <lucide-angular [img]="moonIcon" class="theme-icon"></lucide-angular>
-            <span>Dark</span>
-          </button>
+      <div class="setting-list">
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Theme</h3>
+            <p>Choose your preferred interface aesthetic</p>
+          </div>
+          <div class="theme-options">
+            <button class="theme-btn" [class.active]="currentTheme === 'light'" (click)="setTheme('light')">
+              <lucide-angular [img]="sunIcon" class="theme-icon"></lucide-angular>
+              <span>Light</span>
+            </button>
+            <button class="theme-btn" [class.active]="currentTheme === 'dark'" (click)="setTheme('dark')">
+              <lucide-angular [img]="moonIcon" class="theme-icon"></lucide-angular>
+              <span>Dark</span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
 
     <!-- Notifications Section -->
     <section class="settings-section">
-      <div class="section-header">
+      <header class="section-header">
         <lucide-angular [img]="bellIcon" class="section-icon"></lucide-angular>
         <h2>Notifications</h2>
-      </div>
+      </header>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Likes</h3>
-          <p>Get notified when someone likes your posts</p>
+      <div class="setting-list">
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Likes</h3>
+            <p>Notify when someone likes your content</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifications.likes" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="notifications.likes" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Comments</h3>
-          <p>Get notified when someone comments on your posts</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Comments</h3>
+            <p>Notify when someone comments on your posts</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifications.comments" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="notifications.comments" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Shares</h3>
-          <p>Get notified when someone shares your posts</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Shares</h3>
+            <p>Notify when someone shares your posts</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifications.shares" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="notifications.shares" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>New Followers</h3>
-          <p>Get notified when someone follows you</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Following</h3>
+            <p>Notify when you get a new follower</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifications.follows" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="notifications.follows" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Mentions</h3>
-          <p>Get notified when someone mentions you</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Mentions</h3>
+            <p>Notify when someone tags you in a post</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="notifications.mentions" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="notifications.mentions" />
-          <span class="toggle-slider"></span>
-        </label>
       </div>
     </section>
 
     <!-- Privacy Section -->
     <section class="settings-section">
-      <div class="section-header">
+      <header class="section-header">
         <lucide-angular [img]="shieldIcon" class="section-icon"></lucide-angular>
-        <h2>Privacy</h2>
-      </div>
+        <h2>Privacy & Safety</h2>
+      </header>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Private Account</h3>
-          <p>Only approved followers can see your posts</p>
+      <div class="setting-list">
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Private Account</h3>
+            <p>Only approved followers can see your profile</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="privacy.privateAccount" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="privacy.privateAccount" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Show Activity Status</h3>
-          <p>Let others see when you're active</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Activity Status</h3>
+            <p>Let others see when you're online</p>
+          </div>
+          <label class="toggle">
+            <input type="checkbox" [(ngModel)]="privacy.showActivity" />
+            <span class="toggle-slider"></span>
+          </label>
         </div>
-        <label class="toggle">
-          <input type="checkbox" [(ngModel)]="privacy.showActivity" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Direct Messages</h3>
-          <p>Choose who can send you messages</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Direct Messages</h3>
+            <p>Control who can message you directly</p>
+          </div>
+          <select class="select-input" [(ngModel)]="privacy.allowMessages">
+            <option value="everyone">Everyone</option>
+            <option value="following">Followers</option>
+            <option value="nobody">Direct Off</option>
+          </select>
         </div>
-        <select class="select-input" [(ngModel)]="privacy.allowMessages">
-          <option value="everyone">Everyone</option>
-          <option value="following">People I follow</option>
-          <option value="nobody">Nobody</option>
-        </select>
       </div>
     </section>
 
     <!-- Account Section -->
     <section class="settings-section">
-      <div class="section-header">
+      <header class="section-header">
         <lucide-angular [img]="userIcon" class="section-icon"></lucide-angular>
-        <h2>Account</h2>
-      </div>
+        <h2>Account Management</h2>
+      </header>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Profile Information</h3>
-          <p>Edit your name, username, and bio</p>
+      <div class="setting-list">
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Profile Details</h3>
+            <p>Update your public identity and bio</p>
+          </div>
+          <button class="btn-secondary">Edit Profile</button>
         </div>
-        <button class="btn-secondary">Edit Profile</button>
-      </div>
 
-      <div class="setting-item">
-        <div class="setting-info">
-          <h3>Change Password</h3>
-          <p>Update your password regularly for security</p>
+        <div class="setting-item">
+          <div class="setting-info">
+            <h3>Security</h3>
+            <p>Manage your password and active sessions</p>
+          </div>
+          <button class="btn-secondary">Security Settings</button>
         </div>
-        <button class="btn-secondary">Change Password</button>
       </div>
     </section>
   </div>

@@ -16,8 +16,23 @@
 
   <img *ngIf="post.image" [src]="post.image" [alt]="post.content" class="post-image" />
 
+  <!-- Reaction Summary -->
+  @if (counts && counts.total > 0) {
+    <app-reaction-summary [counts]="counts"></app-reaction-summary>
+  }
+
+  <!-- Reaction Bar -->
+  @if (counts) {
+    <app-reaction-bar
+      [postId]="post.id"
+      [counts]="counts"
+      [userReaction]="userReaction"
+      (reactionSelected)="onReactionSelected($event)">
+    </app-reaction-bar>
+  }
+
   <div class="post-stats">
-    <span>{{ post.likes }} likes</span>
+    <span>{{ counts?.total || post.likes }} reactions</span>
     <span>{{ post.comments }} comments</span>
     <span>{{ post.shares }} shares</span>
   </div>
@@ -29,7 +44,7 @@
       (click)="toggleLike()"
     >
       <lucide-icon [img]="heartIcon" [class.fill-icon]="isLiked"></lucide-icon>
-      <span class="label">Like</span>
+      <span class="label">{{ userReaction ? userReaction : 'Like' }}</span>
     </button>
     <button class="action-btn">
       <lucide-icon [img]="commentIcon"></lucide-icon>

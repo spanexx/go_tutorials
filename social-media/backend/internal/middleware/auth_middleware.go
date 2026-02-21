@@ -9,7 +9,7 @@ import (
 	"github.com/socialhub/auth-service/internal/service"
 )
 
-// Auth creates middleware that validates JWT tokens
+// Auth creates middleware that validates JWT tokens and checks blacklist
 func Auth(authService *service.AuthService) gin.HandlerFunc {
 	jwtManager := auth.NewJWTManager(
 		"dev-secret-key-change-in-production",
@@ -34,6 +34,13 @@ func Auth(authService *service.AuthService) gin.HandlerFunc {
 		}
 
 		token := parts[1]
+
+		// Check if token is blacklisted
+		if authService.IsTokenBlacklisted(c.Request.Context(), token) {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Token has been revoked"})
+			c.Abort()
+			return
+		}
 
 		// Validate token
 		claims, err := jwtManager.ValidateAccessToken(token)

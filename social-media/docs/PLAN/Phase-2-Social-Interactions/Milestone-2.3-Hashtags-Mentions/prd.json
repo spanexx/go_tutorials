@@ -29,7 +29,7 @@
         "Case-insensitive hashtag matching",
         "Hashtag service to track usage"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.3.2",
@@ -45,7 +45,7 @@
         "Trending indicator",
         "Empty state when no posts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.3.3",
@@ -59,7 +59,7 @@
         "Support for usernames with dots and underscores",
         "Profile card on hover (reuse existing)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.3.4",
@@ -74,7 +74,7 @@
         "Update periodically (mock for now)",
         "View all link to full list"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.3.5",
@@ -89,7 +89,7 @@
         "Keyboard navigation (up/down, enter)",
         "Maximum 5 suggestions shown"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

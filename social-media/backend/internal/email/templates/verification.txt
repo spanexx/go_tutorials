@@ -1,0 +1,20 @@
+Verify Your Email - SocialHub
+==============================
+
+Hi {{.Name}},
+
+Thanks for joining SocialHub! To get started, please verify your email address by clicking the link below.
+
+Verify your email:
+{{.VerifyLink}}
+
+⏰ This link expires in {{.ExpiryHours}} hours.
+
+Why verify?
+Verifying your email helps us keep your account secure and ensures you don't miss important notifications from SocialHub.
+
+If you didn't create a SocialHub account, you can safely ignore this email.
+
+---
+© {{.Year}} SocialHub. All rights reserved.
+Need help? Contact us at {{.SupportEmail}}

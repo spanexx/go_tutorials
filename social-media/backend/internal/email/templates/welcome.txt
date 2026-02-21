@@ -1,0 +1,24 @@
+Welcome to SocialHub!
+=====================
+
+Hi {{.Name}},
+
+Welcome to SocialHub! We're excited to have you on board. You've just taken the first step towards connecting with your community in a whole new way.
+
+Here's what you can do on SocialHub:
+
+✓ Share your thoughts with posts
+✓ Follow friends and stay updated
+✓ Discover trending topics
+✓ Save posts to bookmarks
+✓ Track your engagement analytics
+
+Get started by completing your profile and exploring what SocialHub has to offer!
+
+Visit your feed: https://socialhub.example.com/feed
+
+Need help? Feel free to reach out to our support team at {{.SupportEmail}}
+
+---
+© {{.Year}} SocialHub. All rights reserved.
+You're receiving this email because you created an account on SocialHub.

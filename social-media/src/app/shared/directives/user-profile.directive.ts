@@ -1,9 +1,9 @@
-import { 
-  Directive, 
-  ElementRef, 
-  Input, 
-  OnDestroy, 
-  OnInit, 
+import {
+  Directive,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
   Renderer2,
   ComponentRef,
   ViewContainerRef,
@@ -30,7 +30,7 @@ export class UserProfileDirective implements OnInit, OnDestroy {
     private renderer: Renderer2,
     private viewContainerRef: ViewContainerRef,
     private componentFactoryResolver: ComponentFactoryResolver
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.addEventListeners();
@@ -39,9 +39,7 @@ export class UserProfileDirective implements OnInit, OnDestroy {
 
   private styleElement(): void {
     this.renderer.setStyle(this.elementRef.nativeElement, 'cursor', 'pointer');
-    this.renderer.setStyle(this.elementRef.nativeElement, 'color', 'hsl(var(--accent))');
     this.renderer.setStyle(this.elementRef.nativeElement, 'text-decoration', 'none');
-    this.renderer.setStyle(this.elementRef.nativeElement, 'font-weight', '500');
     this.renderer.setStyle(this.elementRef.nativeElement, 'position', 'relative');
   }
 
@@ -112,7 +110,7 @@ export class UserProfileDirective implements OnInit, OnDestroy {
     clearTimeout(this.showTimeout);
     clearTimeout(this.hideTimeout);
     this.cleanupListeners.forEach(cleanup => cleanup());
-    
+
     if (this.profileCardRef) {
       this.profileCardRef.destroy();
       this.profileCardRef = null;

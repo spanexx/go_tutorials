@@ -25,63 +25,47 @@
     }
   }
 
-  .new-posts-banner {
+  .new-posts-chip-wrapper {
     position: sticky;
-    top: 60px;
+    top: 1.25rem;
     z-index: 100;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding: 0.75rem 1.5rem;
-    background: hsl(var(--accent));
-    color: hsl(var(--accent-foreground));
-    box-shadow: 0 4px 12px hsl(var(--shadow) / 0.15);
-    animation: slideDown 0.3s ease;
+    justify-content: center;
+    width: 100%;
+    pointer-events: none;
+    margin-bottom: 2rem;
 
-    .new-posts-btn {
+    .new-posts-chip {
+      pointer-events: auto;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      border: none;
-      color: inherit;
-      font-size: 0.9rem;
-      font-weight: 600;
+      gap: 0.625rem;
+      padding: 0.5rem 1.25rem;
+      background: hsl(var(--primary));
+      color: hsl(var(--primary-foreground));
+      border: 1px solid hsl(var(--primary-foreground) / 0.1);
+      border-radius: 9999px;
+      font-size: 0.875rem;
+      font-weight: 700;
       cursor: pointer;
-      transition: opacity 0.15s ease;
+      box-shadow: 0 4px 12px -2px hsl(var(--foreground) / 0.2);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: chipPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
       &:hover {
-        opacity: 0.9;
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 20px -4px hsl(var(--foreground) / 0.3);
       }
 
-      .arrow-icon {
-        width: 18px;
-        height: 18px;
-        animation: bounce 1s ease infinite;
-      }
-    }
-
-    .dismiss-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      border: 1px solid hsl(var(--accent-foreground) / 0.3);
-      background: transparent;
-      color: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.15s ease;
-
-      &:hover {
-        background: hsl(var(--accent-foreground) / 0.2);
+      &:active {
+        transform: translateY(0) scale(0.98);
       }
 
-      lucide-angular {
+      .chip-icon {
         width: 16px;
         height: 16px;
+        stroke-width: 3;
+        animation: bounceSmall 1s ease infinite;
       }
     }
   }
@@ -90,9 +74,9 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0.5rem 1rem;
-    background: hsl(var(--card));
-    border-bottom: 1px solid hsl(var(--border));
+    padding: 0.75rem 1.25rem;
+    background: transparent;
+    border-bottom: 1px solid hsl(var(--border) / 0.4);
     font-size: 0.8rem;
 
     .last-refreshed {
@@ -159,11 +143,36 @@
   }
 }
 
+@keyframes chipPopIn {
+  0% {
+    transform: translateY(-20px) scale(0.8);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes bounceSmall {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-2px);
+  }
+}
+
 @keyframes slideDown {
   from {
     transform: translateY(-100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -173,14 +182,5 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes bounce {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-3px);
   }
 }

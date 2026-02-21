@@ -40,9 +40,9 @@ export interface SearchHashtag {
 })
 export class SearchService extends BaseApiService {
   private searchQuerySignal = signal<string>('');
-  private searchResultsSignal = signal<SearchResult>({ 
-    posts: [], 
-    users: [], 
+  private searchResultsSignal = signal<SearchResult>({
+    posts: [],
+    users: [],
     hashtags: [],
     query: '',
     total: 0,
@@ -53,29 +53,29 @@ export class SearchService extends BaseApiService {
 
   // Fallback data for when API is unavailable
   private readonly fallbackUsers: SearchUser[] = [
-    { 
-      id: '1', 
-      username: 'sarahjohnson', 
-      display_name: 'Sarah Johnson', 
-      avatar_url: 'https://i.pravatar.cc/150?img=5', 
-      bio: 'Frontend Developer | UI/UX Enthusiast', 
-      followers: 12500 
+    {
+      id: '1',
+      username: 'sarahjohnson',
+      display_name: 'Sarah Johnson',
+      avatar_url: 'https://i.pravatar.cc/150?img=5',
+      bio: 'Frontend Developer | UI/UX Enthusiast',
+      followers: 12500
     },
-    { 
-      id: '2', 
-      username: 'alexchen', 
-      display_name: 'Alex Chen', 
-      avatar_url: 'https://i.pravatar.cc/150?img=3', 
-      bio: 'Full Stack Developer | Open Source Contributor', 
-      followers: 8900 
+    {
+      id: '2',
+      username: 'alexchen',
+      display_name: 'Alex Chen',
+      avatar_url: 'https://i.pravatar.cc/150?img=3',
+      bio: 'Full Stack Developer | Open Source Contributor',
+      followers: 8900
     },
-    { 
-      id: '3', 
-      username: 'marcuswilliams', 
-      display_name: 'Marcus Williams', 
-      avatar_url: 'https://i.pravatar.cc/150?img=12', 
-      bio: 'Tech Writer | TypeScript Advocate', 
-      followers: 15300 
+    {
+      id: '3',
+      username: 'marcuswilliams',
+      display_name: 'Marcus Williams',
+      avatar_url: 'https://i.pravatar.cc/150?img=12',
+      bio: 'Tech Writer | TypeScript Advocate',
+      followers: 15300
     }
   ];
 
@@ -129,7 +129,7 @@ export class SearchService extends BaseApiService {
       next: (results) => {
         // Merge with local post search for comprehensive results
         const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
-        
+
         this.searchResultsSignal.set({
           ...results,
           posts: [...localPosts.slice(0, 5), ...(results.posts || [])].slice(0, limit)
@@ -142,11 +142,11 @@ export class SearchService extends BaseApiService {
         const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
         this.searchResultsSignal.set({
           posts: localPosts.slice(0, limit),
-          users: this.fallbackUsers.filter(u => 
+          users: this.fallbackUsers.filter(u =>
             u.display_name.toLowerCase().includes(query.toLowerCase()) ||
             u.username.toLowerCase().includes(query.toLowerCase())
           ).slice(0, limit),
-          hashtags: this.fallbackHashtags.filter(h => 
+          hashtags: this.fallbackHashtags.filter(h =>
             h.tag.toLowerCase().includes(query.toLowerCase())
           ).slice(0, limit),
           query: query,
@@ -174,33 +174,12 @@ export class SearchService extends BaseApiService {
       if (contentMatch || authorNameMatch || authorUsernameMatch) {
         results.push(post);
       }
-
-      // Search in replies
-      if (post.repliesList) {
-        const matchingReplies = this.searchPostsInReplies(post.repliesList, query);
-        if (matchingReplies.length > 0) {
-          if (!results.find(p => p.id === post.id)) {
-            results.push(post);
-          }
-        }
-      }
     }
 
     return results;
   }
 
-  private searchPostsInReplies(posts: Post[], query: string): Post[] {
-    const results: Post[] = [];
-    for (const post of posts) {
-      if (post.content.toLowerCase().includes(query)) {
-        results.push(post);
-      }
-      if (post.repliesList) {
-        results.push(...this.searchPostsInReplies(post.repliesList, query));
-      }
-    }
-    return results;
-  }
+
 
   /**
    * Get trending hashtags from backend
@@ -222,9 +201,9 @@ export class SearchService extends BaseApiService {
 
   clearSearch(): void {
     this.searchQuerySignal.set('');
-    this.searchResultsSignal.set({ 
-      posts: [], 
-      users: [], 
+    this.searchResultsSignal.set({
+      posts: [],
+      users: [],
       hashtags: [],
       query: '',
       total: 0,

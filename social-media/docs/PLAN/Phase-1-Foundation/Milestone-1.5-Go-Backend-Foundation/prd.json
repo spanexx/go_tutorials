@@ -171,7 +171,7 @@
         "Test coverage >80%",
         "make test runs all tests"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "1.5.11",
@@ -201,7 +201,7 @@
         "CORS configured in Go backend for Angular",
         "Login/Register flows tested end-to-end"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

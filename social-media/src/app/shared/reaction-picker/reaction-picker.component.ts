@@ -1,6 +1,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactionService, ReactionType } from '../../shared/services/reaction.service';
+import { ReactionType } from '../models/reaction.model';
+import { ReactionService } from '../services/reaction.service';
 
 @Component({
   selector: 'app-reaction-picker',
@@ -16,12 +17,12 @@ import { ReactionService, ReactionType } from '../../shared/services/reaction.se
       @for (reaction of reactions; track reaction) {
         <button
           class="reaction-btn"
-          [style.--reaction-color]="reactionService.getReactionColor(reaction)"
+          [style.--reaction-color]="reactionService.getReactionIcon(reaction)"
           [attr.title]="reactionService.getReactionLabel(reaction)"
           (mouseenter)="onHover(reaction)"
           (click)="onSelect(reaction)"
         >
-          <span class="reaction-emoji">{{ reactionService.getReactionEmoji(reaction) }}</span>
+          <span class="reaction-emoji">{{ reactionService.getReactionIcon(reaction) }}</span>
         </button>
       }
     </div>
@@ -34,7 +35,7 @@ export class ReactionPickerComponent {
   @Output() reactionSelected = new EventEmitter<ReactionType>();
   @Output() pickerClosed = new EventEmitter<void>();
 
-  reactions: ReactionType[] = ['like', 'love', 'laugh', 'wow', 'sad', 'angry'];
+  reactions: ReactionType[] = [ReactionType.Like, ReactionType.Love, ReactionType.Laugh, ReactionType.Wow, ReactionType.Sad, ReactionType.Angry];
   hoverReaction: ReactionType | null = null;
 
   constructor(public reactionService: ReactionService) {}
