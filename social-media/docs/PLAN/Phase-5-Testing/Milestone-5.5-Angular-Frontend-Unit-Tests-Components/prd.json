@@ -1,0 +1,214 @@
+{
+  "milestone": "5.5",
+  "title": "Angular Frontend Unit Tests - Components",
+  "problem": "Angular components require unit testing to ensure proper rendering, event handling, form validation, and user interactions. Component tests verify the UI layer works correctly with various input states and user actions.",
+  "success_metrics": [
+    "Critical components have >= 70% test coverage",
+    "Component event handling tested",
+    "Form validation tested",
+    "Template rendering verified",
+    "Component interactions tested"
+  ],
+  "non_goals": [
+    "Service logic testing (covered in Milestone 5.4)",
+    "E2E user flows (covered in Milestone 5.9-5.10)",
+    "Visual regression testing (future phase)"
+  ],
+  "items": [
+    {
+      "id": "5.5.1",
+      "title": "AppComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for root AppComponent.",
+      "acceptance_criteria": [
+        "Test component creation",
+        "Test layout renders router outlet",
+        "Test sidebar/header visibility based on auth",
+        "Test toast container inclusion",
+        "Test dark mode initialization",
+        "Mock AuthService for state",
+        "Mock Router for navigation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.2",
+      "title": "LoginComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for login page component.",
+      "acceptance_criteria": [
+        "Test form renders email/password fields",
+        "Test email validation (required, format)",
+        "Test password validation (required, min length)",
+        "Test submit button disabled when invalid",
+        "Test login() called on submit",
+        "Test loading state display",
+        "Test error message display",
+        "Test redirect on success",
+        "Mock AuthService and Router"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.3",
+      "title": "RegisterComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for registration page component.",
+      "acceptance_criteria": [
+        "Test form renders all fields",
+        "Test name validation (required)",
+        "Test email validation",
+        "Test password strength indicator",
+        "Test password confirmation matching",
+        "Test terms checkbox required",
+        "Test register() called on submit",
+        "Test error for duplicate email",
+        "Mock AuthService and Router"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.4",
+      "title": "FeedComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for feed page with posts.",
+      "acceptance_criteria": [
+        "Test feed type tabs render",
+        "Test post list renders",
+        "Test loading skeleton display",
+        "Test empty state display",
+        "Test load more on scroll",
+        "Test refresh functionality",
+        "Test feed type switching",
+        "Test post card child components",
+        "Mock FeedService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.5",
+      "title": "PostCardComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for individual post card component.",
+      "acceptance_criteria": [
+        "Test post content renders",
+        "Test user avatar/name display",
+        "Test timestamp formatting",
+        "Test like button click",
+        "Test comment button click",
+        "Test share button click",
+        "Test bookmark button click",
+        "Test menu dropdown",
+        "Test image gallery display",
+        "Test reaction counts",
+        "Mock ReactionService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.6",
+      "title": "CreatePostComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for post creation component.",
+      "acceptance_criteria": [
+        "Test textarea renders",
+        "Test content validation (max length)",
+        "Test character counter",
+        "Test image upload preview",
+        "Test submit button state",
+        "Test createPost() called",
+        "Test success callback (clear form)",
+        "Test error handling",
+        "Mock PostService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.7",
+      "title": "CommentListComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for comment list with nested replies.",
+      "acceptance_criteria": [
+        "Test comment list renders",
+        "Test nested reply display",
+        "Test load more replies",
+        "Test reply form toggle",
+        "Test comment depth visualization",
+        "Test author avatar display",
+        "Test timestamp formatting",
+        "Mock CommentService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.8",
+      "title": "ProfileComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for user profile page.",
+      "acceptance_criteria": [
+        "Test profile info display",
+        "Test stats (posts, followers, following)",
+        "Test follow/unfollow button",
+        "Test own profile (edit mode)",
+        "Test other profile (view mode)",
+        "Test posts grid",
+        "Test tabs (posts, likes, media)",
+        "Test loading state",
+        "Mock UserService and FollowService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.9",
+      "title": "HeaderComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for application header.",
+      "acceptance_criteria": [
+        "Test logo renders",
+        "Test search bar display",
+        "Test navigation icons",
+        "Test user menu dropdown",
+        "Test notification badge",
+        "Test mobile menu toggle",
+        "Test dark mode toggle",
+        "Mock AuthService"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.5.10",
+      "title": "SidebarComponent Unit Tests",
+      "type": "test",
+      "description": "Unit tests for navigation sidebar.",
+      "acceptance_criteria": [
+        "Test navigation links render",
+        "Test active link highlighting",
+        "Test icons display",
+        "Test collapse/expand behavior",
+        "Test mobile drawer behavior",
+        "Test shortcut key hints",
+        "Test unread badge counts",
+        "Mock Router for active route"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/app.component.spec.ts",
+    "src/app/pages/auth/login/login.component.spec.ts",
+    "src/app/pages/auth/register/register.component.spec.ts",
+    "src/app/pages/feed/feed.component.spec.ts",
+    "src/app/components/post-card/post-card.component.spec.ts",
+    "src/app/shared/create-post/create-post.component.spec.ts",
+    "src/app/shared/comment-list/comment-list.component.spec.ts",
+    "src/app/pages/profile/profile.component.spec.ts",
+    "src/app/shared/header/header.component.spec.ts",
+    "src/app/shared/sidebar/sidebar.component.spec.ts"
+  ],
+  "affected_dependencies": [
+    "@angular/core/testing",
+    "@angular/common/http/testing",
+    "jasmine",
+    "karma"
+  ]
+}

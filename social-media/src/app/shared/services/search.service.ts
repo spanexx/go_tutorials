@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseApiService } from './base-api.service';
 import { PostService, Post } from './post.service';
+import { debugLog, debugWarn } from '../utils/debug-logger';
 
 export interface SearchUser {
   id: string;
@@ -51,6 +52,9 @@ export class SearchService extends BaseApiService {
   });
   private isSearchingSignal = signal<boolean>(false);
 
+  private trendingHashtagsSignal = signal<SearchHashtag[]>([]);
+  private suggestedUsersSignal = signal<SearchUser[]>([]);
+
   // Fallback data for when API is unavailable
   private readonly fallbackUsers: SearchUser[] = [
     {
@@ -97,6 +101,10 @@ export class SearchService extends BaseApiService {
     private postService: PostService
   ) {
     super(http);
+
+    // Warm caches (best-effort)
+    void this.refreshTrendingHashtags();
+    void this.refreshSuggestedUsers();
   }
 
   get searchQuery(): string {
@@ -124,9 +132,16 @@ export class SearchService extends BaseApiService {
     this.isSearchingSignal.set(true);
     this.searchQuerySignal.set(query.trim());
 
+    debugLog('SearchService', 'search() started', { query: query.trim(), limit, offset });
+
     // Call backend search API
     this.get<SearchResult>('/search', { q: query, limit, offset }).subscribe({
       next: (results) => {
+        debugLog('SearchService', 'search() api results received', {
+          users: results.users?.length ?? 0,
+          hashtags: results.hashtags?.length ?? 0,
+          posts: results.posts?.length ?? 0
+        });
         // Merge with local post search for comprehensive results
         const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
 
@@ -137,6 +152,7 @@ export class SearchService extends BaseApiService {
         this.isSearchingSignal.set(false);
       },
       error: (error) => {
+        debugWarn('SearchService', 'search() api failed, using fallback', error);
         console.warn('Search API unavailable, using fallback data');
         // Fallback to local search only
         const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
@@ -185,8 +201,10 @@ export class SearchService extends BaseApiService {
    * Get trending hashtags from backend
    */
   getTrendingHashtags(): SearchHashtag[] {
-    // In full implementation, fetch from API
-    // For now, return fallback data sorted by count
+    const cached = this.trendingHashtagsSignal();
+    if (cached.length > 0) {
+      return cached;
+    }
     return [...this.fallbackHashtags].sort((a, b) => b.count - a.count).slice(0, 5);
   }
 
@@ -194,9 +212,37 @@ export class SearchService extends BaseApiService {
    * Get suggested users from backend
    */
   getSuggestedUsers(limit: number = 5): SearchUser[] {
-    // In full implementation, fetch from API
-    // For now, return fallback data
+    const cached = this.suggestedUsersSignal();
+    if (cached.length > 0) {
+      return cached.slice(0, limit);
+    }
     return [...this.fallbackUsers].slice(0, limit);
+  }
+
+  async refreshTrendingHashtags(): Promise<void> {
+    try {
+      debugLog('SearchService', 'refreshTrendingHashtags() started');
+      const hashtags = await this.get<SearchHashtag[]>(`/hashtags/trending`).toPromise();
+      if (hashtags) {
+        debugLog('SearchService', 'refreshTrendingHashtags() success', { count: hashtags.length });
+        this.trendingHashtagsSignal.set(hashtags);
+      }
+    } catch (error) {
+      debugWarn('SearchService', 'refreshTrendingHashtags() failed', error);
+    }
+  }
+
+  async refreshSuggestedUsers(limit: number = 5): Promise<void> {
+    try {
+      debugLog('SearchService', 'refreshSuggestedUsers() started', { limit });
+      const users = await this.get<SearchUser[]>(`/users/suggested`, { limit }).toPromise();
+      if (users) {
+        debugLog('SearchService', 'refreshSuggestedUsers() success', { count: users.length });
+        this.suggestedUsersSignal.set(users);
+      }
+    } catch (error) {
+      debugWarn('SearchService', 'refreshSuggestedUsers() failed', error);
+    }
   }
 
   clearSearch(): void {

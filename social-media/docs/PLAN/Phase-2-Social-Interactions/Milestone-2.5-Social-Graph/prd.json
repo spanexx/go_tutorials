@@ -28,7 +28,7 @@
         "Follow counts per user",
         "Prevent self-following"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.5.2",
@@ -43,7 +43,7 @@
         "Prevents self-follow",
         "Works on profile pages and cards"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.5.3",
@@ -59,7 +59,7 @@
         "Empty state when no followers",
         "Back to profile link"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.5.4",
@@ -74,7 +74,7 @@
         "Empty state when not following anyone",
         "Back to profile link"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.5.5",
@@ -88,7 +88,7 @@
         "Real-time updates when following/unfollowing",
         "Format large numbers (1.2K, 1.5M)"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

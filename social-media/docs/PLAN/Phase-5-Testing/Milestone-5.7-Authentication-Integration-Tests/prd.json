@@ -1,0 +1,130 @@
+{
+  "milestone": "5.7",
+  "title": "Authentication Integration Tests",
+  "problem": "Authentication integration tests verify the complete authentication flow works end-to-end including JWT token generation, validation, refresh, and logout. These tests ensure the security layer is robust and handles edge cases properly.",
+  "success_metrics": [
+    "All auth endpoints tested with real database",
+    "JWT token lifecycle validated",
+    "Token refresh flow works correctly",
+    "Logout invalidates tokens properly",
+    "Security edge cases covered"
+  ],
+  "non_goals": [
+    "Password hashing implementation details",
+    "Rate limiting (separate milestone)",
+    "Social OAuth testing (future phase)"
+  ],
+  "items": [
+    {
+      "id": "5.7.1",
+      "title": "Registration Flow Integration Tests",
+      "type": "integration_test",
+      "description": "End-to-end registration flow testing.",
+      "acceptance_criteria": [
+        "Test successful registration creates user in DB",
+        "Test password is hashed in database",
+        "Test duplicate email rejection (409)",
+        "Test invalid email format rejection (400)",
+        "Test weak password rejection (400)",
+        "Test missing required fields rejection",
+        "Test response includes user data (no password)",
+        "Test automatic login on registration",
+        "Verify user record in database"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.7.2",
+      "title": "Login Flow Integration Tests",
+      "type": "integration_test",
+      "description": "End-to-end login flow with JWT tokens.",
+      "acceptance_criteria": [
+        "Test valid credentials return access + refresh tokens",
+        "Test invalid email returns 401",
+        "Test invalid password returns 401",
+        "Test non-existent user returns 401",
+        "Test access token is valid JWT",
+        "Test refresh token is valid JWT",
+        "Test token expiry times are correct",
+        "Test response includes user data",
+        "Verify tokens stored correctly"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.7.3",
+      "title": "Token Refresh Integration Tests",
+      "type": "integration_test",
+      "description": "JWT token refresh flow testing.",
+      "acceptance_criteria": [
+        "Test valid refresh token returns new access token",
+        "Test invalid refresh token rejection (401)",
+        "Test expired refresh token rejection (401)",
+        "Test refresh token rotation (new refresh token)",
+        "Test old refresh token invalidation",
+        "Test access token contains correct claims",
+        "Test refresh token blacklisting",
+        "Test sequence of multiple refreshes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.7.4",
+      "title": "Logout Integration Tests",
+      "type": "integration_test",
+      "description": "Logout flow and token invalidation.",
+      "acceptance_criteria": [
+        "Test logout invalidates access token",
+        "Test logout invalidates refresh token",
+        "Test access after logout returns 401",
+        "Test refresh after logout returns 401",
+        "Test token blacklist in database",
+        "Test concurrent logout scenarios",
+        "Verify tokens marked as revoked"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.7.5",
+      "title": "Protected Route Access Tests",
+      "type": "integration_test",
+      "description": "Verify protected routes require valid authentication.",
+      "acceptance_criteria": [
+        "Test protected route with valid token (200)",
+        "Test protected route without token (401)",
+        "Test protected route with expired token (401)",
+        "Test protected route with invalid token (401)",
+        "Test protected route with malformed token (401)",
+        "Test user ID extracted from token correctly",
+        "Test X-User-ID header injection"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.7.6",
+      "title": "Session Management Tests",
+      "type": "integration_test",
+      "description": "Multi-device and concurrent session handling.",
+      "acceptance_criteria": [
+        "Test multiple logins from different devices",
+        "Test independent token pairs per session",
+        "Test logout from one device doesn't affect others",
+        "Test device tracking in token claims",
+        "Test session listing (if implemented)",
+        "Test global logout (all sessions)"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/tests/integration/auth_test.go",
+    "backend/tests/integration/auth_refresh_test.go",
+    "backend/tests/integration/auth_logout_test.go",
+    "backend/tests/integration/auth_protected_test.go"
+  ],
+  "affected_dependencies": [
+    "testify/suite",
+    "golang-jwt/jwt/v5",
+    "testcontainers-go"
+  ]
+}

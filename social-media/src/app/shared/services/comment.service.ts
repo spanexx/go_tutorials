@@ -1,107 +1,50 @@
 // Code Map: comment.service.ts
-// - CommentService: Service for managing comments and replies
-// - Signals: commentState for reactive state management
+// - CommentService: Service for managing comments and replies via API
+// - Extends BaseApiService for HTTP calls
 // - Methods: getCommentsForPost, addComment, addReply, removeComment, getCommentCount
 // - Support for nested replies with parentId
 // CID: Phase-2 Milestone 2.2 - Comments & Replies System
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BaseApiService } from './base-api.service';
 import { Comment, CommentInput, CommentState, createEmptyCommentState, addReplyToTree, removeCommentFromTree } from '../models/comment.model';
 
 @Injectable({
   providedIn: 'root'
 })
-export class CommentService {
+export class CommentService extends BaseApiService {
   private commentState = signal<CommentState>(createEmptyCommentState());
 
-  constructor() {
-    // Initialize with mock data for development
-    this.initializeMockData();
-  }
-
-  private initializeMockData(): void {
-    // Mock data for development - will be replaced with API calls in Phase 2.6
-    const mockPosts = ['post-1', 'post-2', 'post-3'];
-    const updates: Partial<CommentState> = {
-      comments: {},
-      counts: {},
-      isLoading: {}
-    };
-
-    mockPosts.forEach(postId => {
-      updates.comments![postId] = this.generateMockComments(postId);
-      updates.counts![postId] = this.countAllComments(updates.comments![postId]);
-      updates.isLoading![postId] = false;
-    });
-
-    this.commentState.update(state => ({
-      ...state,
-      ...updates
-    }));
-  }
-
-  private generateMockComments(postId: string): Comment[] {
-    const numComments = Math.floor(Math.random() * 5);
-    const comments: Comment[] = [];
-
-    for (let i = 0; i < numComments; i++) {
-      const comment: Comment = {
-        id: `comment-${postId}-${i}`,
-        postId,
-        author: {
-          id: `user-${i}`,
-          name: `User ${i + 1}`,
-          username: `user${i + 1}`,
-          avatar: `https://i.pravatar.cc/150?img=${i}`
-        },
-        content: `This is a mock comment ${i + 1} on post ${postId}. Great post!`,
-        parentId: null,
-        createdAt: new Date(Date.now() - Math.random() * 86400000 * 7),
-        likes: Math.floor(Math.random() * 10),
-        replies: this.generateMockReplies(postId, i, 2)
-      };
-      comments.push(comment);
-    }
-
-    return comments;
-  }
-
-  private generateMockReplies(postId: string, parentIndex: number, count: number): Comment[] {
-    const replies: Comment[] = [];
-    for (let i = 0; i < count; i++) {
-      replies.push({
-        id: `reply-${postId}-${parentIndex}-${i}`,
-        postId,
-        author: {
-          id: `user-reply-${i}`,
-          name: `Reply User ${i + 1}`,
-          username: `replyuser${i + 1}`,
-          avatar: `https://i.pravatar.cc/150?img=${i + 10}`
-        },
-        content: `This is a mock reply ${i + 1} to comment ${parentIndex}.`,
-        parentId: `comment-${postId}-${parentIndex}`,
-        createdAt: new Date(Date.now() - Math.random() * 86400000 * 3),
-        likes: Math.floor(Math.random() * 5),
-        replies: []
-      });
-    }
-    return replies;
-  }
-
-  private countAllComments(comments: Comment[]): number {
-    let count = comments.length;
-    for (const comment of comments) {
-      if (comment.replies && comment.replies.length > 0) {
-        count += this.countAllComments(comment.replies);
-      }
-    }
-    return count;
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   /**
-   * Get all comments for a post
+   * Fetch comments for a post from API
    */
-  getCommentsForPost(postId: string): Comment[] {
-    return this.commentState().comments[postId] || [];
+  async loadCommentsForPost(postId: string): Promise<void> {
+    this.commentState.update(state => ({
+      ...state,
+      isLoading: { ...state.isLoading, [postId]: true }
+    }));
+
+    try {
+      const comments = await this.get<Comment[]>(`/posts/${postId}/comments`).toPromise() || [];
+      const count = this.countAllComments(comments);
+      
+      this.commentState.update(state => ({
+        ...state,
+        comments: { ...state.comments, [postId]: comments },
+        counts: { ...state.counts, [postId]: count },
+        isLoading: { ...state.isLoading, [postId]: false }
+      }));
+    } catch (error) {
+      console.error(`Failed to load comments for post ${postId}:`, error);
+      this.commentState.update(state => ({
+        ...state,
+        isLoading: { ...state.isLoading, [postId]: false }
+      }));
+    }
   }
 
   /**
@@ -119,57 +62,42 @@ export class CommentService {
   }
 
   /**
-   * Add a new comment to a post
+   * Add a new comment to a post via API
    */
-  addComment(input: CommentInput): Promise<Comment> {
-    return new Promise((resolve, reject) => {
-      const newComment: Comment = {
-        id: `comment-${Date.now()}`,
-        postId: input.postId,
-        author: {
-          id: 'current-user',
-          name: 'Current User',
-          username: 'currentuser',
-          avatar: 'https://i.pravatar.cc/150?img=0'
-        },
-        content: input.content,
-        parentId: input.parentId || null,
-        createdAt: new Date(),
-        likes: 0,
-        replies: []
-      };
+  async addComment(input: CommentInput): Promise<Comment> {
+    const newComment = await this.post<Comment>(`/posts/${input.postId}/comments`, {
+      content: input.content,
+      parent_id: input.parentId || null
+    }).toPromise();
 
-      // Optimistic update
-      this.commentState.update(state => {
-        const comments = state.comments[input.postId] || [];
-        const counts = { ...state.counts };
+    if (!newComment) {
+      throw new Error('Failed to create comment');
+    }
 
-        if (input.parentId) {
-          // Add as reply to existing comment
-          const updatedComments = addReplyToTree(comments, input.parentId!, newComment);
-          counts[input.postId] = this.countAllComments(updatedComments);
-          return {
-            ...state,
-            comments: { ...state.comments, [input.postId]: updatedComments },
-            counts
-          };
-        } else {
-          // Add as top-level comment
-          counts[input.postId] = (counts[input.postId] || 0) + 1;
-          return {
-            ...state,
-            comments: { ...state.comments, [input.postId]: [...comments, newComment] },
-            counts
-          };
-        }
-      });
+    // Optimistic update
+    this.commentState.update(state => {
+      const comments = state.comments[input.postId] || [];
+      const counts = { ...state.counts };
 
-      // Simulate API call (replace with actual API in Phase 2.6)
-      setTimeout(() => {
-        console.log(`Comment added to post ${input.postId}`);
-        resolve(newComment);
-      }, 300);
+      if (input.parentId) {
+        const updatedComments = addReplyToTree(comments, input.parentId!, newComment);
+        counts[input.postId] = this.countAllComments(updatedComments);
+        return {
+          ...state,
+          comments: { ...state.comments, [input.postId]: updatedComments },
+          counts
+        };
+      } else {
+        counts[input.postId] = (counts[input.postId] || 0) + 1;
+        return {
+          ...state,
+          comments: { ...state.comments, [input.postId]: [...comments, newComment] },
+          counts
+        };
+      }
     });
+
+    return newComment;
   }
 
   /**
@@ -180,11 +108,23 @@ export class CommentService {
   }
 
   /**
-   * Get replies for a specific comment
+   * Get all comments for a post (from state)
    */
-  getReplies(postId: string, parentId: string): Comment[] {
-    const comments = this.getCommentsForPost(postId);
-    return this.findCommentAndReplies(comments, parentId);
+  getCommentsForPost(postId: string): Comment[] {
+    return this.commentState().comments[postId] || [];
+  }
+
+  /**
+   * Count all comments including nested replies
+   */
+  private countAllComments(comments: Comment[]): number {
+    let count = comments.length;
+    for (const comment of comments) {
+      if (comment.replies && comment.replies.length > 0) {
+        count += this.countAllComments(comment.replies);
+      }
+    }
+    return count;
   }
 
   private findCommentAndReplies(comments: Comment[], commentId: string): Comment[] {
@@ -203,31 +143,25 @@ export class CommentService {
   }
 
   /**
-   * Remove a comment (soft delete - Phase 3 feature)
+   * Remove a comment via API
    */
-  removeComment(postId: string, commentId: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // Optimistic update
-      this.commentState.update(state => {
-        const comments = state.comments[postId] || [];
-        const updatedComments = removeCommentFromTree(comments, commentId);
-        const counts = {
-          ...state.counts,
-          [postId]: this.countAllComments(updatedComments)
-        };
+  async removeComment(postId: string, commentId: string): Promise<void> {
+    await this.delete<void>(`/posts/${postId}/comments/${commentId}`).toPromise();
 
-        return {
-          ...state,
-          comments: { ...state.comments, [postId]: updatedComments },
-          counts
-        };
-      });
+    // Optimistic update
+    this.commentState.update(state => {
+      const comments = state.comments[postId] || [];
+      const updatedComments = removeCommentFromTree(comments, commentId);
+      const counts = {
+        ...state.counts,
+        [postId]: this.countAllComments(updatedComments)
+      };
 
-      // Simulate API call
-      setTimeout(() => {
-        console.log(`Comment ${commentId} removed from post ${postId}`);
-        resolve();
-      }, 300);
+      return {
+        ...state,
+        comments: { ...state.comments, [postId]: updatedComments },
+        counts
+      };
     });
   }
 
@@ -259,21 +193,19 @@ export class CommentService {
   }
 
   /**
-   * Like a comment (placeholder for Phase 3)
+   * Like a comment via API
    */
-  likeComment(postId: string, commentId: string): Promise<void> {
-    return new Promise((resolve) => {
-      // Optimistic update
-      this.commentState.update(state => {
-        const comments = state.comments[postId] || [];
-        const updatedComments = this.toggleLikeInTree(comments, commentId);
-        return {
-          ...state,
-          comments: { ...state.comments, [postId]: updatedComments }
-        };
-      });
+  async likeComment(postId: string, commentId: string): Promise<void> {
+    await this.post<void>(`/posts/${postId}/comments/${commentId}/like`, {}).toPromise();
 
-      setTimeout(() => resolve(), 300);
+    // Optimistic update
+    this.commentState.update(state => {
+      const comments = state.comments[postId] || [];
+      const updatedComments = this.toggleLikeInTree(comments, commentId);
+      return {
+        ...state,
+        comments: { ...state.comments, [postId]: updatedComments }
+      };
     });
   }
 

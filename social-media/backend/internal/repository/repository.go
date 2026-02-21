@@ -52,6 +52,10 @@ func (r *UserRepository) Close() error {
 	return r.db.Close()
 }
 
+func (r *UserRepository) DB() *sql.DB {
+	return r.db
+}
+
 // CreateUser creates a new user in the database
 func (r *UserRepository) CreateUser(ctx context.Context, user *User) error {
 	query := `

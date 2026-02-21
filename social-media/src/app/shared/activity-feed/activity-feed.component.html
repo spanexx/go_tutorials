@@ -14,45 +14,82 @@
     }
   </div>
 
-  <div class="activity-list">
-    @for (activity of activities; track activity.id) {
-      <div 
-        class="activity-item" 
-        [class.unread]="!activity.isRead"
-        [class.read]="activity.isRead"
+  <!-- Filter Tabs -->
+  <div class="activity-filters">
+    <lucide-angular [img]="filterIcon" class="filter-icon"></lucide-angular>
+    @for (option of filterOptions; track option.value) {
+      <button
+        class="filter-btn"
+        [class.active]="currentFilter === option.value"
+        (click)="setFilter(option.value)"
+      >
+        {{ option.label }}
+      </button>
+    }
+  </div>
+
+  <div class="activity-list" (scroll)="onScroll()">
+    @for (activity of displayedActivities; track activity.id) {
+      <a
+        [routerLink]="getActivityRoute(activity)"
+        class="activity-item"
+        [class.unread]="!activity.read"
+        [class.read]="activity.read"
+        (click)="navigateToActivity(activity)"
       >
         <div class="activity-icon-wrapper" [ngClass]="getColorClass(activity.type)">
           <lucide-angular [img]="getIcon(activity.type)"></lucide-angular>
         </div>
 
         <div class="activity-content">
-          <a [routerLink]="['/profile', activity.user.username]" class="activity-user">
-            <img [src]="activity.user.avatar" [alt]="activity.user.name" class="user-avatar" />
+          <a [routerLink]="['/profile', activity.actor.username]" class="activity-user">
+            <img [src]="activity.actor.avatar" [alt]="activity.actor.name" class="user-avatar" />
           </a>
 
           <div class="activity-details">
             <p class="activity-text" [innerHTML]="getActionText(activity)"></p>
-            
-            @if (activity.target?.content) {
-              <p class="activity-preview">{{ activity.target?.content }}</p>
+
+            @if (activity.target.content) {
+              <p class="activity-preview">{{ activity.target.content }}</p>
             }
 
             <p class="activity-time">{{ getTimeAgo(activity.timestamp) }}</p>
           </div>
         </div>
 
-        @if (!activity.isRead) {
+        @if (!activity.read) {
           <button class="mark-read-btn" (click)="markAsRead(activity.id)" title="Mark as read">
             <lucide-angular [img]="checkIcon" class="check-icon"></lucide-angular>
           </button>
         }
-      </div>
+      </a>
     }
 
-    @if (activities.length === 0) {
+    @if (displayedActivities.length === 0 && activities.length === 0) {
       <div class="empty-activity">
         <lucide-angular [img]="activityIcon" class="empty-icon"></lucide-angular>
         <p>No recent activity</p>
+      </div>
+    }
+
+    @if (displayedActivities.length === 0 && activities.length > 0) {
+      <div class="empty-activity">
+        <lucide-angular [img]="filterIcon" class="empty-icon"></lucide-angular>
+        <p>No activity matching this filter</p>
+      </div>
+    }
+
+    <!-- Load More / Infinite Scroll Indicator -->
+    @if (canLoadMore) {
+      <div class="load-more-indicator">
+        <div class="spinner"></div>
+        <p>Loading more activity...</p>
+      </div>
+    }
+
+    @if (!canLoadMore && displayedActivities.length > 0) {
+      <div class="end-of-feed">
+        <p>You're all caught up!</p>
       </div>
     }
   </div>

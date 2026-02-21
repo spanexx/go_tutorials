@@ -38,7 +38,7 @@ export class BookmarksComponent {
   get savedPosts(): Post[] {
     const postIds = this.collectionService.getPostsInCollection(this.selectedCollectionId);
     return postIds
-      .map(id => this.postService.getPostById(id))
+      .map(id => this.postService.getPostById(String(id)))
       .filter((post): post is Post => !!post);
   }
 

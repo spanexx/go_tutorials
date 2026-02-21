@@ -1,11 +1,14 @@
 // Code Map: hashtag.service.ts
-// - HashtagService: Service for tracking and managing hashtags
+// - HashtagService: Service for tracking and managing hashtags via API
+// - Extends BaseApiService for HTTP calls
 // - Signal-based state for reactive updates
 // - Methods: getTrending, getPostsByHashtag, searchHashtags, getHashtagInfo
-// - Mock data for development (to be replaced with API in Phase 2.6)
 // CID: Phase-2 Milestone 2.3 - Hashtags & Mentions
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BaseApiService } from './base-api.service';
 import { Post } from './post.service';
+import { debugLog, debugWarn } from '../utils/debug-logger';
 
 export interface Hashtag {
   tag: string;
@@ -30,7 +33,7 @@ export interface HashtagState {
 @Injectable({
   providedIn: 'root'
 })
-export class HashtagService {
+export class HashtagService extends BaseApiService {
   private hashtagState = signal<HashtagState>({
     hashtags: {},
     trending: [],
@@ -46,45 +49,23 @@ export class HashtagService {
   // Check if loading
   isLoading = computed(() => this.hashtagState().isLoading);
 
-  constructor() {
-    // Initialize with mock trending hashtags for development
-    this.initializeMockData();
-  }
-
-  private initializeMockData(): void {
-    const mockHashtags: Record<string, Hashtag> = {
-      'angular': { tag: 'angular', count: 1250, trending: true },
-      'typescript': { tag: 'typescript', count: 980, trending: true },
-      'webdev': { tag: 'webdev', count: 856, trending: true },
-      'javascript': { tag: 'javascript', count: 742, trending: false },
-      'coding': { tag: 'coding', count: 623, trending: false },
-      'programming': { tag: 'programming', count: 589, trending: false },
-      'developer': { tag: 'developer', count: 445, trending: false },
-      'tech': { tag: 'tech', count: 398, trending: false },
-      'opensource': { tag: 'opensource', count: 312, trending: false },
-      '100DaysOfCode': { tag: '100DaysOfCode', count: 287, trending: true }
-    };
-
-    this.hashtagState.set({
-      hashtags: mockHashtags,
-      trending: Object.values(mockHashtags)
-        .filter(h => h.trending)
-        .map(h => h.tag)
-        .slice(0, 5),
-      isLoading: false
-    });
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   /**
-   * Get posts by hashtag (placeholder for API integration)
+   * Get posts by hashtag from API
    */
-  getPostsByHashtag(hashtag: string): Promise<string[]> {
-    return new Promise((resolve) => {
-      // Mock implementation - return empty array
-      // In Phase 2.6, this will call the backend API
-      console.log(`Getting posts for hashtag: #${hashtag}`);
-      resolve([]);
-    });
+  async getPostsByHashtag(hashtag: string): Promise<string[]> {
+    try {
+      debugLog('HashtagService', 'getPostsByHashtag() started', { hashtag });
+      const response = await this.get<{ posts: string[] }>(`/hashtags/${hashtag}/posts`).toPromise();
+      return response?.posts || [];
+    } catch (error) {
+      debugWarn('HashtagService', 'getPostsByHashtag() failed', error);
+      console.error(`Failed to get posts for hashtag #${hashtag}:`, error);
+      return [];
+    }
   }
 
   /**
@@ -199,35 +180,68 @@ export class HashtagService {
   }
 
   /**
-   * Refresh trending hashtags (placeholder for API)
+   * Refresh trending hashtags from API
    */
-  refreshTrending(): Promise<void> {
-    return new Promise((resolve) => {
-      // Mock implementation
-      console.log('Refreshing trending hashtags...');
-      resolve();
-    });
+  async refreshTrending(): Promise<void> {
+    this.hashtagState.update(state => ({ ...state, isLoading: true }));
+    
+    try {
+      const trending = await this.get<Hashtag[]>('/hashtags/trending').toPromise() || [];
+      const hashtagMap: Record<string, Hashtag> = {};
+      trending.forEach(h => {
+        hashtagMap[h.tag.toLowerCase()] = h;
+      });
+      
+      this.hashtagState.set({
+        hashtags: hashtagMap,
+        trending: trending.filter(h => h.trending).map(h => h.tag).slice(0, 5),
+        isLoading: false
+      });
+    } catch (error) {
+      console.error('Failed to refresh trending hashtags:', error);
+      this.hashtagState.update(state => ({ ...state, isLoading: false }));
+    }
   }
 
   /**
-   * Get hashtag info with posts (for hashtag page)
+   * Get hashtag info with posts from API
    */
-  getHashtagInfo(tag: string): HashtagInfo {
+  async getHashtagInfo(tag: string): Promise<HashtagInfo> {
     const normalizedTag = tag.toLowerCase().replace('#', '');
-    const stats = this.getHashtagStats(normalizedTag);
     
+    try {
+      const info = await this.get<HashtagInfo>(`/hashtags/${normalizedTag}`).toPromise();
+      if (info) {
+        return info;
+      }
+    } catch (error) {
+      console.error(`Failed to get hashtag info for #${tag}:`, error);
+    }
+    
+    // Fallback
+    const stats = this.getHashtagStats(normalizedTag);
     return {
       tag: normalizedTag,
       count: stats?.count || 0,
-      posts: [], // Mock - will be populated from API in Phase 2.6
+      posts: [],
       trending: stats?.trending || false
     };
   }
 
   /**
-   * Get trending hashtags
+   * Get trending hashtags from API
    */
-  getTrendingHashtags(limit: number = 5): HashtagInfo[] {
+  async getTrendingHashtags(limit: number = 5): Promise<HashtagInfo[]> {
+    try {
+      const trending = await this.get<HashtagInfo[]>(`/hashtags/trending`, { limit }).toPromise();
+      if (trending) {
+        return trending;
+      }
+    } catch (error) {
+      console.error('Failed to get trending hashtags:', error);
+    }
+    
+    // Fallback to local state
     const state = this.hashtagState();
     return state.trending
       .slice(0, limit)

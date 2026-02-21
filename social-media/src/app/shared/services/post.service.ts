@@ -1,155 +1,335 @@
+// Code Map: post.service.ts
+// - PostService: Service for post operations with real API integration
+// - Methods: getFeed, getPost, createPost, updatePost, deletePost
+// - Feed types: home, trending, latest
+// - Optimistic UI updates for reactions
+// - Error handling with toast notifications
+// CID: Phase-2 Milestone 2.6 - Posts Service API Integration
 import { Injectable, signal, computed } from '@angular/core';
-import { BookmarkCollectionService } from './bookmark-collection.service';
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Observable, catchError, tap, throwError } from 'rxjs';
+import { environment } from '../../../environments/environment';
+import { ToastService } from './toast.service';
+import { AuthService } from './auth.service';
 
 export interface User {
+  id?: string;
   name: string;
   username: string;
   avatar: string;
+  is_verified?: boolean;
 }
 
 export interface Post {
-  id: number;
+  id: string;
   author: User;
   content: string;
   timestamp: string;
+  created_at?: string;
   likes: number;
+  total_likes?: number;
   replies: number;
+  comments_count?: number;
   shares: number;
+  shares_count?: number;
   image?: string;
+  image_url?: string;
+  video_url?: string;
   isLiked?: boolean;
+  user_reaction?: string;
   isSaved?: boolean;
 }
+
+export interface FeedResponse {
+  posts: Post[];
+  total_count: number;
+  has_more: boolean;
+  page: number;
+  limit: number;
+}
+
+export type FeedType = 'home' | 'trending' | 'latest';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PostService {
-  private readonly initialPosts: Post[] = [
-    {
-      id: 1,
-      author: { name: 'Sarah Johnson', username: 'sarahjohnson', avatar: 'https://i.pravatar.cc/150?img=5' },
-      content: 'Just launched my new portfolio website! Check it out and let me know what you think 🚀 Thanks @alexchen for the design review! #WebDevelopment #Portfolio #Coding',
-      timestamp: '2h',
-      likes: 243,
-      replies: 45,
-      shares: 12,
-      image: 'https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=500&h=300&fit=crop',
-      isLiked: false,
-      isSaved: false
-    },
-    {
-      id: 2,
-      author: { name: 'Marcus Williams', username: 'marcuswilliams', avatar: 'https://i.pravatar.cc/150?img=12' },
-      content: 'Hot take: TypeScript makes you a better developer, even if you\'re working on small projects. The type safety catches bugs before they happen. What do you think @jakethompson? #TypeScript #JavaScript #WebDevelopment',
-      timestamp: '4h',
-      likes: 512,
-      replies: 87,
-      shares: 34,
-      isLiked: false,
-      isSaved: false
-    },
-    {
-      id: 3,
-      author: { name: 'Nina Patel', username: 'ninapatel', avatar: 'https://i.pravatar.cc/150?img=9' },
-      content: 'Just finished a 30-day coding challenge! Built 30 small projects in 30 days. Here\'s what I learned:\n\n1. Consistency > Intensity\n2. Small wins compound\n3. Community support is everything\n\nThank you all for the encouragement! Special thanks to @emmadavis and @michaelchen for the support 🙏 #Coding #WebDevelopment #Challenge',
-      timestamp: '6h',
-      likes: 891,
-      replies: 156,
-      shares: 203,
-      isLiked: false,
-      isSaved: false
-    }
-  ];
+  private readonly apiUrl = `${environment.apiUrl}/${environment.apiVersion}`;
 
-  private postsSignal = signal<Post[]>([...this.initialPosts]);
+  private postsSignal = signal<Post[]>([]);
+  private isLoadingSignal = signal<boolean>(false);
+  private hasMoreSignal = signal<boolean>(true);
+  private currentPageSignal = signal<number>(1);
 
   posts = this.postsSignal.asReadonly();
+  isLoading = this.isLoadingSignal.asReadonly();
+  hasMore = this.hasMoreSignal.asReadonly();
 
-  savedPosts = computed(() => this.postsSignal().filter(post => post.isSaved));
+  constructor(
+    private http: HttpClient,
+    private toastService: ToastService,
+    private authService: AuthService
+  ) {}
 
-  toggleLike(postId: number): void {
-    this.postsSignal.update(posts => {
-      const updatedPosts = [...posts];
-      const post = this.findPostById(updatedPosts, postId);
-      if (post) {
-        post.isLiked = !post.isLiked;
-        post.likes += post.isLiked ? 1 : -1;
-      }
-      return updatedPosts;
-    });
+  /**
+   * Get feed with pagination
+   */
+  getFeed(type: FeedType = 'home', page: number = 1, limit: number = 20): Observable<FeedResponse> {
+    this.isLoadingSignal.set(true);
+
+    const params = new HttpParams()
+      .set('type', type)
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<FeedResponse>(`${this.apiUrl}/feed`, { params }).pipe(
+      tap(response => {
+        if (page === 1) {
+          this.postsSignal.set(response.posts);
+        } else {
+          this.postsSignal.update(posts => [...posts, ...response.posts]);
+        }
+        this.hasMoreSignal.set(response.has_more);
+        this.currentPageSignal.set(page);
+        this.isLoadingSignal.set(false);
+      }),
+      catchError(error => {
+        this.isLoadingSignal.set(false);
+        this.toastService.error('Error', 'Failed to load feed');
+        console.error('Feed error:', error);
+        return throwError(() => error);
+      })
+    );
   }
 
-  toggleSave(postId: number, collectionId?: string): void {
-    const isCurrentlySaved = this.postsSignal().some(p => p.id === postId && p.isSaved);
-
-    this.postsSignal.update(posts => {
-      const updatedPosts = [...posts];
-      const post = this.findPostById(updatedPosts, postId);
-      if (post) {
-        post.isSaved = !post.isSaved;
-      }
-      return updatedPosts;
-    });
-
-    // Also update bookmark collections
-    if (!isCurrentlySaved) {
-      // Saving - add to collection
-      // In a real app, we'd inject BookmarkCollectionService here
-      // For now, the collection service handles this separately
-    } else {
-      // Unsaving - remove from all collections
-    }
+  /**
+   * Get single post by ID
+   */
+  getPost(postId: string): Observable<Post> {
+    return this.http.get<Post>(`${this.apiUrl}/posts/${postId}`).pipe(
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to load post');
+        return throwError(() => error);
+      })
+    );
   }
 
-  addPost(content: string, image?: string): void {
-    const newPost: Post = {
-      id: Date.now(),
-      author: {
-        name: 'Current User',
-        username: 'currentuser',
-        avatar: 'https://i.pravatar.cc/150?img=1'
-      },
+  /**
+   * Create new post
+   */
+  createPost(content: string, imageUrl?: string, videoUrl?: string): Observable<Post> {
+    const body = {
       content,
-      timestamp: 'now',
-      likes: 0,
-      replies: 0,
-      shares: 0,
-      image,
-      isLiked: false,
-      isSaved: false
+      image_url: imageUrl,
+      video_url: videoUrl
     };
 
-    this.postsSignal.update(posts => [newPost, ...posts]);
+    return this.http.post<Post>(`${this.apiUrl}/posts`, body).pipe(
+      tap(post => {
+        this.postsSignal.update(posts => [post, ...posts]);
+        this.toastService.success('Success', 'Post created successfully');
+      }),
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to create post');
+        return throwError(() => error);
+      })
+    );
   }
 
-  getPostById(postId: number): Post | undefined {
-    return this.findPostById(this.postsSignal(), postId);
+  /**
+   * Update existing post
+   */
+  updatePost(postId: string, content: string, imageUrl?: string, videoUrl?: string): Observable<Post> {
+    const body = {
+      content,
+      image_url: imageUrl,
+      video_url: videoUrl
+    };
+
+    return this.http.put<Post>(`${this.apiUrl}/posts/${postId}`, body).pipe(
+      tap(updatedPost => {
+        this.postsSignal.update(posts =>
+          posts.map(p => p.id === postId ? { ...p, ...updatedPost } : p)
+        );
+        this.toastService.success('Success', 'Post updated successfully');
+      }),
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to update post');
+        return throwError(() => error);
+      })
+    );
   }
 
-  private findPostById(posts: Post[], postId: number): Post | undefined {
-    for (const post of posts) {
-      if (post.id === postId) {
-        return post;
-      }
-    }
-    return undefined;
+  /**
+   * Delete post
+   */
+  deletePost(postId: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/posts/${postId}`).pipe(
+      tap(() => {
+        this.postsSignal.update(posts => posts.filter(p => p.id !== postId));
+        this.toastService.success('Success', 'Post deleted successfully');
+      }),
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to delete post');
+        return throwError(() => error);
+      })
+    );
   }
 
-  getSavedPosts(): Post[] {
-    return this.savedPosts();
+  /**
+   * Get posts by user
+   */
+  getPostsByUser(userId: string, page: number = 1, limit: number = 20): Observable<FeedResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<FeedResponse>(`${this.apiUrl}/users/${userId}/posts`, { params }).pipe(
+      tap(response => {
+        if (page === 1) {
+          this.postsSignal.set(response.posts);
+        } else {
+          this.postsSignal.update(posts => [...posts, ...response.posts]);
+        }
+        this.hasMoreSignal.set(response.has_more);
+      }),
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to load user posts');
+        return throwError(() => error);
+      })
+    );
   }
 
-  updateReplyCount(postId: number, count: number): void {
+  /**
+   * Get posts by hashtag
+   */
+  getPostsByHashtag(hashtag: string, page: number = 1, limit: number = 20): Observable<FeedResponse> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('limit', limit.toString());
+
+    return this.http.get<FeedResponse>(`${this.apiUrl}/hashtag/${hashtag}`, { params }).pipe(
+      tap(response => {
+        if (page === 1) {
+          this.postsSignal.set(response.posts);
+        } else {
+          this.postsSignal.update(posts => [...posts, ...response.posts]);
+        }
+        this.hasMoreSignal.set(response.has_more);
+      }),
+      catchError(error => {
+        this.toastService.error('Error', 'Failed to load hashtag posts');
+        return throwError(() => error);
+      })
+    );
+  }
+
+  /**
+   * Optimistic like update (for instant UI feedback)
+   */
+  toggleLikeOptimistic(postId: string): void {
     this.postsSignal.update(posts => {
-      const updateNested = (posts: Post[]): Post[] => {
-        return posts.map(post => {
-          if (post.id === postId) {
-            return { ...post, replies: count };
-          }
-          return post;
-        });
-      };
-      return updateNested(posts);
+      return posts.map(post => {
+        if (post.id === postId) {
+          const newIsLiked = !post.isLiked;
+          return {
+            ...post,
+            isLiked: newIsLiked,
+            likes: post.likes + (newIsLiked ? 1 : -1)
+          };
+        }
+        return post;
+      });
+    });
+  }
+
+  /**
+   * Revert optimistic update on error
+   */
+  revertLike(postId: string): void {
+    this.postsSignal.update(posts => {
+      return posts.map(post => {
+        if (post.id === postId) {
+          const newIsLiked = !post.isLiked;
+          return {
+            ...post,
+            isLiked: newIsLiked,
+            likes: post.likes + (newIsLiked ? 1 : -1)
+          };
+        }
+        return post;
+      });
+    });
+  }
+
+  /**
+   * Clear posts (for logout or refresh)
+   */
+  clear(): void {
+    this.postsSignal.set([]);
+    this.hasMoreSignal.set(true);
+    this.currentPageSignal.set(1);
+  }
+
+  /**
+   * Refresh feed
+   */
+  refresh(type: FeedType = 'home'): Observable<FeedResponse> {
+    this.currentPageSignal.set(1);
+    return this.getFeed(type, 1, 20);
+  }
+
+  // Legacy methods for backward compatibility (to be removed in future refactor)
+  
+  /**
+   * @deprecated Use createPost() instead - this is for mock data only
+   */
+  addPost(content: string, image?: string): void {
+    // This is now a no-op for mock data
+    // Use createPost() for real API calls
+    console.warn('addPost() is deprecated. Use createPost() for API calls.');
+  }
+
+  /**
+   * @deprecated Use getPost() instead - this is for mock data only
+   */
+  getPostById(postId: string): Post | undefined {
+    return this.postsSignal().find(p => p.id === postId);
+  }
+
+  /**
+   * @deprecated Use toggleLike() from reaction service instead
+   */
+  toggleLike(postId: string): void {
+    this.toggleLikeOptimistic(postId);
+  }
+
+  /**
+   * @deprecated Use bookmark service instead
+   */
+  toggleSave(postId: string, collectionId?: string): void {
+    // Handled by BookmarkCollectionService
+    console.warn('toggleSave() is deprecated. Use BookmarkCollectionService.');
+  }
+
+  /**
+   * @deprecated Use savedPosts signal instead
+   */
+  getSavedPosts(): Post[] {
+    return this.postsSignal().filter(post => post.isSaved);
+  }
+
+  /**
+   * Update reply count (for mock data compatibility)
+   */
+  updateReplyCount(postId: string, count: number): void {
+    this.postsSignal.update(posts => {
+      return posts.map(post => {
+        if (post.id === postId) {
+          return { ...post, replies: count };
+        }
+        return post;
+      });
     });
   }
 }

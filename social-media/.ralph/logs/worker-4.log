@@ -1,3 +1,0 @@
-[0;34m[Agent 4][0m Registered
-[1;33m[Agent 4][0m Executing 1.2:1.2.2 (type: feature)
-[0;31m[Agent 4][0m Task failed: 1.2:1.2.2 - Agent execution failed: Invalid --resume: "agent-4-1771572063". Must be a valid UUID (e.g., "123e4567-e89b-12d3-a456-426614174000"). Usage: qwen [options] [command]  Qwen Code - Launch an interactive CLI, use -p/--prompt for non-interactive mode  

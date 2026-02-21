@@ -174,11 +174,29 @@ export class UserProfileCardComponent implements OnChanges {
 
   toggleFollow(): void {
     if (this.user) {
+      const previousIsFollowing = this.user.isFollowing;
+      const previousFollowers = this.user.followers;
+
       this.user.isFollowing = !this.user.isFollowing;
       this.user.followers += this.user.isFollowing ? 1 : -1;
 
-      // In full implementation, call API to update follow status
-      // this.http.post(`/users/${this.username}/follow`, {}).subscribe();
+      const userId = this.user.id;
+      if (!userId) {
+        return;
+      }
+
+      const request$ = this.user.isFollowing
+        ? this.http.post(`${this.apiUrl}/users/${userId}/follow`, {})
+        : this.http.delete(`${this.apiUrl}/users/${userId}/follow`);
+
+      request$.subscribe({
+        error: () => {
+          if (this.user) {
+            this.user.isFollowing = previousIsFollowing;
+            this.user.followers = previousFollowers;
+          }
+        }
+      });
     }
   }
 }

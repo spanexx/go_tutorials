@@ -1,8 +1,0 @@
-[0;34m[Agent 8][0m Registered
-[1;33m[Agent 8][0m Executing 1.2:1.2.2 (type: feature)
-[0;32m[Agent 8][0m Task completed: 1.2:1.2.2
-[0;32m[Agent 8][0m Claimed task: 1.3:1.3.2
-[1;33m[Agent 8][0m Executing 1.3:1.3.2 (type: feature)
-[0;31m[Agent 8][0m Task failed: 1.3:1.3.2 - Agent execution failed: Error: Session Id fb2ed360-6fd0-4500-a0ba-8fb37dc3f58f is already in use. 
-bash: -c: line 1: unexpected EOF while looking for matching `"'
-[0;34m[Agent 8][0m Registered

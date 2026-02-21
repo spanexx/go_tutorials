@@ -1,10 +1,11 @@
 package middleware
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 	"go.uber.org/zap"
-	"time"
 )
 
 // Recovery middleware recovers from panics
@@ -27,6 +28,7 @@ func Logger() gin.HandlerFunc {
 		start := time.Now()
 		path := c.Request.URL.Path
 		query := c.Request.URL.RawQuery
+		rid, _ := c.Get("request_id")
 
 		c.Next()
 
@@ -34,6 +36,7 @@ func Logger() gin.HandlerFunc {
 		statusCode := c.Writer.Status()
 
 		zap.L().Info("request",
+			zap.Any("request_id", rid),
 			zap.Int("status", statusCode),
 			zap.String("method", c.Request.Method),
 			zap.String("path", path),

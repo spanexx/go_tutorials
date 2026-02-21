@@ -1,0 +1,125 @@
+{
+  "milestone": "5.8",
+  "title": "Database Integration Tests",
+  "problem": "Database integration tests validate complex database operations including migrations, transactions, constraints, and multi-table queries. These tests ensure data integrity and verify that schema changes work correctly.",
+  "success_metrics": [
+    "All migrations tested (up and down)",
+    "Transaction rollback verified",
+    "Database constraints enforced",
+    "Complex queries return correct results",
+    "Connection pooling works correctly"
+  ],
+  "non_goals": [
+    "Repository method testing (covered in Milestone 5.2)",
+    "Business logic testing (covered in Milestone 5.1)"
+  ],
+  "items": [
+    {
+      "id": "5.8.1",
+      "title": "Migration Tests",
+      "type": "integration_test",
+      "description": "Test database migrations up and down.",
+      "acceptance_criteria": [
+        "Test all migrations apply cleanly",
+        "Test migration downgrades work",
+        "Test migration idempotency",
+        "Test schema version tracking",
+        "Test migration locking (concurrent)",
+        "Test seed data migrations",
+        "Verify table creation order"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.8.2",
+      "title": "Transaction Tests",
+      "type": "integration_test",
+      "description": "Verify transaction isolation and rollback.",
+      "acceptance_criteria": [
+        "Test transaction commit persists data",
+        "Test transaction rollback reverts data",
+        "Test nested transactions handling",
+        "Test deadlock detection and retry",
+        "Test transaction timeout handling",
+        "Test concurrent transaction isolation",
+        "Verify ACID properties"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.8.3",
+      "title": "Constraint Tests",
+      "type": "integration_test",
+      "description": "Verify database constraints are enforced.",
+      "acceptance_criteria": [
+        "Test NOT NULL constraints",
+        "Test UNIQUE constraints (email, username)",
+        "Test FOREIGN KEY constraints",
+        "Test CHECK constraints",
+        "Test DEFAULT values",
+        "Test constraint error messages",
+        "Test cascading deletes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.8.4",
+      "title": "Complex Query Tests",
+      "type": "integration_test",
+      "description": "Test complex multi-table queries.",
+      "acceptance_criteria": [
+        "Test recursive CTE for comment trees",
+        "Test trending score calculation",
+        "Test feed generation queries",
+        "Test aggregation with GROUP BY",
+        "Test subqueries performance",
+        "Test JOIN operations",
+        "Test window functions"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.8.5",
+      "title": "Index Tests",
+      "type": "integration_test",
+      "description": "Verify index usage and performance.",
+      "acceptance_criteria": [
+        "Test unique indexes prevent duplicates",
+        "Test composite index usage",
+        "Test partial index conditions",
+        "Test GIN index for full-text search",
+        "Test index-only scans",
+        "Test query planner index selection"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.8.6",
+      "title": "Connection Pool Tests",
+      "type": "integration_test",
+      "description": "Test database connection management.",
+      "acceptance_criteria": [
+        "Test connection pool limits",
+        "Test connection timeout handling",
+        "Test connection health checks",
+        "Test graceful shutdown",
+        "Test max connection handling",
+        "Test connection leak detection"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/tests/integration/db_migration_test.go",
+    "backend/tests/integration/db_transaction_test.go",
+    "backend/tests/integration/db_constraint_test.go",
+    "backend/tests/integration/db_query_test.go",
+    "backend/tests/integration/db_index_test.go",
+    "backend/tests/integration/db_connection_test.go"
+  ],
+  "affected_dependencies": [
+    "testify/suite",
+    "testcontainers-go/postgres",
+    "golang-migrate/migrate"
+  ]
+}

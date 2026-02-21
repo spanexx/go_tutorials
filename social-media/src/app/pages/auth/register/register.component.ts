@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LucideAngularModule, Mail, Lock, User, Eye, EyeOff, UserPlus } from 'lucide-angular';
 import { AuthService } from '../../../shared/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { debugError, debugLog } from '../../../shared/utils/debug-logger';
 
 @Component({
   selector: 'app-register',
@@ -31,6 +32,10 @@ export class RegisterComponent {
   isLoading = false;
   error = '';
   agreeToTerms = false;
+
+  usernameError = '';
+
+  emailError = '';
 
   constructor(
     private authService: AuthService,
@@ -73,6 +78,9 @@ export class RegisterComponent {
 
     this.isLoading = true;
     this.error = '';
+    this.usernameError = '';
+    this.emailError = '';
+    debugLog('RegisterComponent', 'onSubmit() called', { email: this.email, username: this.username });
     console.log('[AUTH-CLIENT] Registration form submitted for:', this.email);
 
     const result = await this.authService.register(this.name, this.email, this.password, this.username);
@@ -80,12 +88,37 @@ export class RegisterComponent {
     this.isLoading = false;
 
     if (result.success) {
+      debugLog('RegisterComponent', 'register success: navigating to feed');
       console.log('[AUTH-CLIENT] Registration successful, redirecting to feed');
       this.toastService.success('Account created!', 'Welcome to SocialHub. You are now logged in.');
       this.router.navigate(['/feed']);
     } else {
+      debugError('RegisterComponent', 'register failed', { error: result.error, fieldErrors: result.fieldErrors });
       console.error('[AUTH-CLIENT] Registration failed:', result.error);
+
+      const fieldUsernameError = result.fieldErrors?.username;
+      if (fieldUsernameError) {
+        this.usernameError = fieldUsernameError;
+      }
+
+      const fieldEmailError = result.fieldErrors?.email;
+      if (fieldEmailError) {
+        this.emailError = fieldEmailError;
+      }
+
       this.toastService.error('Registration failed', result.error || 'Please try again with different credentials.');
+    }
+  }
+
+  onEmailInput(): void {
+    if (this.emailError) {
+      this.emailError = '';
+    }
+  }
+
+  onUsernameInput(): void {
+    if (this.usernameError) {
+      this.usernameError = '';
     }
   }
 }

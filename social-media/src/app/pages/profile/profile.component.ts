@@ -4,6 +4,7 @@ import { RouterModule, ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule, Mail, Link, Calendar, Edit3, MapPin } from 'lucide-angular';
 import { AuthService } from '../../shared/services/auth.service';
+import { FollowService } from '../../shared/services/follow.service';
 import { ProfileSkeletonComponent } from '../../shared/skeleton/profile-skeleton.component';
 import { environment } from '../../../environments/environment';
 
@@ -65,12 +66,28 @@ export class ProfileComponent {
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
-    private http: HttpClient
+    private http: HttpClient,
+    private followService: FollowService
   ) {
     this.route.params.subscribe(params => {
       this.profileId = params['id'];
       this.loadProfile();
     });
+  }
+
+  /**
+   * Format large numbers with K/M notation
+   */
+  formatNumber(value: number): string {
+    if (value < 1000) {
+      return value.toString();
+    }
+    if (value < 1000000) {
+      const formatted = (value / 1000).toFixed(1);
+      return formatted.endsWith('.0') ? formatted.slice(0, -2) + 'K' : formatted + 'K';
+    }
+    const formatted = (value / 1000000).toFixed(1);
+    return formatted.endsWith('.0') ? formatted.slice(0, -2) + 'M' : formatted + 'M';
   }
 
   /**
@@ -155,12 +172,5 @@ export class ProfileComponent {
 
   get displayEmail(): boolean {
     return this.isCurrentUser && !!this.user.email;
-  }
-
-  formatNumber(num: number): string {
-    if (num >= 1000) {
-      return (num / 1000).toFixed(1) + 'K';
-    }
-    return num.toString();
   }
 }

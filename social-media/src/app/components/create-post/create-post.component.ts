@@ -103,20 +103,27 @@ export class CreatePostComponent {
 
     this.isPosting = true;
 
-    // Create the post via service
-    this.postService.addPost(this.postContent, this.selectedImage || undefined);
-
-    // Show success toast
-    this.toastService.success('Post created!', 'Your post has been published successfully.');
-
-    // Reset form
-    this.postContent = '';
-    this.selectedImage = null;
-    this.selectedImageFile = null;
-    this.showEmojiPicker = false;
-    this.isPosting = false;
-
-    this.postCreated.emit();
+    // Create the post via real API
+    this.postService.createPost(this.postContent, this.selectedImage || undefined).subscribe({
+      next: () => {
+        // Show success toast
+        this.toastService.success('Post created!', 'Your post has been published successfully.');
+        
+        // Reset form
+        this.postContent = '';
+        this.selectedImage = null;
+        this.selectedImageFile = null;
+        this.showEmojiPicker = false;
+        this.isPosting = false;
+        
+        this.postCreated.emit();
+      },
+      error: (error) => {
+        this.isPosting = false;
+        this.toastService.error('Error', 'Failed to create post. Please try again.');
+        console.error('Create post error:', error);
+      }
+    });
   }
 
   toggleEmojiPicker(): void {

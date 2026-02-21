@@ -38,6 +38,36 @@ Authentication service for the SocialHub platform, built with Go and Gin.
    make docker-run
    ```
 
+### Logs & Debugging
+
+#### View Docker logs
+```bash
+# All services
+docker-compose logs -f
+
+# Specific services
+docker-compose logs -f auth-service
+docker-compose logs -f postgres
+docker-compose logs -f redis
+```
+
+#### Request correlation (request_id)
+The backend emits a `request_id` field in request logs and also returns it as an `X-Request-ID` response header.
+
+- If the client sends `X-Request-ID`, the server will reuse it.
+- Otherwise, the server generates a UUID.
+
+Use the `request_id` value to correlate:
+- Request logs (middleware)
+- Handler logs (e.g. `[AUTH]`, `[SEARCH]`)
+
+Example log fields:
+- `request_id`
+- `status`
+- `method`
+- `path`
+- `latency`
+
    Or run locally:
    ```bash
    # Start PostgreSQL and Redis

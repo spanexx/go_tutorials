@@ -294,7 +294,11 @@ TASK:
    - Read README.md, tasks.md, prd.json, Progress.md
    - Pick the next prd.json item top-to-bottom where passes=false
    - Implement it end-to-end (no placeholders)
+   - Run test, The test Must pass, Build must pass, Lint must pass.
    - Update the milestone's Progress.md and mark the implemented prd.json item passes=true
+   - i encourage you to check social-media/.validator-report.md and social-media/.critic-report.md to ensure that the code is correct and that there are no stubs or placeholders.
+   - if you find any issues, please fix them.
+   - Always use the ./ralph-chat.sh tail 100 to read chat log.
 3. Run the smallest relevant checks (and repo defaults if applicable).
 4. Summarize what you did.
 

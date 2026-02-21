@@ -5,6 +5,8 @@
 // - Optimistic UI updates with rollback on error
 // CID: Phase-2 Milestone 2.1 - Post Reactions
 import { Injectable, signal } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BaseApiService } from './base-api.service';
 import { Reaction, ReactionType, ReactionCounts, createEmptyReactionCounts, REACTION_TYPES } from '../models/reaction.model';
 
 export interface ReactionState {
@@ -16,46 +18,15 @@ export interface ReactionState {
 @Injectable({
   providedIn: 'root'
 })
-export class ReactionService {
+export class ReactionService extends BaseApiService {
   private reactionState = signal<ReactionState>({
     counts: {},
     userReactions: {},
     isLoading: {}
   });
 
-  constructor() {
-    // Initialize with mock data for development
-    this.initializeMockData();
-  }
-
-  private initializeMockData(): void {
-    // Mock data for development - will be replaced with API calls in Phase 2.6
-    const mockPosts = ['post-1', 'post-2', 'post-3'];
-    const updates: Partial<ReactionState> = {
-      counts: {},
-      userReactions: {},
-      isLoading: {}
-    };
-
-    mockPosts.forEach(postId => {
-      updates.counts![postId] = {
-        like: Math.floor(Math.random() * 10),
-        love: Math.floor(Math.random() * 5),
-        laugh: Math.floor(Math.random() * 3),
-        wow: Math.floor(Math.random() * 2),
-        sad: Math.floor(Math.random() * 2),
-        angry: Math.floor(Math.random() * 1),
-        total: 0
-      };
-      updates.counts![postId].total = this.calculateTotal(updates.counts![postId]);
-      updates.userReactions![postId] = null;
-      updates.isLoading![postId] = false;
-    });
-
-    this.reactionState.update(state => ({
-      ...state,
-      ...updates
-    }));
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   private calculateTotal(counts: ReactionCounts): number {
@@ -122,66 +93,64 @@ export class ReactionService {
   /**
    * Add a reaction to a post with optimistic UI update
    */
-  addReaction(postId: string, type: ReactionType): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const currentState = this.reactionState();
-      const previousReaction = currentState.userReactions[postId];
-      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+  async addReaction(postId: string, type: ReactionType): Promise<void> {
+    const currentState = this.reactionState();
+    const previousReaction = currentState.userReactions[postId];
+    const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
 
-      // Optimistic update
-      this.optimisticUpdate(postId, type);
+    this.optimisticUpdate(postId, type);
 
-      // Simulate API call (replace with actual API in Phase 2.6)
-      setTimeout(() => {
-        // Success - keep the optimistic update
-        console.log(`Reaction ${type} added to post ${postId}`);
-        resolve();
-      }, 300);
-    });
+    try {
+      await this.post(`/posts/${postId}/reactions`, { type }).toPromise();
+      await this.loadReactionState(postId);
+    } catch (error) {
+      this.restoreState(postId, previousReaction || null, previousCounts);
+      throw error;
+    }
   }
 
   /**
    * Remove a reaction from a post with optimistic UI update
    */
-  removeReaction(postId: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const currentState = this.reactionState();
-      const previousReaction = currentState.userReactions[postId];
-      
-      if (!previousReaction) {
-        resolve();
-        return;
-      }
+  async removeReaction(postId: string): Promise<void> {
+    const currentState = this.reactionState();
+    const previousReaction = currentState.userReactions[postId];
+    if (!previousReaction) {
+      return;
+    }
 
-      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+    const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+    this.optimisticRemove(postId);
 
-      // Optimistic update
-      this.optimisticRemove(postId);
-
-      // Simulate API call (replace with actual API in Phase 2.6)
-      setTimeout(() => {
-        console.log(`Reaction removed from post ${postId}`);
-        resolve();
-      }, 300);
-    });
+    try {
+      await this.delete(`/posts/${postId}/reactions?type=${encodeURIComponent(previousReaction)}`).toPromise();
+      await this.loadReactionState(postId);
+    } catch (error) {
+      this.restoreState(postId, previousReaction, previousCounts);
+      throw error;
+    }
   }
 
   /**
    * Toggle a reaction on a post
    */
-  toggleReaction(postId: string, type: ReactionType): Promise<void> {
+  async toggleReaction(postId: string, type: ReactionType): Promise<void> {
     const currentState = this.reactionState();
-    const currentReaction = currentState.userReactions[postId];
+    const previousReaction = currentState.userReactions[postId] || null;
+    const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
 
-    if (currentReaction === type) {
-      // Same reaction - remove it
-      return this.removeReaction(postId);
-    } else if (currentReaction) {
-      // Different reaction - change it
-      return this.changeReaction(postId, type);
+    if (previousReaction === type) {
+      this.optimisticRemove(postId);
     } else {
-      // No reaction - add it
-      return this.addReaction(postId, type);
+      this.optimisticUpdate(postId, type);
+    }
+
+    try {
+      await this.post(`/posts/${postId}/reactions/toggle`, { type }).toPromise();
+      await this.loadReactionState(postId);
+    } catch (error) {
+      this.restoreState(postId, previousReaction, previousCounts);
+      throw error;
     }
   }
 
@@ -189,46 +158,45 @@ export class ReactionService {
    * Change reaction type on a post
    */
   private changeReaction(postId: string, newType: ReactionType): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const currentState = this.reactionState();
-      const previousReaction = currentState.userReactions[postId];
-      
-      if (!previousReaction) {
-        resolve();
-        return;
-      }
+    return this.toggleReaction(postId, newType);
+  }
 
-      const previousCounts = { ...currentState.counts[postId] || createEmptyReactionCounts() };
+  private restoreState(postId: string, reaction: ReactionType | null, counts: ReactionCounts): void {
+    this.reactionState.update(state => ({
+      ...state,
+      counts: { ...state.counts, [postId]: counts },
+      userReactions: { ...state.userReactions, [postId]: reaction }
+    }));
+  }
 
-      // Optimistic update for changing reaction
-      this.reactionState.update(state => {
-        const newCounts = { ...state.counts[postId] || createEmptyReactionCounts() };
-        
-        // Decrement old reaction
-        newCounts[previousReaction] = Math.max(0, newCounts[previousReaction] - 1);
-        // Increment new reaction
-        newCounts[newType] = (newCounts[newType] || 0) + 1;
-        newCounts.total = this.calculateTotal(newCounts);
+  private async loadReactionState(postId: string): Promise<void> {
+    this.reactionState.update(state => ({
+      ...state,
+      isLoading: { ...state.isLoading, [postId]: true }
+    }));
 
-        return {
-          ...state,
-          counts: {
-            ...state.counts,
-            [postId]: newCounts
-          },
-          userReactions: {
-            ...state.userReactions,
-            [postId]: newType
-          }
-        };
-      });
+    try {
+      const [reactionsResponse, userReactionResponse] = await Promise.all([
+        this.get<{ counts: ReactionCounts; success: boolean }>(`/posts/${postId}/reactions`).toPromise(),
+        this.get<{ reaction: { type: ReactionType } | null; success: boolean }>(`/posts/${postId}/reactions/me`).toPromise(),
+      ]);
 
-      // Simulate API call
-      setTimeout(() => {
-        console.log(`Reaction changed to ${newType} on post ${postId}`);
-        resolve();
-      }, 300);
-    });
+      const counts = reactionsResponse?.counts || createEmptyReactionCounts();
+      const userReaction = userReactionResponse?.reaction?.type || null;
+
+      this.reactionState.update(state => ({
+        ...state,
+        counts: { ...state.counts, [postId]: counts },
+        userReactions: { ...state.userReactions, [postId]: userReaction },
+        isLoading: { ...state.isLoading, [postId]: false }
+      }));
+    } catch (error) {
+      this.reactionState.update(state => ({
+        ...state,
+        isLoading: { ...state.isLoading, [postId]: false }
+      }));
+      throw error;
+    }
   }
 
   /**
@@ -295,10 +263,10 @@ export class ReactionService {
   }
 
   /**
-   * Get reactions for a post (for Phase 2.6 API integration)
+   * Get reactions for a post
    */
   async getReactionsForPost(postId: string): Promise<Reaction[]> {
-    // TODO: Implement API call in Phase 2.6
+    await this.loadReactionState(postId);
     return [];
   }
 

@@ -1,0 +1,235 @@
+{
+  "milestone": "5.10",
+  "title": "End-to-End Tests - Social Features",
+  "problem": "End-to-end tests for social interaction features validate complex user workflows including following, reactions, comments, bookmarks, and notifications. These tests ensure the social aspects of the platform work correctly.",
+  "success_metrics": [
+    "All social flows have E2E test coverage",
+    "Multi-user interactions tested",
+    "Real-time updates verified",
+    "Notifications triggered correctly",
+    "Data consistency across users"
+  ],
+  "non_goals": [
+    "Performance under load (future phase)",
+    "WebSocket real-time testing (separate scope)",
+    "Email delivery testing (separate scope)"
+  ],
+  "items": [
+    {
+      "id": "5.10.1",
+      "title": "Follow User E2E Test",
+      "type": "e2e_test",
+      "description": "Follow and unfollow user flow.",
+      "acceptance_criteria": [
+        "Login as User A",
+        "Navigate to User B profile",
+        "Click follow button",
+        "Verify button changes to following",
+        "Verify follower count increases",
+        "Logout and login as User B",
+        "Verify User A in followers list",
+        "Click unfollow",
+        "Verify button changes back",
+        "Verify follower count decreases",
+        "Test self-follow prevention"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.2",
+      "title": "Post Reactions E2E Test",
+      "type": "e2e_test",
+      "description": "React to posts with different reaction types.",
+      "acceptance_criteria": [
+        "Login as test user",
+        "Find post in feed",
+        "Click reaction button",
+        "Select reaction type (like, love, etc.)",
+        "Verify reaction count updates",
+        "Verify reaction icon highlighted",
+        "Toggle reaction off",
+        "Verify count decreases",
+        "Verify icon no longer highlighted",
+        "Test reaction type switching",
+        "Verify correct reaction stored"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.3",
+      "title": "Comments E2E Test",
+      "type": "e2e_test",
+      "description": "Add and interact with comments.",
+      "acceptance_criteria": [
+        "Login as User A",
+        "Navigate to post",
+        "Click comment button",
+        "Type comment text",
+        "Submit comment",
+        "Verify comment appears",
+        "Reply to comment as User B",
+        "Verify nested reply structure",
+        "Delete own comment",
+        "Verify comment removed",
+        "Test comment pagination",
+        "Test comment depth limit"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.4",
+      "title": "Bookmarks E2E Test",
+      "type": "e2e_test",
+      "description": "Bookmark posts and manage collections.",
+      "acceptance_criteria": [
+        "Login as test user",
+        "Navigate to feed",
+        "Click bookmark on post",
+        "Verify bookmark icon highlighted",
+        "Navigate to bookmarks page",
+        "Verify post appears in list",
+        "Create new collection",
+        "Move bookmark to collection",
+        "Remove bookmark",
+        "Verify removed from list",
+        "Test collection privacy"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.5",
+      "title": "Share Post E2E Test",
+      "type": "e2e_test",
+      "description": "Share posts via different methods.",
+      "acceptance_criteria": [
+        "Login as test user",
+        "Click share on post",
+        "Verify share modal opens",
+        "Copy link to clipboard",
+        "Verify clipboard content",
+        "Share via email (if implemented)",
+        "Share via message (if implemented)",
+        "Repost to own feed (if implemented)",
+        "Verify share count increment",
+        "Test share modal close"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.6",
+      "title": "Notifications E2E Test",
+      "type": "e2e_test",
+      "description": "Receive and view notifications.",
+      "acceptance_criteria": [
+        "Login as User A",
+        "User B likes User A post",
+        "Verify notification badge appears",
+        "Click notification icon",
+        "Verify notification list opens",
+        "Verify like notification shown",
+        "Click notification",
+        "Navigate to relevant post",
+        "Mark notification as read",
+        "Verify badge updates",
+        "Test notification pagination",
+        "Test mark all as read"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.7",
+      "title": "Search E2E Test",
+      "type": "e2e_test",
+      "description": "Search for users, posts, and hashtags.",
+      "acceptance_criteria": [
+        "Login as test user",
+        "Click search in header",
+        "Type user name",
+        "Verify user results appear",
+        "Click on user result",
+        "Navigate to profile",
+        "Search for hashtag",
+        "Verify hashtag results",
+        "Click hashtag result",
+        "Navigate to hashtag page",
+        "Search for post content",
+        "Verify post results"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.8",
+      "title": "Activity Feed E2E Test",
+      "type": "e2e_test",
+      "description": "View and filter activity feed.",
+      "acceptance_criteria": [
+        "Login as test user",
+        "Navigate to activity page",
+        "Verify activities load",
+        "Filter by likes",
+        "Filter by comments",
+        "Filter by follows",
+        "Test mark as read",
+        "Test mark all as read",
+        "Click activity item",
+        "Navigate to relevant content",
+        "Test infinite scroll"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.9",
+      "title": "Multi-User Interaction E2E Test",
+      "type": "e2e_test",
+      "description": "Complex multi-user scenarios.",
+      "acceptance_criteria": [
+        "Setup: User A, User B, User C",
+        "User B follows User A",
+        "User C follows User A",
+        "User A posts content",
+        "User B likes post",
+        "User C comments on post",
+        "User B replies to comment",
+        "User A views notifications",
+        "Verify all activities appear",
+        "Test concurrent interactions",
+        "Verify data consistency"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.10.10",
+      "title": "Privacy Controls E2E Test",
+      "type": "e2e_test",
+      "description": "Test privacy settings if implemented.",
+      "acceptance_criteria": [
+        "Login as User A",
+        "Set profile to private (if feature exists)",
+        "Login as User B (not following)",
+        "Attempt to view User A profile",
+        "Verify access denied or limited",
+        "User A follows User B back",
+        "User B now sees full profile",
+        "Test post visibility settings",
+        "Test follower list privacy",
+        "Test activity feed privacy"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "e2e/tests/social/follow.spec.ts",
+    "e2e/tests/social/reactions.spec.ts",
+    "e2e/tests/social/comments.spec.ts",
+    "e2e/tests/social/bookmarks.spec.ts",
+    "e2e/tests/social/share.spec.ts",
+    "e2e/tests/social/notifications.spec.ts",
+    "e2e/tests/social/search.spec.ts",
+    "e2e/tests/social/activity.spec.ts",
+    "e2e/tests/social/multi-user.spec.ts",
+    "e2e/tests/social/privacy.spec.ts"
+  ],
+  "affected_dependencies": [
+    "@playwright/test"
+  ]
+}

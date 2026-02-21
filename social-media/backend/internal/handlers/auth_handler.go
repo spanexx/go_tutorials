@@ -75,14 +75,15 @@ type UserResponse struct {
 // @Failure 409 {object} map[string]string
 // @Router /api/v1/auth/register [post]
 func (h *AuthHandler) Register(c *gin.Context) {
-	log.Println("[AUTH] Register attempt starting")
+	rid := c.GetString("request_id")
+	log.Printf("[AUTH] Register attempt starting request_id=%s", rid)
 	var req RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		log.Printf("[AUTH] Register request binding failed: %v", err)
+		log.Printf("[AUTH] Register request binding failed request_id=%s: %v", rid, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("[AUTH] Register request received for email: %s, username: %s", req.Email, req.Username)
+	log.Printf("[AUTH] Register request received request_id=%s email=%s username=%s", rid, req.Email, req.Username)
 
 	input := service.RegisterInput{
 		Email:       req.Email,
@@ -93,7 +94,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 	user, err := h.authService.Register(c.Request.Context(), input)
 	if err != nil {
-		log.Printf("[AUTH] Register failed for email %s: %v", req.Email, err)
+		log.Printf("[AUTH] Register failed request_id=%s email=%s: %v", rid, req.Email, err)
 		switch err {
 		case service.ErrUserExists:
 			c.JSON(http.StatusConflict, gin.H{"error": "User already exists"})
@@ -102,13 +103,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		}
 		return
 	}
-	log.Printf("[AUTH] Register successful for user: %s (ID: %s)", user.Email, user.ID)
+	log.Printf("[AUTH] Register successful request_id=%s email=%s user_id=%s", rid, user.Email, user.ID)
 
 	// Generate tokens
-	log.Printf("[AUTH] Generating JWT tokens for new user: %s", user.ID)
+	log.Printf("[AUTH] Generating JWT tokens request_id=%s user_id=%s", rid, user.ID)
 	tokens, err := h.jwtManager.GenerateTokenPair(user.ID, user.Email, user.Username)
 	if err != nil {
-		log.Printf("[AUTH] Token generation failed: %v", err)
+		log.Printf("[AUTH] Token generation failed request_id=%s: %v", rid, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
@@ -142,14 +143,15 @@ func (h *AuthHandler) Register(c *gin.Context) {
 // @Failure 401 {object} map[string]string
 // @Router /api/v1/auth/login [post]
 func (h *AuthHandler) Login(c *gin.Context) {
-	log.Println("[AUTH] Login attempt starting")
+	rid := c.GetString("request_id")
+	log.Printf("[AUTH] Login attempt starting request_id=%s", rid)
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		log.Printf("[AUTH] Login request binding failed: %v", err)
+		log.Printf("[AUTH] Login request binding failed request_id=%s: %v", rid, err)
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Printf("[AUTH] Login request received for email: %s", req.Email)
+	log.Printf("[AUTH] Login request received request_id=%s email=%s", rid, req.Email)
 
 	input := service.LoginInput{
 		Email:    req.Email,
@@ -158,17 +160,17 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	user, err := h.authService.Login(c.Request.Context(), input)
 	if err != nil {
-		log.Printf("[AUTH] Login failed for email %s: %v", req.Email, err)
+		log.Printf("[AUTH] Login failed request_id=%s email=%s: %v", rid, req.Email, err)
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid credentials"})
 		return
 	}
-	log.Printf("[AUTH] Login successful for user: %s (ID: %s)", user.Email, user.ID)
+	log.Printf("[AUTH] Login successful request_id=%s email=%s user_id=%s", rid, user.Email, user.ID)
 
 	// Generate tokens
-	log.Printf("[AUTH] Generating JWT tokens for user: %s", user.ID)
+	log.Printf("[AUTH] Generating JWT tokens request_id=%s user_id=%s", rid, user.ID)
 	tokens, err := h.jwtManager.GenerateTokenPair(user.ID, user.Email, user.Username)
 	if err != nil {
-		log.Printf("[AUTH] Token generation failed: %v", err)
+		log.Printf("[AUTH] Token generation failed request_id=%s: %v", rid, err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate tokens"})
 		return
 	}
@@ -220,8 +222,8 @@ func (h *AuthHandler) Logout(c *gin.Context) {
 // @Tags auth
 // @Accept json
 // @Produce json
-// @Param request body RefreshTokenRequest true "Refresh token"
-// @Success 200 {object} TokenResponse
+// @Param request body object true "Refresh token"
+// @Success 200 {object} object
 // @Failure 401 {object} map[string]string
 // @Router /api/v1/auth/refresh [post]
 func (h *AuthHandler) RefreshToken(c *gin.Context) {

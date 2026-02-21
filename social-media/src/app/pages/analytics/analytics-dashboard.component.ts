@@ -30,13 +30,13 @@ export class AnalyticsDashboardComponent {
   topHashtags: { tag: string; count: number }[] = [];
 
   constructor(private analyticsService: AnalyticsService) {
-    this.loadAnalytics();
+    void this.loadAnalytics();
   }
 
-  loadAnalytics(): void {
+  async loadAnalytics(): Promise<void> {
     this.metrics = this.analyticsService.getMetrics();
-    this.engagementData = this.analyticsService.getEngagementData();
-    this.followerGrowth = this.analyticsService.getFollowerGrowth();
+    this.engagementData = await this.analyticsService.getEngagementData();
+    this.followerGrowth = await this.analyticsService.getFollowerGrowth();
     this.followerGrowthPercent = this.calculateFollowerGrowthPercentage();
     this.engagementTrend = this.analyticsService.getEngagementTrend(this.engagementData);
     this.topHashtags = this.analyticsService.getTopHashtags();

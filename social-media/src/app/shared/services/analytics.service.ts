@@ -10,7 +10,7 @@ export interface AnalyticsMetrics {
   totalShares: number;
   avgEngagementRate: number;
   topPost: {
-    id: number;
+    id: string;
     content: string;
     likes: number;
     replies: number;
@@ -89,36 +89,64 @@ export class AnalyticsService extends BaseApiService {
   }
 
   /**
-   * Get engagement analytics data
-   * Uses cached API data if available, otherwise falls back to mock data
+   * Get engagement analytics data from API
+   * Falls back to cached or mock data if API fails
    */
-  getEngagementData(period: string = '7d'): EngagementData[] {
+  async getEngagementData(period: string = '7d'): Promise<EngagementData[]> {
     if (this.cachedEngagementData) {
       return this.cachedEngagementData;
     }
-    // For now, return fallback data
-    // In full implementation, this would call the API and cache the result
+    
+    try {
+      const data = await this.get<EngagementData[]>(`/analytics/engagement`, { period }).toPromise();
+      if (data) {
+        this.cachedEngagementData = data;
+        return data;
+      }
+    } catch (error) {
+      console.warn('Failed to fetch engagement data from API, using fallback');
+    }
+    
     return this.fallbackEngagementData;
   }
 
   /**
-   * Get follower growth data
-   * Uses cached API data if available, otherwise falls back to mock data
+   * Get follower growth data from API
+   * Falls back to cached or mock data if API fails
    */
-  getFollowerGrowth(period: string = '7d'): FollowerGrowth[] {
+  async getFollowerGrowth(period: string = '7d'): Promise<FollowerGrowth[]> {
     if (this.cachedFollowerGrowth) {
       return this.cachedFollowerGrowth;
     }
-    // For now, return fallback data
-    // In full implementation, this would call the API and cache the result
+    
+    try {
+      const data = await this.get<FollowerGrowth[]>(`/analytics/followers`, { period }).toPromise();
+      if (data) {
+        this.cachedFollowerGrowth = data;
+        return data;
+      }
+    } catch (error) {
+      console.warn('Failed to fetch follower growth from API, using fallback');
+    }
+    
     return this.fallbackFollowerGrowth;
   }
 
   /**
-   * Get overall analytics stats from backend
+   * Get overall analytics stats from backend API
+   * Falls back to mock data if API fails
    */
-  getStats(): AnalyticsStats {
-    // In full implementation, fetch from API
+  async getStats(): Promise<AnalyticsStats> {
+    try {
+      const stats = await this.get<AnalyticsStats>('/analytics/stats').toPromise();
+      if (stats) {
+        return stats;
+      }
+    } catch (error) {
+      console.warn('Failed to fetch analytics stats from API, using fallback');
+    }
+    
+    // Fallback data
     return {
       total_posts: 156,
       total_likes: 2847,
@@ -133,8 +161,8 @@ export class AnalyticsService extends BaseApiService {
   /**
    * Calculate follower growth percentage
    */
-  getFollowerGrowthPercentage(): number {
-    const data = this.getFollowerGrowth();
+  async getFollowerGrowthPercentage(): Promise<number> {
+    const data = await this.getFollowerGrowth();
     if (data.length < 2) return 0;
     const first = data[0].count;
     const last = data[data.length - 1].count;
@@ -220,18 +248,17 @@ export class AnalyticsService extends BaseApiService {
   }
 
   /**
-   * Load analytics data from API (for future use)
-   * This method would be called to refresh cached data
+   * Load analytics data from API and cache results
    */
   async loadFromApi(period: string = '7d'): Promise<void> {
     try {
-      // In full implementation, fetch from API and cache results
-      // const [engagement, followers] = await Promise.all([
-      //   this.get<EngagementData[]>('/analytics/engagement', { period }).toPromise(),
-      //   this.get<FollowerGrowth[]>('/analytics/followers', { period }).toPromise()
-      // ]);
-      // this.cachedEngagementData = engagement;
-      // this.cachedFollowerGrowth = followers;
+      const [engagement, followers, stats] = await Promise.all([
+        this.get<EngagementData[]>('/analytics/engagement', { period }).toPromise(),
+        this.get<FollowerGrowth[]>('/analytics/followers', { period }).toPromise(),
+        this.get<AnalyticsStats>('/analytics/stats').toPromise()
+      ]);
+      this.cachedEngagementData = engagement || null;
+      this.cachedFollowerGrowth = followers || null;
     } catch (error) {
       console.warn('Failed to load analytics from API, using fallback data');
     }

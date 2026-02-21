@@ -57,7 +57,7 @@
         "Signal-based activity feed",
         "Pagination support"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.4.4",
@@ -73,7 +73,7 @@
         "Mark as read functionality",
         "Infinite scroll"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.4.5",
@@ -89,7 +89,7 @@
         "Empty state when no activity",
         "Loading and error states"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

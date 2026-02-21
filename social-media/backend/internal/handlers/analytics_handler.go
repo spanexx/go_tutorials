@@ -1,28 +1,30 @@
 package handlers
 
 import (
+	"database/sql"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
 
 // AnalyticsHandler handles analytics API requests
 type AnalyticsHandler struct {
-	// In a full implementation, this would inject an analytics service
+	db *sql.DB
 }
 
 // NewAnalyticsHandler creates a new analytics handler
-func NewAnalyticsHandler() *AnalyticsHandler {
-	return &AnalyticsHandler{}
+func NewAnalyticsHandler(db *sql.DB) *AnalyticsHandler {
+	return &AnalyticsHandler{db: db}
 }
 
 // EngagementData represents engagement metrics
 type EngagementData struct {
-	Date  string `json:"date"`
-	Likes int    `json:"likes"`
-	Comments int `json:"comments"`
-	Shares   int `json:"shares"`
-	Views    int `json:"views"`
+	Date     string `json:"date"`
+	Likes    int    `json:"likes"`
+	Comments int    `json:"comments"`
+	Shares   int    `json:"shares"`
+	Views    int    `json:"views"`
 }
 
 // FollowerGrowth represents follower growth data
@@ -43,24 +45,79 @@ type FollowerGrowth struct {
 // @Router /api/v1/analytics/engagement [get]
 func (h *AnalyticsHandler) GetEngagement(c *gin.Context) {
 	period := c.DefaultQuery("period", "7d")
-	
-	// In a full implementation, fetch from database
-	// For now, return sample data structure
-	data := []EngagementData{
-		{Date: "2026-02-14", Likes: 120, Comments: 15, Shares: 8, Views: 1500},
-		{Date: "2026-02-15", Likes: 145, Comments: 22, Shares: 12, Views: 1800},
-		{Date: "2026-02-16", Likes: 98, Comments: 18, Shares: 6, Views: 1200},
-		{Date: "2026-02-17", Likes: 167, Comments: 31, Shares: 15, Views: 2100},
-		{Date: "2026-02-18", Likes: 203, Comments: 42, Shares: 23, Views: 2800},
-		{Date: "2026-02-19", Likes: 178, Comments: 28, Shares: 18, Views: 2300},
-		{Date: "2026-02-20", Likes: 156, Comments: 25, Shares: 14, Views: 1900},
+
+	userID := c.GetString("user_id")
+	if userID == "" {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
 	}
-	
-	// Filter by period if needed
-	if period != "7d" {
-		// Extend data for longer periods in full implementation
+
+	if h.db == nil {
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": "Database not configured"})
+		return
 	}
-	
+
+	var days int
+	switch period {
+	case "7d":
+		days = 7
+	case "30d":
+		days = 30
+	case "90d":
+		days = 90
+	default:
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid period. Use 7d, 30d, or 90d"})
+		return
+	}
+
+	from := time.Now().AddDate(0, 0, -days)
+
+	rows, err := h.db.QueryContext(
+		c.Request.Context(),
+		`
+			SELECT
+				date_trunc('day', created_at) AS day,
+				COALESCE(SUM(likes_count), 0) AS likes,
+				COALESCE(SUM(comments_count), 0) AS comments,
+				COALESCE(SUM(shares_count), 0) AS shares,
+				COALESCE(SUM(views_count), 0) AS views
+			FROM posts
+			WHERE user_id = $1
+			  AND created_at >= $2
+			  AND deleted_at IS NULL
+			GROUP BY 1
+			ORDER BY 1 ASC
+		`,
+		userID,
+		from,
+	)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query engagement"})
+		return
+	}
+	defer rows.Close()
+
+	data := make([]EngagementData, 0)
+	for rows.Next() {
+		var day time.Time
+		var likes, comments, shares, views int
+		if err := rows.Scan(&day, &likes, &comments, &shares, &views); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read engagement"})
+			return
+		}
+		data = append(data, EngagementData{
+			Date:     day.Format("2006-01-02"),
+			Likes:    likes,
+			Comments: comments,
+			Shares:   shares,
+			Views:    views,
+		})
+	}
+	if err := rows.Err(); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to query engagement"})
+		return
+	}
+
 	c.JSON(http.StatusOK, data)
 }
 
@@ -74,7 +131,7 @@ func (h *AnalyticsHandler) GetEngagement(c *gin.Context) {
 // @Router /api/v1/analytics/followers [get]
 func (h *AnalyticsHandler) GetFollowers(c *gin.Context) {
 	period := c.DefaultQuery("period", "7d")
-	
+
 	// In a full implementation, fetch from database
 	data := []FollowerGrowth{
 		{Date: "2026-02-14", Count: 1250, New: 15, Lost: 3},
@@ -85,11 +142,11 @@ func (h *AnalyticsHandler) GetFollowers(c *gin.Context) {
 		{Date: "2026-02-19", Count: 1368, New: 28, Lost: 2},
 		{Date: "2026-02-20", Count: 1389, New: 25, Lost: 4},
 	}
-	
+
 	if period != "7d" {
 		// Extend data for longer periods
 	}
-	
+
 	c.JSON(http.StatusOK, data)
 }
 

@@ -9,6 +9,8 @@ import { NotificationsComponent } from './pages/notifications/notifications.comp
 import { BookmarksComponent } from './pages/bookmarks/bookmarks.component';
 import { SettingsComponent } from './pages/settings/settings.component';
 import { HashtagComponent } from './pages/hashtag/hashtag.component';
+import { FollowersComponent } from './pages/followers/followers.component';
+import { FollowingComponent } from './pages/following/following.component';
 import { LoginComponent } from './pages/auth/login/login.component';
 import { RegisterComponent } from './pages/auth/register/register.component';
 import { VerifyEmailComponent } from './pages/auth/verify-email/verify-email.component';
@@ -29,6 +31,8 @@ export const routes: Routes = [
   { path: 'feed', component: FeedComponent, canActivate: [authGuard] },
   { path: 'profile/:id', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'profile/:id/edit', component: ProfileEditComponent, canActivate: [authGuard] },
+  { path: 'profile/:id/followers', component: FollowersComponent, canActivate: [authGuard] },
+  { path: 'profile/:id/following', component: FollowingComponent, canActivate: [authGuard] },
   { path: 'explore', component: ExploreComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },

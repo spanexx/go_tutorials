@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, Hash, TrendingUp } from 'lucide-angular';
@@ -13,7 +13,7 @@ import { Post } from '../../shared/services/post.service';
   templateUrl: './hashtag.component.html',
   styleUrls: ['./hashtag.component.scss']
 })
-export class HashtagComponent {
+export class HashtagComponent implements OnInit {
   hashtagIcon = Hash;
   trendingIcon = TrendingUp;
 
@@ -32,12 +32,29 @@ export class HashtagComponent {
       const tag = params.get('tag');
       if (tag) {
         this.currentHashtag = tag.replace('#', '');
-        this.hashtagInfo = this.hashtagService.getHashtagInfo(this.currentHashtag);
-        this.posts = this.hashtagInfo?.posts || [];
+        void this.loadHashtagInfo(this.currentHashtag);
       }
     });
 
-    this.trendingHashtags = this.hashtagService.getTrendingHashtags(5);
+    void this.loadTrendingHashtags();
+  }
+
+  private async loadHashtagInfo(tag: string): Promise<void> {
+    try {
+      this.hashtagInfo = await this.hashtagService.getHashtagInfo(tag);
+      this.posts = this.hashtagInfo?.posts || [];
+    } catch {
+      this.hashtagInfo = undefined;
+      this.posts = [];
+    }
+  }
+
+  private async loadTrendingHashtags(): Promise<void> {
+    try {
+      this.trendingHashtags = await this.hashtagService.getTrendingHashtags(5);
+    } catch {
+      this.trendingHashtags = [];
+    }
   }
 
   get displayTag(): string {

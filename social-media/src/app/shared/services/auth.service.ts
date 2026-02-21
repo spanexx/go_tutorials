@@ -1,6 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BaseApiService } from './base-api.service';
+import { debugError, debugLog } from '../utils/debug-logger';
 
 export interface User {
   id: string;
@@ -17,6 +18,8 @@ export interface AuthState {
   isLoading: boolean;
   token?: string;
 }
+
+type AuthFieldErrors = Partial<Record<'name' | 'username' | 'email' | 'password', string>>;
 
 export interface LoginResponse {
   user: {
@@ -104,13 +107,18 @@ export class AuthService extends BaseApiService {
    * Login user with email and password
    * Calls backend API and stores token
    */
-  login(email: string, password: string): Promise<{ success: boolean; error?: string }> {
+  login(
+    email: string,
+    password: string
+  ): Promise<{ success: boolean; error?: string; fieldErrors?: AuthFieldErrors }> {
     return new Promise((resolve) => {
+      debugLog('AuthService', 'login() called', { email });
       console.log('[AUTH-SERVICE] Login called with email:', email);
       this.authState.update(state => ({ ...state, isLoading: true }));
 
       this.post<LoginResponse>('/auth/login', { email, password }).subscribe({
         next: (response) => {
+          debugLog('AuthService', 'login() response received', { userId: response.user.id });
           console.log('[AUTH-SERVICE] Login response received:', response.user);
           const user: User = {
             id: response.user.id,
@@ -128,6 +136,7 @@ export class AuthService extends BaseApiService {
             token: response.access_token
           });
 
+          debugLog('AuthService', 'login() success: storing session');
           console.log('[AUTH-SERVICE] User state updated, storing in localStorage');
           localStorage.setItem('socialhub_user', JSON.stringify(user));
           localStorage.setItem('socialhub_token', response.access_token);
@@ -135,10 +144,37 @@ export class AuthService extends BaseApiService {
           resolve({ success: true });
         },
         error: (error) => {
+          debugError('AuthService', 'login() error', error);
           console.error('[AUTH-SERVICE] Login error:', error);
           this.authState.update(state => ({ ...state, isLoading: false }));
-          const errorMessage = error.error?.error || 'Login failed';
-          resolve({ success: false, error: errorMessage });
+
+          const rawErrorMessage = error?.error?.error;
+          const errorMessage = rawErrorMessage || 'Login failed';
+          const fieldErrors: AuthFieldErrors = {};
+
+          if (typeof rawErrorMessage === 'string') {
+            const keyMatch = rawErrorMessage.match(/LoginRequest\.([A-Za-z]+)/);
+            const tagMatch = rawErrorMessage.match(/failed on the '([^']+)' tag/);
+
+            if (keyMatch && tagMatch) {
+              const rawField = keyMatch[1].toLowerCase();
+              const tag = tagMatch[1];
+
+              if (rawField === 'email') {
+                if (tag === 'email') {
+                  fieldErrors.email = 'Please enter a valid email address.';
+                } else {
+                  fieldErrors.email = 'Email is required.';
+                }
+              }
+
+              if (rawField === 'password') {
+                fieldErrors.password = 'Password is required.';
+              }
+            }
+          }
+
+          resolve({ success: false, error: errorMessage, fieldErrors: Object.keys(fieldErrors).length ? fieldErrors : undefined });
         }
       });
     });
@@ -148,8 +184,14 @@ export class AuthService extends BaseApiService {
    * Register new user
    * Calls backend API and stores token
    */
-  register(name: string, email: string, password: string, username?: string): Promise<{ success: boolean; error?: string }> {
+  register(
+    name: string,
+    email: string,
+    password: string,
+    username?: string
+  ): Promise<{ success: boolean; error?: string; fieldErrors?: AuthFieldErrors }> {
     return new Promise((resolve) => {
+      debugLog('AuthService', 'register() called', { email, username });
       console.log('[AUTH-SERVICE] Register called with email:', email);
       this.authState.update(state => ({ ...state, isLoading: true }));
 
@@ -163,6 +205,7 @@ export class AuthService extends BaseApiService {
         display_name: name
       }).subscribe({
         next: (response) => {
+          debugLog('AuthService', 'register() response received', { userId: response.user.id });
           console.log('[AUTH-SERVICE] Registration response received:', response.user);
           const user: User = {
             id: response.user.id,
@@ -180,6 +223,7 @@ export class AuthService extends BaseApiService {
             token: response.access_token
           });
 
+          debugLog('AuthService', 'register() success: storing session');
           console.log('[AUTH-SERVICE] User state updated, storing in localStorage');
           localStorage.setItem('socialhub_user', JSON.stringify(user));
           localStorage.setItem('socialhub_token', response.access_token);
@@ -187,10 +231,49 @@ export class AuthService extends BaseApiService {
           resolve({ success: true });
         },
         error: (error) => {
+          debugError('AuthService', 'register() error', error);
           console.error('[AUTH-SERVICE] Registration error:', error);
           this.authState.update(state => ({ ...state, isLoading: false }));
-          const errorMessage = error.error?.error || 'Registration failed';
-          resolve({ success: false, error: errorMessage });
+
+          const rawErrorMessage = error?.error?.error;
+          const errorMessage = rawErrorMessage || 'Registration failed';
+          const fieldErrors: AuthFieldErrors = {};
+
+          if (typeof rawErrorMessage === 'string') {
+            const keyMatch = rawErrorMessage.match(/RegisterRequest\.([A-Za-z]+)/);
+            const tagMatch = rawErrorMessage.match(/failed on the '([^']+)' tag/);
+
+            if (keyMatch && tagMatch) {
+              const rawField = keyMatch[1].toLowerCase();
+              const tag = tagMatch[1];
+
+              if (rawField === 'username') {
+                if (tag === 'alphanum') {
+                  fieldErrors.username = 'Username must contain only letters and numbers.';
+                } else if (tag === 'min') {
+                  fieldErrors.username = 'Username must be at least 3 characters.';
+                } else if (tag === 'max') {
+                  fieldErrors.username = 'Username must be at most 30 characters.';
+                } else {
+                  fieldErrors.username = 'Invalid username.';
+                }
+              }
+
+              if (rawField === 'email') {
+                fieldErrors.email = 'Please enter a valid email address.';
+              }
+
+              if (rawField === 'password') {
+                fieldErrors.password = 'Password is invalid.';
+              }
+
+              if (rawField === 'displayname') {
+                fieldErrors.name = 'Name is required.';
+              }
+            }
+          }
+
+          resolve({ success: false, error: errorMessage, fieldErrors: Object.keys(fieldErrors).length ? fieldErrors : undefined });
         }
       });
     });

@@ -99,44 +99,68 @@ export class MentionService extends BaseApiService {
 
     // Try API
     try {
-      // In full implementation, call backend API
-      // const user = await this.get<any>(`/users/${username}`).toPromise();
-      // const mentionedUser: MentionedUser = {
-      //   id: user.id,
-      //   username: user.username,
-      //   name: user.display_name,
-      //   avatar: user.avatar_url,
-      //   mentionCount: 0
-      // };
-      // this.userCache.set(normalizedUsername, mentionedUser);
-      // return mentionedUser;
-
-      // For now, return fallback
-      return this.fallbackUsers.get(normalizedUsername);
+      const user = await this.get<{ id: string; username: string; display_name: string; avatar_url: string }>(`/users/${username}`).toPromise();
+      if (user) {
+        const mentionedUser: MentionedUser = {
+          id: user.id,
+          username: user.username,
+          name: user.display_name,
+          avatar: user.avatar_url,
+          mentionCount: 0
+        };
+        this.userCache.set(normalizedUsername, mentionedUser);
+        return mentionedUser;
+      }
     } catch (error) {
       console.warn(`Failed to fetch user ${username} from API, using fallback`);
-      return this.fallbackUsers.get(normalizedUsername);
     }
+    
+    return this.fallbackUsers.get(normalizedUsername);
   }
 
   /**
-   * Get all users (for dropdown suggestions)
-   * Returns cached/fallback users
+   * Get all users from API (for dropdown suggestions)
    */
-  getAllUsers(): MentionedUser[] {
-    // In full implementation, fetch from API and cache
+  async getAllUsers(): Promise<MentionedUser[]> {
+    try {
+      const users = await this.get<{ id: string; username: string; display_name: string; avatar_url: string }[]>('/users').toPromise();
+      if (users) {
+        return users.map(u => ({
+          id: u.id,
+          username: u.username,
+          name: u.display_name,
+          avatar: u.avatar_url,
+          mentionCount: 0
+        }));
+      }
+    } catch (error) {
+      console.warn('Failed to fetch users from API, using fallback');
+    }
     return Array.from(this.fallbackUsers.values());
   }
 
   /**
-   * Search users by query
-   * Uses backend search API with fallback to local search
+   * Search users by query via backend API
    */
-  searchUsers(query: string): MentionedUser[] {
+  async searchUsers(query: string): Promise<MentionedUser[]> {
     const normalizedQuery = query.toLowerCase();
 
-    // In full implementation, call backend search API
-    // For now, search fallback users
+    try {
+      const users = await this.get<{ id: string; username: string; display_name: string; avatar_url: string }[]>('/users/search', { q: normalizedQuery }).toPromise();
+      if (users) {
+        return users.map(u => ({
+          id: u.id,
+          username: u.username,
+          name: u.display_name,
+          avatar: u.avatar_url,
+          mentionCount: 0
+        }));
+      }
+    } catch (error) {
+      console.warn('Failed to search users from API, using fallback');
+    }
+    
+    // Fallback to local search
     return Array.from(this.fallbackUsers.values()).filter(user =>
       user.username.includes(normalizedQuery) ||
       user.name.toLowerCase().includes(normalizedQuery)

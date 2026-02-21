@@ -25,14 +25,14 @@
       "type": "infrastructure",
       "description": "Design and implement PostgreSQL schema for posts, comments, and reactions.",
       "acceptance_criteria": [
-        "migrations/000002_create_posts_tables.up.sql with posts, comments, reactions, follows tables",
+        "migrations/000003_create_posts_tables.up.sql with posts, comments, reactions, follows tables",
         "Indexes on user_id, created_at, parent_id, post_id",
         "Foreign keys with CASCADE delete where appropriate",
         "Unique constraint on (post_id, user_id, type) for reactions",
         "Down migrations for rollback",
         "make migrate-up applies all migrations"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.2",
@@ -40,14 +40,14 @@
       "type": "feature",
       "description": "Implement database access layer for post operations using sqlc.",
       "acceptance_criteria": [
-        "internal/repository/posts.sql with queries: CreatePost, GetPostByID, GetPostsWithDetails, UpdatePost, DeletePost",
+        "internal/repository/queries/posts.sql with queries: CreatePost, GetPostByID, GetPostsWithDetails, UpdatePost, DeletePost",
         "GetPostsByUserID, GetPostsByHashtag, GetThreadPosts",
         "IncrementLikeCount, DecrementLikeCount, IncrementCommentCount",
         "internal/repository/posts.sql.go generated",
         "Transactions for complex operations",
         "Handles soft deletes (deleted_at column)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.3",
@@ -55,13 +55,13 @@
       "type": "feature",
       "description": "Implement database access layer for comment operations.",
       "acceptance_criteria": [
-        "internal/repository/comments.sql with queries: CreateComment, GetCommentsByPostID, GetCommentByID, DeleteComment",
+        "internal/repository/queries/comments.sql with queries: CreateComment, GetCommentsByPostID, GetCommentByID, DeleteComment",
         "GetRepliesToComment (nested comments)",
         "CountCommentsByPostID",
         "Supports nested comments via parent_id",
         "Efficient tree retrieval for threaded discussions"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.4",
@@ -69,13 +69,27 @@
       "type": "feature",
       "description": "Implement database access layer for reaction operations.",
       "acceptance_criteria": [
-        "internal/repository/reactions.sql with queries: AddReaction, RemoveReaction, GetReactionsByPostID",
+        "internal/repository/queries/reactions.sql with queries: AddReaction, RemoveReaction, GetReactionsByPostID",
         "GetUserReaction (check if user reacted)",
         "CountReactionsByType, GetReactionCountsByPostID",
         "Upsert pattern for add/update reactions",
         "Efficient aggregation for reaction counts"
       ],
-      "passes": false
+      "passes": true
+    },
+    {
+      "id": "2.6.5",
+      "title": "Follow Repository Layer",
+      "type": "feature",
+      "description": "Implement database access layer for follow operations.",
+      "acceptance_criteria": [
+        "internal/repository/queries/follows.sql with queries: FollowUser, UnfollowUser, IsFollowing",
+        "GetFollowers, GetFollowing",
+        "CountFollowers, CountFollowing",
+        "GetMutualFollows, GetFollowSuggestions",
+        "Prevents self-following"
+      ],
+      "passes": true
     },
     {
       "id": "2.6.5",
@@ -90,7 +104,7 @@
         "Authorization: users can only update/delete their own posts",
         "Content validation (max 5000 chars, no XSS)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.6",
@@ -105,7 +119,7 @@
         "Updates post reaction counts atomically",
         "Prevents duplicate reactions"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.7",
@@ -119,7 +133,7 @@
         "Comment depth limit (max 5 levels)",
         "Authorization checks for deletion"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.8",
@@ -133,7 +147,7 @@
         "Consistent error responses",
         "Pagination: page, limit, has_more"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.9",
@@ -147,7 +161,7 @@
         "Returns 400 for invalid reaction type",
         "Idempotent delete (no error if reaction doesn't exist)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.10",
@@ -160,7 +174,7 @@
         "Nested replies via parent_id in request body",
         "Returns comment tree with nested replies"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.11",
@@ -174,7 +188,7 @@
         "Score calculation: likes*1 + comments*2 + shares*3 + time_decay",
         "Cursor-based pagination (not offset)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.12",
@@ -190,7 +204,7 @@
         "Reactions update in real-time (optimistic UI)",
         "Error handling with toast notifications"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.13",
@@ -205,7 +219,7 @@
         "Test cases for CRUD, reactions, comments, feed, pagination",
         "Test coverage >80%"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "2.6.14",

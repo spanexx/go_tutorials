@@ -10,7 +10,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, TrendingUp, Hash } from 'lucide-angular';
 import { HashtagService, Hashtag } from '../../services/hashtag.service';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-trending-hashtags',
@@ -246,7 +245,7 @@ export class TrendingHashtagsComponent implements OnInit, OnDestroy {
 
   trendingHashtags: Hashtag[] = [];
   isLoading = false;
-  private refreshSubscription?: Subscription;
+  private refreshSubscription?: ReturnType<typeof setInterval>;
 
   constructor(private hashtagService: HashtagService) {}
 
@@ -269,9 +268,14 @@ export class TrendingHashtagsComponent implements OnInit, OnDestroy {
   private loadTrendingHashtags(): void {
     this.isLoading = true;
     
-    // Get trending hashtags from service
-    this.trendingHashtags = this.hashtagService.getTrendingHashtags(10);
-    
-    this.isLoading = false;
+    void this.hashtagService.getTrendingHashtags(10)
+      .then((hashtags) => {
+        this.trendingHashtags = hashtags;
+        this.isLoading = false;
+      })
+      .catch(() => {
+        this.trendingHashtags = [];
+        this.isLoading = false;
+      });
   }
 }

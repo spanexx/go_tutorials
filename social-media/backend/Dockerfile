@@ -26,6 +26,9 @@ WORKDIR /root/
 # Copy the binary from builder
 COPY --from=builder /app/main .
 
+# Copy email templates required at runtime
+COPY --from=builder /app/internal/email/templates ./internal/email/templates
+
 EXPOSE 8080
 
 CMD ["./main"]

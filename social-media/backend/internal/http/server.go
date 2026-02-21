@@ -47,10 +47,10 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 		adminHandler := handlers.NewAdminHandler(emailService)
 
 		// Analytics handlers
-		analyticsHandler := handlers.NewAnalyticsHandler()
+		analyticsHandler := handlers.NewAnalyticsHandler(authService.DB())
 
 		// Search handlers
-		searchHandler := handlers.NewSearchHandler()
+		searchHandler := handlers.NewSearchHandler(authService.DB())
 
 		// User handlers
 		userHandler := handlers.NewUserHandler(authService)
@@ -113,6 +113,16 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 		protected := v1.Group("")
 		protected.Use(middleware.Auth(authService))
 		{
+			postService := service.NewPostService(authService.DB())
+			reactionService := service.NewReactionService(authService.DB())
+			commentService := service.NewCommentService(authService.DB())
+			followService := service.NewFollowService(authService.DB())
+
+			handlers.RegisterPostRoutes(protected, postService, reactionService, commentService)
+			handlers.RegisterCommentRoutes(protected, commentService)
+			handlers.RegisterReactionRoutes(protected, reactionService)
+			handlers.RegisterFollowRoutes(protected, followService)
+
 			protected.POST("/auth/logout", authHandler.Logout)
 			protected.GET("/auth/me", authHandler.GetCurrentUser)
 			protected.PUT("/user/profile", authHandler.UpdateProfile)

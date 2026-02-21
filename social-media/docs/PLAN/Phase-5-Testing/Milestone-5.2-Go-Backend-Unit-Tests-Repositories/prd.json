@@ -1,0 +1,147 @@
+{
+  "milestone": "5.2",
+  "title": "Go Backend Unit Tests - Repositories",
+  "problem": "The database repository layer requires thorough testing to ensure SQL queries are correct, transactions work properly, and database constraints are respected. Repository tests validate the data access layer independently from business logic.",
+  "success_metrics": [
+    "All repository methods have unit tests",
+    "Test coverage for repository layer >= 70%",
+    "Tests run against isolated test database",
+    "Transaction rollback verification",
+    "Edge cases (null values, empty results) covered"
+  ],
+  "non_goals": [
+    "Business logic testing (covered in Milestone 5.1)",
+    "API endpoint testing (covered in Milestone 5.6)",
+    "Load testing database performance (future phase)"
+  ],
+  "items": [
+    {
+      "id": "5.2.1",
+      "title": "PostRepository Unit Tests",
+      "type": "test",
+      "description": "Unit tests for PostRepository covering all CRUD operations and complex queries.",
+      "acceptance_criteria": [
+        "Test CreatePost with all fields",
+        "Test GetPostByID with existing/non-existing",
+        "Test UpdatePost all fields",
+        "Test DeletePost soft delete verification",
+        "Test GetPostsByUserID pagination",
+        "Test GetPostsWithDetails joins",
+        "Test GetPostsByHashtag filtering",
+        "Test Increment/Decrement counts",
+        "Test post_hashtags junction operations",
+        "Test post_mentions junction operations",
+        "Use test database with transaction rollback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.2.2",
+      "title": "CommentRepository Unit Tests",
+      "type": "test",
+      "description": "Unit tests for CommentRepository including recursive queries and pagination.",
+      "acceptance_criteria": [
+        "Test CreateComment with/without parent_id",
+        "Test GetCommentByID",
+        "Test GetCommentsByPostID pagination",
+        "Test GetRepliesToComment",
+        "Test GetCommentTree recursive CTE",
+        "Test UpdateComment",
+        "Test DeleteComment soft delete",
+        "Test Increment/Decrement like counts",
+        "Test depth calculation for nested comments",
+        "Use test database with transaction rollback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.2.3",
+      "title": "UserRepository Unit Tests",
+      "type": "test",
+      "description": "Unit tests for UserRepository covering user management and search.",
+      "acceptance_criteria": [
+        "Test CreateUser with all fields",
+        "Test GetUserByID",
+        "Test GetUserByEmail",
+        "Test GetUserByUsername",
+        "Test UpdateUser profile changes",
+        "Test DeleteUser soft delete",
+        "Test SearchUsers with query",
+        "Test username uniqueness constraint",
+        "Test email uniqueness constraint",
+        "Test password hash storage",
+        "Use test database with transaction rollback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.2.4",
+      "title": "ReactionRepository Unit Tests",
+      "type": "test",
+      "description": "Unit tests for ReactionRepository covering upsert pattern and aggregations.",
+      "acceptance_criteria": [
+        "Test CreateReaction new reaction",
+        "Test UpdateReaction type change",
+        "Test DeleteReaction",
+        "Test GetReactionsByPostID",
+        "Test GetReactionsByCommentID",
+        "Test GetUserReaction check",
+        "Test CountReactionsByType aggregation",
+        "Test HasUserReacted boolean",
+        "Test UpsertReaction pattern",
+        "Use test database with transaction rollback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.2.5",
+      "title": "FollowRepository Unit Tests",
+      "type": "test",
+      "description": "Unit tests for FollowRepository covering follow relationships and queries.",
+      "acceptance_criteria": [
+        "Test CreateFollow new follow",
+        "Test CreateFollow upsert existing",
+        "Test DeleteFollow",
+        "Test GetFollowers with user details",
+        "Test GetFollowing with user details",
+        "Test GetMutualFollows intersection",
+        "Test CountFollowers/CountFollowing",
+        "Test IsFollowing check",
+        "Test GetFollowSuggestions",
+        "Use test database with transaction rollback"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.2.6",
+      "title": "Test Database Infrastructure",
+      "type": "test_infrastructure",
+      "description": "Setup test database utilities including migrations, fixtures, and cleanup.",
+      "acceptance_criteria": [
+        "Test database connection management",
+        "Migration runner for test schema",
+        "Transaction wrapper for test isolation",
+        "Test fixture loading (seed data)",
+        "Automatic cleanup after tests",
+        "Parallel test support (unique test DBs)",
+        "Testcontainers integration for CI"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "backend/internal/repository/post_repository_test.go",
+    "backend/internal/repository/comment_repository_test.go",
+    "backend/internal/repository/user_repository_test.go",
+    "backend/internal/repository/reaction_repository_test.go",
+    "backend/internal/repository/follow_repository_test.go",
+    "backend/internal/testutil/db.go",
+    "backend/internal/testutil/fixtures.go"
+  ],
+  "affected_dependencies": [
+    "testify/assert",
+    "testify/suite",
+    "testcontainers-go/postgres",
+    "golang-migrate/migrate"
+  ]
+}

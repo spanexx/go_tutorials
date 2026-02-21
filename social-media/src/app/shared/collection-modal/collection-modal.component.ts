@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, X, Palette, Folder } from 'lucide-angular';
@@ -12,7 +12,7 @@ import { ToastService } from '../../shared/services/toast.service';
   templateUrl: './collection-modal.component.html',
   styleUrls: ['./collection-modal.component.scss']
 })
-export class CollectionModalComponent {
+export class CollectionModalComponent implements OnInit {
   @Input() visible: boolean = false;
   @Input() editCollectionId?: string;
   @Output() closed = new EventEmitter<void>();

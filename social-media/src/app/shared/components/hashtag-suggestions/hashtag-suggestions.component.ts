@@ -184,7 +184,12 @@ export class HashtagSuggestionsComponent implements OnChanges {
     
     // If no matches, show popular hashtags
     if (this.suggestions.length === 0 && searchText.length === 0) {
-      this.suggestions = this.hashtagService.getTrendingHashtags(5);
+      const trendingTags = this.hashtagService.trending();
+      const hashtagsMap = this.hashtagService.hashtags();
+      this.suggestions = trendingTags
+        .slice(0, 5)
+        .map(tag => hashtagsMap[tag.toLowerCase()])
+        .filter((h): h is Hashtag => Boolean(h));
     }
 
     this.isVisible = this.suggestions.length > 0;

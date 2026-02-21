@@ -161,6 +161,21 @@
               margin: 0;
             }
           }
+
+          .stat-link {
+            text-decoration: none;
+            transition: all 0.2s;
+
+            &:hover {
+              .stat-value {
+                color: hsl(var(--accent));
+              }
+
+              .stat-label {
+                color: hsl(var(--accent));
+              }
+            }
+          }
         }
       }
     }

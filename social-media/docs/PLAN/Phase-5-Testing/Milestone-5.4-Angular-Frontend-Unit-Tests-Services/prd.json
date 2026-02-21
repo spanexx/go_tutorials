@@ -1,0 +1,185 @@
+{
+  "milestone": "5.4",
+  "title": "Angular Frontend Unit Tests - Services & Guards",
+  "problem": "Angular services and guards require unit testing to ensure proper state management, API communication, and route protection. Service tests validate business logic in the frontend independently from UI components.",
+  "success_metrics": [
+    "All services have >= 80% test coverage",
+    "All route guards have comprehensive tests",
+    "HTTP client mocking works correctly",
+    "Service state management tested",
+    "Test execution < 30 seconds"
+  ],
+  "non_goals": [
+    "Component rendering tests (covered in Milestone 5.5)",
+    "API endpoint testing (covered in Milestone 5.6)",
+    "E2E user flows (covered in Milestone 5.9-5.10)"
+  ],
+  "items": [
+    {
+      "id": "5.4.1",
+      "title": "AuthService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for AuthService covering authentication state and API calls.",
+      "acceptance_criteria": [
+        "Test login() with valid credentials",
+        "Test login() with invalid credentials (error handling)",
+        "Test register() with valid data",
+        "Test logout() clears state",
+        "Test isAuthenticated signal updates",
+        "Test currentUser signal updates",
+        "Test localStorage persistence",
+        "Test token storage and retrieval",
+        "Mock HttpClient for API calls",
+        "Test Observables with marble testing"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.2",
+      "title": "PostService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for PostService covering feed and post operations.",
+      "acceptance_criteria": [
+        "Test createPost() with content",
+        "Test getFeed() with different types",
+        "Test getPost() by ID",
+        "Test updatePost() with changes",
+        "Test deletePost() confirmation",
+        "Test getUserPosts() pagination",
+        "Test loading state signals",
+        "Test error state handling",
+        "Mock HttpClient for all requests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.3",
+      "title": "CommentService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for CommentService with nested comment support.",
+      "acceptance_criteria": [
+        "Test addComment() to post",
+        "Test addComment() as reply",
+        "Test getComments() pagination",
+        "Test getCommentTree() nested structure",
+        "Test deleteComment() by ID",
+        "Test updateComment() content",
+        "Test comment depth tracking",
+        "Mock HttpClient for all requests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.4",
+      "title": "ReactionService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for ReactionService covering reactions and counts.",
+      "acceptance_criteria": [
+        "Test react() with different types",
+        "Test toggleReaction() add/remove",
+        "Test removeReaction() idempotent",
+        "Test getReactionCounts() aggregation",
+        "Test getUserReaction() check",
+        "Test optimistic UI updates",
+        "Mock HttpClient for all requests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.5",
+      "title": "FollowService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for FollowService covering follow/unfollow operations.",
+      "acceptance_criteria": [
+        "Test followUser() new follow",
+        "Test unfollowUser() existing",
+        "Test toggleFollow() behavior",
+        "Test isFollowing() check",
+        "Test getFollowers() pagination",
+        "Test getFollowing() pagination",
+        "Test getFollowSuggestions()",
+        "Mock HttpClient for all requests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.6",
+      "title": "FeedService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for FeedService (if separate from PostService).",
+      "acceptance_criteria": [
+        "Test getHomeFeed() with following",
+        "Test getTrendingFeed() with scores",
+        "Test getLatestFeed() chronological",
+        "Test feed pagination (hasMore)",
+        "Test feed type switching",
+        "Test refresh functionality",
+        "Mock HttpClient for all requests"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.7",
+      "title": "authGuard Unit Tests",
+      "type": "test",
+      "description": "Unit tests for authentication route guard.",
+      "acceptance_criteria": [
+        "Test allow access when authenticated",
+        "Test redirect to login when not authenticated",
+        "Test preserve URL in query params",
+        "Test async auth state resolution",
+        "Mock Router and AuthService",
+        "Test both true/false outcomes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.8",
+      "title": "guestGuard Unit Tests",
+      "type": "test",
+      "description": "Unit tests for guest route guard (redirects authenticated users).",
+      "acceptance_criteria": [
+        "Test redirect to feed when authenticated",
+        "Test allow access when not authenticated",
+        "Test redirect after login page",
+        "Mock Router and AuthService",
+        "Test both true/false outcomes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "5.4.9",
+      "title": "ToastService Unit Tests",
+      "type": "test",
+      "description": "Unit tests for ToastService notifications.",
+      "acceptance_criteria": [
+        "Test success() adds toast",
+        "Test error() adds toast",
+        "Test warning() adds toast",
+        "Test info() adds toast",
+        "Test auto-dismiss timeout",
+        "Test manual dismiss",
+        "Test toast queue limits",
+        "Test signal updates"
+      ],
+      "passes": false
+    }
+  ],
+  "affected_files": [
+    "src/app/shared/services/auth.service.spec.ts",
+    "src/app/shared/services/post.service.spec.ts",
+    "src/app/shared/services/comment.service.spec.ts",
+    "src/app/shared/services/reaction.service.spec.ts",
+    "src/app/shared/services/follow.service.spec.ts",
+    "src/app/shared/services/feed.service.spec.ts",
+    "src/app/shared/guards/auth.guard.spec.ts",
+    "src/app/shared/guards/guest.guard.spec.ts",
+    "src/app/shared/services/toast.service.spec.ts"
+  ],
+  "affected_dependencies": [
+    "@angular/core/testing",
+    "@angular/common/http/testing",
+    "jasmine",
+    "karma"
+  ]
+}

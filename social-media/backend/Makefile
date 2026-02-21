@@ -1,12 +1,20 @@
-.PHONY: build run test clean migrate-up migrate-down generate docs
+.PHONY: build run test clean migrate-up migrate-down generate docs build-posts run-posts
 
 # Build the application
 build:
 	go build -o bin/auth-service ./cmd/auth-service
 
+# Build posts service
+build-posts:
+	go build -o bin/posts-service ./cmd/posts-service
+
 # Run the application
 run:
 	go run ./cmd/auth-service
+
+# Run posts service
+run-posts:
+	go run ./cmd/posts-service
 
 # Run tests
 test:
@@ -36,7 +44,12 @@ generate:
 
 # Generate Swagger documentation
 docs:
-	swag init -g cmd/auth-service/main.go -o docs
+	swag init -g cmd/auth-service/main.go -o docs/swagger
+	swag init -g cmd/posts-service/main.go -o docs/swagger-posts
+
+# Generate Swagger documentation for posts service
+docs-posts:
+	swag init -g cmd/posts-service/main.go -o docs/swagger-posts
 
 # Install dependencies
 deps:

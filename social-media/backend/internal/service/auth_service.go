@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"crypto/rand"
+	"database/sql"
 	"encoding/hex"
 	"errors"
 	"fmt"
@@ -20,11 +21,11 @@ import (
 
 // Common errors
 var (
-	ErrUserExists          = errors.New("user already exists")
-	ErrInvalidCredentials  = errors.New("invalid credentials")
-	ErrUserNotFound        = errors.New("user not found")
-	ErrInvalidToken        = errors.New("invalid token")
-	ErrEmailNotVerified    = errors.New("email not verified")
+	ErrUserExists         = errors.New("user already exists")
+	ErrInvalidCredentials = errors.New("invalid credentials")
+	ErrUserNotFound       = errors.New("user not found")
+	ErrInvalidToken       = errors.New("invalid token")
+	ErrEmailNotVerified   = errors.New("email not verified")
 )
 
 // AuthService handles authentication business logic
@@ -45,11 +46,15 @@ func NewAuthService(repo *repository.UserRepository, config *config.Config, redi
 	}
 }
 
+func (s *AuthService) DB() *sql.DB {
+	return s.repo.DB()
+}
+
 // RegisterInput represents registration input
 type RegisterInput struct {
-	Email     string `json:"email" binding:"required,email"`
-	Username  string `json:"username" binding:"required,alphanum,min=3,max=30"`
-	Password  string `json:"password" binding:"required,min=8"`
+	Email       string `json:"email" binding:"required,email"`
+	Username    string `json:"username" binding:"required,alphanum,min=3,max=30"`
+	Password    string `json:"password" binding:"required,min=8"`
 	DisplayName string `json:"display_name" binding:"required"`
 }
 
@@ -186,6 +191,10 @@ func (s *AuthService) IsTokenBlacklisted(ctx context.Context, token string) bool
 // GetCurrentUser retrieves the current user
 func (s *AuthService) GetCurrentUser(ctx context.Context, userID string) (*repository.User, error) {
 	return s.repo.GetUserByID(ctx, userID)
+}
+
+func (s *AuthService) GetUserByUsername(ctx context.Context, username string) (*repository.User, error) {
+	return s.repo.GetUserByUsername(ctx, username)
 }
 
 // UpdateProfile updates user profile

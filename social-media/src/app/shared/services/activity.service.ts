@@ -1,173 +1,366 @@
-import { Injectable, signal } from '@angular/core';
+// Code Map: activity.service.ts
+// - ActivityService: Service for tracking user interactions and activity feed
+// - Activity interface with id, type, actor, target, timestamp
+// - Activity types: LIKE, COMMENT, FOLLOW, POST, SHARE, MENTION
+// - Methods: getUserActivity, getFeedActivity, createActivity
+// - Signal-based activity feed with pagination support
+// CID: Phase-2 Milestone 2.4 - Sharing & Activity Feed
+import { Injectable, signal, computed } from '@angular/core';
 
-export type ActivityType = 'like' | 'comment' | 'follow' | 'share' | 'post' | 'mention';
+export enum ActivityType {
+  LIKE = 'LIKE',
+  COMMENT = 'COMMENT',
+  FOLLOW = 'FOLLOW',
+  POST = 'POST',
+  SHARE = 'SHARE',
+  MENTION = 'MENTION',
+  REACTION = 'REACTION',
+  REPLY = 'REPLY'
+}
+
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  avatar?: string;
+}
+
+export interface ActivityTarget {
+  id: string;
+  type: 'post' | 'comment' | 'user';
+  content?: string;
+  title?: string;
+}
 
 export interface Activity {
   id: string;
   type: ActivityType;
-  user: {
-    name: string;
-    username: string;
-    avatar: string;
-  };
-  target?: {
-    type: 'post' | 'user';
-    content?: string;
-    username?: string;
-  };
+  actor: User;
+  target: ActivityTarget;
   timestamp: Date;
-  isRead: boolean;
+  read: boolean;
+  metadata?: Record<string, any>;
+}
+
+export interface ActivityFeed {
+  activities: Activity[];
+  hasMore: boolean;
+  cursor: string | null;
+}
+
+export interface ActivityState {
+  feed: Activity[];
+  userActivity: Record<string, Activity[]>;
+  unreadCount: number;
+  isLoading: boolean;
+  hasMore: boolean;
+  cursor: string | null;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ActivityService {
-  private activitiesSignal = signal<Activity[]>([]);
-  activities = this.activitiesSignal.asReadonly();
+  private activityState = signal<ActivityState>({
+    feed: [],
+    userActivity: {},
+    unreadCount: 0,
+    isLoading: false,
+    hasMore: true,
+    cursor: null
+  });
+
+  // Get all activities in feed
+  activities = computed(() => this.activityState().feed);
+
+  // Get unread count
+  unreadCount = computed(() => this.activityState().unreadCount);
+
+  // Check if loading
+  isLoading = computed(() => this.activityState().isLoading);
+
+  // Check if more activities available
+  hasMore = computed(() => this.activityState().hasMore);
 
   constructor() {
-    this.initializeMockActivities();
+    this.initializeMockData();
   }
 
-  private initializeMockActivities(): void {
-    const now = new Date();
-    
+  private initializeMockData(): void {
+    const mockUsers: User[] = [
+      { id: 'user-1', name: 'Alice Johnson', username: 'alice', avatar: '/avatars/alice.jpg' },
+      { id: 'user-2', name: 'Bob Smith', username: 'bob', avatar: '/avatars/bob.jpg' },
+      { id: 'user-3', name: 'Carol White', username: 'carol', avatar: '/avatars/carol.jpg' },
+      { id: 'user-4', name: 'David Brown', username: 'david', avatar: '/avatars/david.jpg' },
+      { id: 'user-5', name: 'Eve Davis', username: 'eve', avatar: '/avatars/eve.jpg' }
+    ];
+
     const mockActivities: Activity[] = [
       {
-        id: '1',
-        type: 'like',
-        user: { name: 'Sarah Johnson', username: 'sarahjohnson', avatar: 'https://i.pravatar.cc/150?img=5' },
-        target: { type: 'post', content: 'Just launched my new portfolio website!' },
-        timestamp: new Date(now.getTime() - 5 * 60000), // 5 minutes ago
-        isRead: false
+        id: 'activity-1',
+        type: ActivityType.LIKE,
+        actor: mockUsers[0],
+        target: { id: 'post-1', type: 'post', content: 'Just shipped a new feature!' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+        read: false
       },
       {
-        id: '2',
-        type: 'follow',
-        user: { name: 'Alex Chen', username: 'alexchen', avatar: 'https://i.pravatar.cc/150?img=3' },
-        target: { type: 'user', username: 'ninapatel' },
-        timestamp: new Date(now.getTime() - 15 * 60000), // 15 minutes ago
-        isRead: false
+        id: 'activity-2',
+        type: ActivityType.COMMENT,
+        actor: mockUsers[1],
+        target: { id: 'post-2', type: 'post', content: 'Working on Angular updates' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+        read: false,
+        metadata: { comment: 'Great progress!' }
       },
       {
-        id: '3',
-        type: 'comment',
-        user: { name: 'Emma Davis', username: 'emmadavis', avatar: 'https://i.pravatar.cc/150?img=7' },
-        target: { type: 'post', content: 'Hot take: TypeScript makes you a better developer...' },
-        timestamp: new Date(now.getTime() - 30 * 60000), // 30 minutes ago
-        isRead: false
+        id: 'activity-3',
+        type: ActivityType.FOLLOW,
+        actor: mockUsers[2],
+        target: { id: 'user-current', type: 'user' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
+        read: true
       },
       {
-        id: '4',
-        type: 'share',
-        user: { name: 'Marcus Williams', username: 'marcuswilliams', avatar: 'https://i.pravatar.cc/150?img=12' },
-        target: { type: 'post', content: '30-day coding challenge results' },
-        timestamp: new Date(now.getTime() - 60 * 60000), // 1 hour ago
-        isRead: true
+        id: 'activity-4',
+        type: ActivityType.REACTION,
+        actor: mockUsers[3],
+        target: { id: 'post-3', type: 'post', content: 'Check out my latest project' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
+        read: true,
+        metadata: { reactionType: 'Love' }
       },
       {
-        id: '5',
-        type: 'mention',
-        user: { name: 'Lisa Rodriguez', username: 'lisarodriguez', avatar: 'https://i.pravatar.cc/150?img=11' },
-        target: { type: 'post', content: 'Great insights from @currentuser on web development' },
-        timestamp: new Date(now.getTime() - 2 * 60 * 60000), // 2 hours ago
-        isRead: true
+        id: 'activity-5',
+        type: ActivityType.SHARE,
+        actor: mockUsers[4],
+        target: { id: 'post-4', type: 'post', content: 'TypeScript tips and tricks' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
+        read: true
       },
       {
-        id: '6',
-        type: 'post',
-        user: { name: 'Nina Patel', username: 'ninapatel', avatar: 'https://i.pravatar.cc/150?img=9' },
-        target: { type: 'post', content: 'Just finished reading an amazing book on Angular!' },
-        timestamp: new Date(now.getTime() - 3 * 60 * 60000), // 3 hours ago
-        isRead: true
+        id: 'activity-6',
+        type: ActivityType.MENTION,
+        actor: mockUsers[0],
+        target: { id: 'post-5', type: 'post', content: 'Thanks @currentuser for the help!' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
+        read: true
       },
       {
-        id: '7',
-        type: 'like',
-        user: { name: 'Jake Thompson', username: 'jakethompson', avatar: 'https://i.pravatar.cc/150?img=8' },
-        target: { type: 'post', content: 'The future of web development' },
-        timestamp: new Date(now.getTime() - 5 * 60 * 60000), // 5 hours ago
-        isRead: true
+        id: 'activity-7',
+        type: ActivityType.REPLY,
+        actor: mockUsers[1],
+        target: { id: 'comment-1', type: 'comment', content: 'This is really helpful' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
+        read: true
       },
       {
-        id: '8',
-        type: 'follow',
-        user: { name: 'Michael Chen', username: 'michaelchen', avatar: 'https://i.pravatar.cc/150?img=10' },
-        target: { type: 'user', username: 'alexchen' },
-        timestamp: new Date(now.getTime() - 24 * 60 * 60000), // 1 day ago
-        isRead: true
+        id: 'activity-8',
+        type: ActivityType.POST,
+        actor: mockUsers[2],
+        target: { id: 'post-6', type: 'post', title: 'New blog post published' },
+        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), // 5 days ago
+        read: true
       }
     ];
 
-    this.activitiesSignal.set(mockActivities);
+    const unreadCount = mockActivities.filter(a => !a.read).length;
+
+    this.activityState.set({
+      feed: mockActivities,
+      userActivity: {},
+      unreadCount,
+      isLoading: false,
+      hasMore: true,
+      cursor: 'cursor-8'
+    });
   }
 
-  getActivities(limit?: number): Activity[] {
-    const all = this.activitiesSignal();
-    if (limit) {
-      return all.slice(0, limit);
-    }
-    return all;
+  /**
+   * Get activity feed with pagination
+   */
+  getFeedActivity(limit: number = 20, cursor?: string): Promise<ActivityFeed> {
+    return new Promise((resolve) => {
+      this.activityState.update(state => ({ ...state, isLoading: true }));
+
+      // Simulate API delay
+      setTimeout(() => {
+        const state = this.activityState();
+        const activities = state.feed;
+        
+        // Apply pagination
+        const startIndex = cursor ? activities.findIndex(a => a.id === cursor) + 1 : 0;
+        const paginatedActivities = activities.slice(startIndex, startIndex + limit);
+        
+        this.activityState.update(state => ({
+          ...state,
+          isLoading: false,
+          cursor: startIndex + limit < activities.length 
+            ? activities[startIndex + limit].id 
+            : null,
+          hasMore: startIndex + limit < activities.length
+        }));
+
+        resolve({
+          activities: paginatedActivities,
+          hasMore: startIndex + limit < activities.length,
+          cursor: startIndex + limit < activities.length 
+            ? activities[startIndex + limit].id 
+            : null
+        });
+      }, 300);
+    });
   }
 
-  getUnreadCount(): number {
-    return this.activitiesSignal().filter(a => !a.isRead).length;
+  /**
+   * Get user's activity history
+   */
+  getUserActivity(userId: string, limit: number = 20): Promise<Activity[]> {
+    return new Promise((resolve) => {
+      const state = this.activityState();
+      
+      // Check cache first
+      if (state.userActivity[userId]) {
+        resolve(state.userActivity[userId].slice(0, limit));
+        return;
+      }
+
+      // Filter activities where user is the actor
+      const userActivities = state.feed.filter(a => a.actor.id === userId);
+      
+      // Cache the result
+      this.activityState.update(state => ({
+        ...state,
+        userActivity: {
+          ...state.userActivity,
+          [userId]: userActivities
+        }
+      }));
+
+      resolve(userActivities.slice(0, limit));
+    });
   }
 
+  /**
+   * Create a new activity
+   */
+  createActivity(type: ActivityType, actor: User, target: ActivityTarget, metadata?: Record<string, any>): Activity {
+    const newActivity: Activity = {
+      id: `activity-${Date.now()}`,
+      type,
+      actor,
+      target,
+      timestamp: new Date(),
+      read: false,
+      metadata
+    };
+
+    this.activityState.update(state => ({
+      ...state,
+      feed: [newActivity, ...state.feed],
+      unreadCount: state.unreadCount + 1
+    }));
+
+    return newActivity;
+  }
+
+  /**
+   * Mark activity as read
+   */
   markAsRead(activityId: string): void {
-    this.activitiesSignal.update(activities =>
-      activities.map(a =>
-        a.id === activityId ? { ...a, isRead: true } : a
-      )
-    );
+    this.activityState.update(state => ({
+      ...state,
+      feed: state.feed.map(a => 
+        a.id === activityId ? { ...a, read: true } : a
+      ),
+      unreadCount: Math.max(0, state.unreadCount - 1)
+    }));
   }
 
+  /**
+   * Mark all activities as read
+   */
   markAllAsRead(): void {
-    this.activitiesSignal.update(activities =>
-      activities.map(a => ({ ...a, isRead: true }))
-    );
+    this.activityState.update(state => ({
+      ...state,
+      feed: state.feed.map(a => ({ ...a, read: true })),
+      unreadCount: 0
+    }));
   }
 
-  getRecentActivities(hours: number = 24): Activity[] {
-    const cutoff = new Date(Date.now() - hours * 60 * 60 * 1000);
-    return this.activitiesSignal().filter(a => a.timestamp > cutoff);
+  /**
+   * Get unread activities
+   */
+  getUnreadActivities(): Activity[] {
+    const state = this.activityState();
+    return state.feed.filter(a => !a.read);
   }
 
+  /**
+   * Get activities by type
+   */
   getActivitiesByType(type: ActivityType): Activity[] {
-    return this.activitiesSignal().filter(a => a.type === type);
+    const state = this.activityState();
+    return state.feed.filter(a => a.type === type);
   }
 
-  getActivityIcon(type: ActivityType): string {
+  /**
+   * Clear activity feed (for testing)
+   */
+  clear(): void {
+    this.activityState.set({
+      feed: [],
+      userActivity: {},
+      unreadCount: 0,
+      isLoading: false,
+      hasMore: true,
+      cursor: null
+    });
+  }
+
+  /**
+   * Refresh activity feed
+   */
+  async refresh(): Promise<void> {
+    this.activityState.update(state => ({ ...state, isLoading: true }));
+    
+    // Simulate API refresh
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    this.activityState.update(state => ({ ...state, isLoading: false }));
+  }
+
+  /**
+   * Get activity type label
+   */
+  static getActivityLabel(type: ActivityType): string {
+    const labels: Record<ActivityType, string> = {
+      [ActivityType.LIKE]: 'liked',
+      [ActivityType.COMMENT]: 'commented on',
+      [ActivityType.FOLLOW]: 'started following',
+      [ActivityType.POST]: 'posted',
+      [ActivityType.SHARE]: 'shared',
+      [ActivityType.MENTION]: 'mentioned you in',
+      [ActivityType.REACTION]: 'reacted to',
+      [ActivityType.REPLY]: 'replied to'
+    };
+    return labels[type];
+  }
+
+  /**
+   * Get activity type icon
+   */
+  static getActivityIcon(type: ActivityType): string {
     const icons: Record<ActivityType, string> = {
-      like: '❤️',
-      comment: '💬',
-      follow: '👤',
-      share: '↗️',
-      post: '📝',
-      mention: '@'
+      [ActivityType.LIKE]: 'heart',
+      [ActivityType.COMMENT]: 'message-circle',
+      [ActivityType.FOLLOW]: 'user-plus',
+      [ActivityType.POST]: 'file-text',
+      [ActivityType.SHARE]: 'share-2',
+      [ActivityType.MENTION]: 'at-sign',
+      [ActivityType.REACTION]: 'smile',
+      [ActivityType.REPLY]: 'corner-down-right'
     };
     return icons[type];
-  }
-
-  getActivityColor(type: ActivityType): string {
-    const colors: Record<ActivityType, string> = {
-      like: 'hsl(var(--destructive))',
-      comment: 'hsl(var(--accent))',
-      follow: 'hsl(var(--success))',
-      share: 'hsl(var(--info))',
-      post: 'hsl(var(--warning))',
-      mention: 'hsl(var(--accent))'
-    };
-    return colors[type];
-  }
-
-  getTimeAgo(date: Date): string {
-    const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
-    
-    if (seconds < 60) return 'Just now';
-    if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-    if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-    return `${Math.floor(seconds / 86400)}d ago`;
   }
 }
