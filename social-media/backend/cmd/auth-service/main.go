@@ -12,9 +12,9 @@ import (
 	"time"
 
 	"github.com/redis/go-redis/v9"
-	httpserver "github.com/socialhub/auth-service/internal/http"
 	"github.com/socialhub/auth-service/internal/config"
 	"github.com/socialhub/auth-service/internal/email"
+	httpserver "github.com/socialhub/auth-service/internal/http"
 	"github.com/socialhub/auth-service/internal/repository"
 	"github.com/socialhub/auth-service/internal/service"
 )
@@ -63,19 +63,29 @@ func main() {
 	defer repo.Close()
 
 	// Initialize Redis client
-	redisClient := redis.NewClient(&redis.Options{
-		Addr:     getRedisAddr(cfg.RedisURL),
-		Password: "", // No password by default
-		DB:       0,  // Default DB
-	})
+	var redisClient *redis.Client
+	if cfg.RedisURL != "" {
+		opt, err := redis.ParseURL(cfg.RedisURL)
+		if err != nil {
+			log.Printf("Warning: Failed to parse Redis URL %s: %v", cfg.RedisURL, err)
+			// Fallback to manual address parsing
+			redisClient = redis.NewClient(&redis.Options{
+				Addr: getRedisAddr(cfg.RedisURL),
+			})
+		} else {
+			redisClient = redis.NewClient(opt)
+		}
 
-	// Test Redis connection
-	if _, err := redisClient.Ping(context.Background()).Result(); err != nil {
-		log.Printf("Warning: Redis connection failed: %v", err)
-		log.Println("Running without Redis - token blacklisting will be disabled")
-		redisClient = nil // Run without Redis
+		// Test Redis connection
+		if _, err := redisClient.Ping(context.Background()).Result(); err != nil {
+			log.Printf("Warning: Redis connection failed: %v", err)
+			log.Println("Running without Redis - token blacklisting will be disabled")
+			redisClient = nil // Run without Redis
+		} else {
+			log.Println("Connected to Redis")
+		}
 	} else {
-		log.Println("Connected to Redis")
+		log.Println("Redis URL not provided, running without Redis")
 	}
 
 	// Initialize email service
@@ -102,12 +112,12 @@ func main() {
 		}
 
 		smtpConfig := &email.SMTPConfig{
-			Host:       cfg.EmailHost,
-			Port:       cfg.EmailPort,
-			Username:   cfg.EmailUsername,
-			Password:   cfg.EmailPassword,
-			FromName:   cfg.EmailFromName,
-			FromEmail:  cfg.EmailFromAddress,
+			Host:      cfg.EmailHost,
+			Port:      cfg.EmailPort,
+			Username:  cfg.EmailUsername,
+			Password:  cfg.EmailPassword,
+			FromName:  cfg.EmailFromName,
+			FromEmail: cfg.EmailFromAddress,
 		}
 		emailService = email.NewEmailService(smtpConfig, templateDir, cfg.EmailEnabled)
 

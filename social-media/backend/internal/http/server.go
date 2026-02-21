@@ -18,9 +18,9 @@ import (
 
 // Server represents the HTTP server
 type Server struct {
-	router *gin.Engine
+	router  *gin.Engine
 	httpSrv *http.Server
-	config *config.Config
+	config  *config.Config
 }
 
 // NewServer creates a new HTTP server
@@ -74,29 +74,32 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 			auth.POST("/forgot-password", authHandler.ForgotPassword)
 			auth.POST("/reset-password", authHandler.ResetPassword)
 		}
-		
+
 		// Search routes (public)
 		search := v1.Group("/search")
+		search.Use(middleware.Cache(redisClient, 5*time.Minute))
 		{
 			search.GET("", searchHandler.Search)
 		}
-		
+
 		// Hashtags routes (public)
 		hashtags := v1.Group("/hashtags")
+		hashtags.Use(middleware.Cache(redisClient, 5*time.Minute))
 		{
 			hashtags.GET("/trending", searchHandler.GetTrendingHashtags)
 		}
-		
+
 		// Users routes (mixed)
 		users := v1.Group("/users")
-		{
-			users.GET("/suggested", searchHandler.GetSuggestedUsers)
-			users.GET("/:username", userHandler.GetUserByUsername)
-			users.GET("/id/:id", userHandler.GetUserByID)
-			users.POST("/:username/follow", userHandler.FollowUser)
-			users.POST("/:username/unfollow", userHandler.UnfollowUser)
-		}
-		
+		// Apply cache middleware only to GET user profile routes
+		users.GET("/suggested", middleware.Cache(redisClient, 5*time.Minute), searchHandler.GetSuggestedUsers)
+		users.GET("/:username", middleware.Cache(redisClient, 5*time.Minute), userHandler.GetUserByUsername)
+		users.GET("/id/:id", middleware.Cache(redisClient, 5*time.Minute), userHandler.GetUserByID)
+
+		// Uncached POST routes
+		users.POST("/:username/follow", userHandler.FollowUser)
+		users.POST("/:username/unfollow", userHandler.UnfollowUser)
+
 		// Analytics routes (protected)
 		analytics := v1.Group("/analytics")
 		analytics.Use(middleware.Auth(authService))
