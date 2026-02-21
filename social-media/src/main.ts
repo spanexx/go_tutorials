@@ -5,6 +5,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
 import { authInterceptor, errorInterceptor, loggingInterceptor } from './app/shared/interceptors';
+import { cacheInterceptor } from './app/core/interceptors/cache.interceptor';
 
 bootstrapApplication(AppComponent, {
   providers: [
@@ -13,6 +14,7 @@ bootstrapApplication(AppComponent, {
     provideHttpClient(
       withInterceptors([
         authInterceptor,
+        cacheInterceptor,
         errorInterceptor,
         loggingInterceptor
       ])

@@ -1,10 +1,13 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule, Mail, Link, MapPin, Calendar, Check, UserPlus } from 'lucide-angular';
 import { AuthService } from '../../shared/services/auth.service';
+import { environment } from '../../../environments/environment';
 
 export interface UserProfileData {
+  id: string;
   username: string;
   name: string;
   bio: string;
@@ -18,6 +21,29 @@ export interface UserProfileData {
   isVerified?: boolean;
 }
 
+// API response interface
+interface UserProfileResponse {
+  id: string;
+  username: string;
+  display_name: string;
+  avatar_url: string;
+  bio: string;
+  followers_count?: number;
+  following_count?: number;
+  is_following?: boolean;
+  is_verified?: boolean;
+  created_at?: string;
+  location?: string;
+  website?: string;
+  name?: string;
+}
+
+/**
+ * UserProfileCardComponent - Displays a user profile card
+ *
+ * Fetches user profile data from backend API with caching
+ * to avoid repeated calls for the same user.
+ */
 @Component({
   selector: 'app-user-profile-card',
   standalone: true,
@@ -38,9 +64,16 @@ export class UserProfileCardComponent implements OnChanges {
 
   user: UserProfileData | null = null;
   isLoading = true;
+  isError = false;
   isCurrentUser = false;
+  errorMessage = '';
 
-  constructor(private authService: AuthService) {}
+  private readonly apiUrl = environment.apiUrl + '/v1';
+
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient
+  ) { }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['username'] && changes['username'].currentValue) {
@@ -48,45 +81,81 @@ export class UserProfileCardComponent implements OnChanges {
     }
   }
 
+  /**
+   * Load user profile from backend API with caching
+   */
   loadUserProfile(): void {
     this.isLoading = true;
+    this.isError = false;
+    this.errorMessage = '';
+
     const currentUser = this.authService.user;
     this.isCurrentUser = currentUser?.username === this.username;
 
-    // Simulate API call with mock data
-    setTimeout(() => {
-      if (this.isCurrentUser && currentUser) {
+    // Fetch from API
+    this.http.get<UserProfileResponse>(`${this.apiUrl}/users/${this.username}`).subscribe({
+      next: (userData) => {
+        // Transform API response to component format
         this.user = {
-          username: currentUser.username,
-          name: currentUser.name || '',
-          bio: currentUser.bio || 'Software developer passionate about web technologies ✨',
-          avatar: currentUser.avatar || 'https://i.pravatar.cc/150?img=1',
-          location: 'San Francisco, CA',
-          website: 'example.com',
-          joinedDate: 'January 2024',
-          followers: 2500,
-          following: 342,
-          isFollowing: false,
-          isVerified: true
+          id: userData.id,
+          username: userData.username,
+          name: userData.display_name || userData.name || this.formatName(userData.username),
+          bio: userData.bio || '',
+          avatar: userData.avatar_url,
+          location: userData.location,
+          website: userData.website,
+          joinedDate: userData.created_at ? new Date(userData.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : undefined,
+          followers: userData.followers_count || 0,
+          following: userData.following_count || 0,
+          isFollowing: userData.is_following || false,
+          isVerified: userData.is_verified || false
         };
-      } else {
-        // Mock data for other users
-        this.user = {
-          username: this.username,
-          name: this.formatName(this.username),
-          bio: 'Digital creator and content enthusiast 🎨',
-          avatar: `https://i.pravatar.cc/150?u=${this.username}`,
-          location: 'New York, NY',
-          website: `${this.username}.com`,
-          joinedDate: 'March 2024',
-          followers: Math.floor(Math.random() * 5000) + 500,
-          following: Math.floor(Math.random() * 1000) + 100,
-          isFollowing: false,
-          isVerified: Math.random() > 0.7
-        };
+
+        this.isLoading = false;
+      },
+      error: (error) => {
+        console.warn(`Failed to fetch profile for ${this.username}, using fallback data`);
+        this.isError = true;
+        this.errorMessage = 'Unable to load profile';
+
+        // Fallback to basic profile structure
+        this.user = this.getFallbackProfile();
+        this.isLoading = false;
       }
-      this.isLoading = false;
-    }, 300);
+    });
+  }
+
+  /**
+   * Get fallback profile when API is unavailable
+   */
+  private getFallbackProfile(): UserProfileData {
+    const currentUser = this.authService.user;
+
+    if (this.isCurrentUser && currentUser) {
+      return {
+        id: currentUser.id,
+        username: currentUser.username,
+        name: currentUser.name || '',
+        bio: currentUser.bio || '',
+        avatar: currentUser.avatar || 'https://i.pravatar.cc/150?img=1',
+        followers: 0,
+        following: 0,
+        isFollowing: false,
+        isVerified: false
+      };
+    }
+
+    return {
+      id: '',
+      username: this.username,
+      name: this.formatName(this.username),
+      bio: '',
+      avatar: `https://i.pravatar.cc/150?u=${this.username}`,
+      followers: 0,
+      following: 0,
+      isFollowing: false,
+      isVerified: false
+    };
   }
 
   formatName(username: string): string {
@@ -107,6 +176,9 @@ export class UserProfileCardComponent implements OnChanges {
     if (this.user) {
       this.user.isFollowing = !this.user.isFollowing;
       this.user.followers += this.user.isFollowing ? 1 : -1;
+
+      // In full implementation, call API to update follow status
+      // this.http.post(`/users/${this.username}/follow`, {}).subscribe();
     }
   }
 }
