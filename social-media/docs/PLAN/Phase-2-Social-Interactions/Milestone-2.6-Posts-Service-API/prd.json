@@ -233,7 +233,7 @@
         "Feed types and ranking documented",
         "Swagger UI accessible at /swagger"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [
@@ -244,6 +244,7 @@
     "backend/internal/handlers/post_handler.go",
     "backend/internal/handlers/comment_handler.go",
     "backend/internal/handlers/reaction_handler.go",
+    "backend/internal/handlers/auth_handler.go",
     "backend/internal/repository/posts.sql",
     "backend/internal/repository/posts.sql.go",
     "backend/internal/repository/comments.sql",
@@ -251,9 +252,14 @@
     "backend/internal/repository/reactions.sql",
     "backend/internal/repository/reactions.sql.go",
     "backend/internal/dto/post_dto.go",
+    "backend/internal/dto/auth_dto.go",
     "backend/migrations/000002_create_posts_tables.up.sql",
     "backend/migrations/000002_create_posts_tables.down.sql",
-    "backend/docs/swagger.yaml",
+    "backend/docs/swagger-auth/swagger.yaml",
+    "backend/docs/swagger-auth/swagger.json",
+    "backend/docs/swagger-posts/swagger.yaml",
+    "backend/docs/swagger-posts/swagger.json",
+    "backend/Makefile",
     "src/app/shared/services/post.service.ts",
     "src/app/shared/services/feed.service.ts",
     "src/app/shared/services/reaction.service.ts",

@@ -28,7 +28,7 @@
         "Signal-based bookmark state",
         "Default 'All Bookmarks' collection"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.2.2",
@@ -43,7 +43,7 @@
         "Toast feedback on action",
         "Keyboard accessible"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.2.3",
@@ -59,7 +59,7 @@
         "Show bookmark count per collection",
         "Default collection cannot be deleted"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.2.4",
@@ -76,7 +76,7 @@
         "Empty state when no bookmarks",
         "Search within bookmarks"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.2.5",
@@ -92,7 +92,7 @@
         "Back to all bookmarks link",
         "Empty state for empty collection"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

@@ -6,13 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-playground/validator/v10"
 
 	"github.com/socialhub/auth-service/internal/service"
 	"github.com/socialhub/auth-service/pkg/models"
 )
-
-var validate = validator.New()
 
 // PostHandler handles HTTP requests for post operations
 type PostHandler struct {
@@ -383,7 +380,68 @@ func (h *PostHandler) GetFeed(c *gin.Context) {
 	})
 }
 
-// GetPostsByUser handles GET /api/v1/users/:user_id/posts
+// GetPostsByUserV1 handles GET /api/v1/users/:user_id/posts
+// This endpoint matches the frontend contract and returns a FeedResponse.
+func (h *PostHandler) GetPostsByUserV1(c *gin.Context) {
+	userID := c.Param("user_id")
+	if userID == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Error:   "invalid_id",
+			Message: "user ID is required",
+		})
+		return
+	}
+
+	var query PaginationQuery
+	if err := c.ShouldBindQuery(&query); err != nil {
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Error:   "invalid_query",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	if query.Page == 0 {
+		query.Page = 1
+	}
+	if query.Limit == 0 {
+		query.Limit = 20
+	}
+
+	offset := int32((query.Page - 1) * query.Limit)
+
+	viewerUserID := c.GetString("user_id")
+
+	posts, err := h.postService.GetPostsByUserWithDetails(c.Request.Context(), viewerUserID, userID, int32(query.Limit), offset)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   "fetch_failed",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	totalCount, err := h.postService.CountPostsByUser(c.Request.Context(), userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   "count_failed",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	hasMore := int64(query.Page*query.Limit) < totalCount
+
+	c.JSON(http.StatusOK, FeedResponse{
+		Posts:      posts,
+		TotalCount: totalCount,
+		HasMore:    hasMore,
+		Page:       query.Page,
+		Limit:      query.Limit,
+	})
+}
+
+// GetPostsByUser handles GET /api/v1/user/:user_id/posts
 // @Summary Get posts by user
 // @Description Get paginated posts by a specific user
 // @Tags posts
@@ -393,7 +451,7 @@ func (h *PostHandler) GetFeed(c *gin.Context) {
 // @Param limit query int false "Items per page" default(20)
 // @Success 200 {object} PostsResponse
 // @Failure 400 {object} ErrorResponse
-// @Router /api/v1/users/{user_id}/posts [get]
+// @Router /api/v1/user/{user_id}/posts [get]
 func (h *PostHandler) GetPostsByUser(c *gin.Context) {
 	userID := c.Param("user_id")
 	if userID == "" {
@@ -447,7 +505,7 @@ func (h *PostHandler) GetPostsByUser(c *gin.Context) {
 // @Param tag path string true "Hashtag (without #)"
 // @Param page query int false "Page number" default(1)
 // @Param limit query int false "Items per page" default(20)
-// @Success 200 {object} PostsResponse
+// @Success 200 {object} HashtagPostsResponse
 // @Failure 400 {object} ErrorResponse
 // @Router /api/v1/hashtag/{tag} [get]
 func (h *PostHandler) GetPostsByHashtag(c *gin.Context) {
@@ -479,7 +537,12 @@ func (h *PostHandler) GetPostsByHashtag(c *gin.Context) {
 
 	offset := int32((query.Page - 1) * query.Limit)
 
-	posts, err := h.postService.GetPostsByHashtag(c.Request.Context(), tag, int32(query.Limit), offset)
+	posts, err := h.postService.GetPostsByHashtagWithDetails(c.Request.Context(), service.GetPostsByHashtagInput{
+		UserID: c.GetString("user_id"),
+		Tag:    tag,
+		Limit:  int32(query.Limit),
+		Offset: offset,
+	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
 			Error:   "fetch_failed",
@@ -488,11 +551,33 @@ func (h *PostHandler) GetPostsByHashtag(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, PostsResponse{
-		Posts: posts,
-		Page:  query.Page,
-		Limit: query.Limit,
+	totalCount, err := h.postService.CountPostsByHashtag(c.Request.Context(), tag)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   "count_failed",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	hasMore := int64(query.Page*query.Limit) < totalCount
+
+	c.JSON(http.StatusOK, HashtagPostsResponse{
+		Posts:      posts,
+		TotalCount: totalCount,
+		HasMore:    hasMore,
+		Page:       query.Page,
+		Limit:      query.Limit,
 	})
+}
+
+// HashtagPostsResponse represents a paginated hashtag posts response
+type HashtagPostsResponse struct {
+	Posts      []models.PostWithDetails `json:"posts"`
+	TotalCount int64                    `json:"total_count"`
+	HasMore    bool                     `json:"has_more"`
+	Page       int                      `json:"page"`
+	Limit      int                      `json:"limit"`
 }
 
 // PaginationQuery represents common pagination query parameters
@@ -529,9 +614,27 @@ func RegisterPostRoutes(
 		posts.GET("/:id", handler.GetPost)
 		posts.PUT("/:id", handler.UpdatePost)
 		posts.DELETE("/:id", handler.DeletePost)
+		posts.POST("/:id/share", handler.SharePost)
 	}
 
 	r.GET("/feed", handler.GetFeed)
-	r.GET("/users/:user_id/posts", handler.GetPostsByUser)
+	r.GET("/user/:user_id/posts", handler.GetPostsByUser)
+	r.GET("/users/by-id/:user_id/posts", handler.GetPostsByUserV1)
 	r.GET("/hashtag/:tag", handler.GetPostsByHashtag)
+}
+
+// SharePost handles POST /api/v1/posts/:id/share
+func (h *PostHandler) SharePost(c *gin.Context) {
+	postID := c.Param("id")
+	if postID == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{Error: "invalid_id", Message: "post ID is required"})
+		return
+	}
+
+	if err := h.postService.IncrementShareCount(c.Request.Context(), postID); err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{Error: "share_failed", Message: err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"ok": true})
 }

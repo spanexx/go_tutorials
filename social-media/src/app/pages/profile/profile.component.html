@@ -13,6 +13,8 @@
               <a [routerLink]="['/profile', user.username, 'edit']" class="edit-btn" title="Edit Profile">
                 <lucide-angular [img]="editIcon"></lucide-angular>
               </a>
+            } @else if (profileUserId) {
+              <app-follow-button [userId]="profileUserId" [username]="user.username"></app-follow-button>
             }
           </div>
           <p class="handle">&#64;{{ user.username }}</p>

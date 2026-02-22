@@ -184,7 +184,7 @@ export class PostService {
       .set('page', page.toString())
       .set('limit', limit.toString());
 
-    return this.http.get<FeedResponse>(`${this.apiUrl}/users/${userId}/posts`, { params }).pipe(
+    return this.http.get<FeedResponse>(`${this.apiUrl}/users/by-id/${userId}/posts`, { params }).pipe(
       tap(response => {
         if (page === 1) {
           this.postsSignal.set(response.posts);

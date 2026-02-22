@@ -1,19 +1,13 @@
 <div class="feed-container">
   <aside class="sidebar-left">
     <div class="quick-links">
-      <h3>Quick Links</h3>
-      <div class="link-item">
-        <lucide-icon [img]="hashtagIcon"></lucide-icon>
-        <span>#WebDevelopment</span>
-      </div>
-      <div class="link-item">
-        <lucide-icon [img]="hashtagIcon"></lucide-icon>
-        <span>#Angular</span>
-      </div>
-      <div class="link-item">
-        <lucide-icon [img]="hashtagIcon"></lucide-icon>
-        <span>#TypeScript</span>
-      </div>
+      <h3>Trending</h3>
+      @for (tag of searchService.getTrendingHashtags().slice(0, 5); track tag.tag) {
+        <a class="link-item" [routerLink]="['/hashtag', tag.tag]">
+          <lucide-icon [img]="hashtagIcon"></lucide-icon>
+          <span>#{{ tag.tag }}</span>
+        </a>
+      }
     </div>
   </aside>
 
@@ -25,7 +19,7 @@
       (dismiss)="onDismissNewPosts()">
     </app-refresh-indicator>
 
-    @if (isLoading) {
+    @if (isLoading()) {
       <div class="create-post-skeleton">
         <div class="skeleton-header">
           <app-skeleton variant="avatar" width="40px" height="40px"></app-skeleton>
@@ -38,12 +32,12 @@
     }
 
     <div class="threads-container">
-      @if (isLoading) {
+      @if (isLoading()) {
         @for (item of [1, 2, 3]; track item) {
           <app-post-skeleton></app-post-skeleton>
         }
       } @else {
-        @for (post of posts; track post.id) {
+        @for (post of posts(); track post.id) {
           <app-post-card
             [post]="post"
           ></app-post-card>
@@ -52,10 +46,10 @@
     </div>
 
     <!-- Loading Indicator -->
-    <app-loading-indicator [visible]="isLoadingMore"></app-loading-indicator>
+    <app-loading-indicator [visible]="isLoadingMore()"></app-loading-indicator>
 
     <!-- End of Feed Message -->
-    @if (!isLoading && !hasMorePosts && posts.length > 0) {
+    @if (!isLoading() && !hasMorePosts() && posts().length > 0) {
       <div class="end-of-feed">
         <p>You're all caught up!</p>
         <span>No more posts to show</span>
@@ -64,53 +58,19 @@
   </div>
 
   <aside class="sidebar-right">
-    <div class="trends-card">
-      <h3>Trending Now</h3>
-      <div class="trend-item">
-        <div class="trend-info">
-          <p class="trend-category">Technology • Trending</p>
-          <p class="trend-title">#WebDevelopment</p>
-          <p class="trend-count">145K posts</p>
-        </div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-info">
-          <p class="trend-category">Entertainment • Trending</p>
-          <p class="trend-title">#AngularJS</p>
-          <p class="trend-count">89K posts</p>
-        </div>
-      </div>
-      <div class="trend-item">
-        <div class="trend-info">
-          <p class="trend-category">Design • Popular</p>
-          <p class="trend-title">#UIDesign</p>
-          <p class="trend-count">234K posts</p>
-        </div>
-      </div>
-    </div>
-
     <div class="suggestions-card">
       <h3>Suggestions For You</h3>
-      <div class="suggestion-item">
-        <div class="suggestion-left">
-          <img src="https://i.pravatar.cc/150?img=10" alt="User" />
-          <div class="suggestion-info">
-            <p class="suggestion-name">Michael Chen</p>
-            <p class="suggestion-handle">&#64;michaelchen</p>
+      @for (u of searchService.getSuggestedUsers(5); track u.username) {
+        <a class="suggestion-item" [routerLink]="['/profile', u.username]">
+          <div class="suggestion-left">
+            <img [src]="u.avatar_url" [alt]="u.display_name" />
+            <div class="suggestion-info">
+              <p class="suggestion-name">{{ u.display_name }}</p>
+              <p class="suggestion-handle">&#64;{{ u.username }}</p>
+            </div>
           </div>
-        </div>
-        <button class="follow-btn">Follow</button>
-      </div>
-      <div class="suggestion-item">
-        <div class="suggestion-left">
-          <img src="https://i.pravatar.cc/150?img=11" alt="User" />
-          <div class="suggestion-info">
-            <p class="suggestion-name">Lisa Rodriguez</p>
-            <p class="suggestion-handle">&#64;lisarodriguez</p>
-          </div>
-        </div>
-        <button class="follow-btn">Follow</button>
-      </div>
+        </a>
+      }
     </div>
   </aside>
 </div>

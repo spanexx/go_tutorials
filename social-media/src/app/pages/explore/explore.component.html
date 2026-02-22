@@ -13,12 +13,15 @@
         class="search-input"
         placeholder="Search topics, hashtags, or people..."
         (input)="onSearchInput($event)"
-        [value]="searchQuery"
+        [value]="searchQuery()"
       />
-      @if (searchQuery) {
-        <button class="clear-btn" (click)="searchQuery = ''">×</button>
+      @if (searchQuery()) {
+        <button class="clear-btn" (click)="searchQuery.set('')">×</button>
       }
     </div>
+    <button class="refresh-btn" (click)="refreshContent()" [class.loading]="isLoading()" title="Refresh">
+      <lucide-angular [img]="refreshIcon" [size]="18"></lucide-angular>
+    </button>
   </div>
 
   <!-- Category Filters -->
@@ -26,7 +29,7 @@
     @for (category of categories; track category.id) {
       <button
         class="filter-btn"
-        [class.active]="selectedCategory === category.id"
+        [class.active]="selectedCategory() === category.id"
         (click)="selectCategory(category.id)"
         [style.--category-color]="category.color"
       >
@@ -37,34 +40,96 @@
   </div>
 
   <div class="explore-layout">
-    <!-- Main Content - Trending Topics -->
+    <!-- Main Content -->
     <main class="explore-main">
-      <div class="section-header">
-        <lucide-angular [img]="trendingIcon" class="section-icon"></lucide-angular>
-        <h2>Trending Topics</h2>
-      </div>
+      <!-- Featured Content Carousel -->
+      <section class="featured-section">
+        <div class="section-header">
+          <lucide-angular [img]="trendingIcon" class="section-icon"></lucide-angular>
+          <h2>Featured</h2>
+        </div>
 
-      @if (trendingTopics.length > 0) {
-        <div class="topics-grid">
-          @for (topic of trendingTopics; track topic.id) {
-            <a [routerLink]="['/hashtag', topic.title]" class="topic-card">
-              <div class="topic-gradient" [style.background]="topic.gradient"></div>
-              <div class="topic-content">
-                <div class="topic-header">
-                  <lucide-angular [img]="hashtagIcon" class="topic-icon"></lucide-angular>
-                  <span class="topic-category">{{ getCategoryName(topic.category) }}</span>
+        <div class="featured-carousel">
+          @if (hasMultipleSlides) {
+            <button class="carousel-nav prev" (click)="prevSlide()" [class.disabled]="currentSlide() === 0">
+              <lucide-angular [img]="chevronLeft" [size]="20"></lucide-angular>
+            </button>
+          }
+
+          <div class="featured-slides">
+            @for (topic of featuredTopics; track topic.id; let i = $index) {
+              <a 
+                [routerLink]="['/hashtag', topic.title]" 
+                class="featured-slide"
+                [class.active]="currentSlide() === i"
+                [style.background]="topic.gradient"
+              >
+                <div class="slide-content">
+                  <span class="slide-category">{{ getCategoryName(topic.category) }}</span>
+                  <h3 class="slide-title">#{{ topic.title }}</h3>
+                  <p class="slide-posts">{{ formatPostCount(topic.posts) }} posts</p>
                 </div>
-                <h3 class="topic-title">#{{ topic.title }}</h3>
-                <p class="topic-posts">{{ formatPostCount(topic.posts) }} posts</p>
-              </div>
-            </a>
+              </a>
+            }
+          </div>
+
+          @if (hasMultipleSlides) {
+            <button class="carousel-nav next" (click)="nextSlide()">
+              <lucide-angular [img]="chevronRight" [size]="20"></lucide-angular>
+            </button>
+          }
+
+          @if (hasMultipleSlides) {
+            <div class="carousel-dots">
+              @for (topic of featuredTopics; track topic.id; let i = $index) {
+                <button 
+                  class="dot" 
+                  [class.active]="currentSlide() === i"
+                  (click)="goToSlide(i)"
+                ></button>
+              }
+            </div>
           }
         </div>
-      } @else {
-        <div class="empty-state">
-          <p>No topics found for "{{ searchQuery }}"</p>
+      </section>
+
+      <!-- Trending Topics Grid -->
+      <section class="trending-section">
+        <div class="section-header">
+          <lucide-angular [img]="hashtagIcon" class="section-icon"></lucide-angular>
+          <h2>Trending Topics</h2>
         </div>
-      }
+
+        @if (trendingTopics.length > 0) {
+          <div class="topics-grid">
+            @for (topic of trendingTopics; track topic.id) {
+              <a [routerLink]="['/hashtag', topic.title]" class="topic-card">
+                <div class="topic-gradient" [style.background]="topic.gradient"></div>
+                <div class="topic-content">
+                  <div class="topic-header">
+                    <lucide-angular [img]="hashtagIcon" class="topic-icon"></lucide-angular>
+                    <span class="topic-category">{{ getCategoryName(topic.category) }}</span>
+                  </div>
+                  <h3 class="topic-title">#{{ topic.title }}</h3>
+                  <p class="topic-posts">{{ formatPostCount(topic.posts) }} posts</p>
+                </div>
+              </a>
+            }
+          </div>
+
+          @if (hasMore()) {
+            <div class="load-more-container">
+              <button class="load-more-btn" (click)="loadMore()">
+                Load more topics
+              </button>
+            </div>
+          }
+        } @else {
+          <div class="empty-state">
+            <p>No topics found for "{{ searchQuery() }}"</p>
+          </div>
+        }
+      </section>
     </main>
 
     <!-- Sidebar - Suggested Users -->

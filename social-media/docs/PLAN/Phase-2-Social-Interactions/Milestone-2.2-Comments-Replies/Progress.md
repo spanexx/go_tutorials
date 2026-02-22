@@ -14,6 +14,18 @@
 
 ## Progress Log
 
+### 2026-02-22 - Audit Execute: Production Readiness Fixes
+
+Audited Milestone 2.2 against the PRD and verified the actual implementation end-to-end (frontend + backend). Addressed gaps that would have prevented comments from loading/working against the real API:
+
+- Aligned Angular `CommentService` with backend response shapes (wrapped list/create responses) and corrected delete route to `DELETE /api/v1/comments/:id`.
+- Switched comment loading to use `GET /api/v1/posts/:id/comments/tree` so nested replies are returned as a thread.
+- Updated `CommentListComponent` to actually trigger an API load on init and to read state reactively from `CommentService`.
+- Wired comments UI into `PostCardComponent` (toggle comments, comment input, comment list, reply and like events).
+
+**Verification:**
+- `npm run typecheck`
+
 ### 2026-02-21 - Item 2.2.1 Complete: Comment Model & Service
 
 **2.2.1 - Comment Model & Service** ✅

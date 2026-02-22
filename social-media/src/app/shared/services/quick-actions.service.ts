@@ -1,5 +1,6 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, signal, computed } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 export type ActionType = 'navigation' | 'action' | 'setting';
 
@@ -30,9 +31,14 @@ export class QuickActionsService {
 
   private actions: QuickAction[] = [];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.initializeActions();
     this.initKeyboardListener();
+  }
+
+  private getMyProfileRoute(): string {
+    const username = this.authService.user?.username;
+    return username ? `/profile/${username}` : '/feed';
   }
 
   private initializeActions(): void {
@@ -89,7 +95,7 @@ export class QuickActionsService {
         icon: 'user',
         type: 'navigation',
         shortcut: 'G P',
-        action: () => this.router.navigate(['/profile/1']),
+        action: () => this.router.navigate([this.getMyProfileRoute()]),
         category: 'Navigation',
         keywords: ['profile', 'account', 'me', 'my page']
       },

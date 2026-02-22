@@ -26,28 +26,28 @@ func setupTestAuthService(t *testing.T) (*service.AuthService, *repository.UserR
 	// Use test database or mock
 	// For integration tests, we'll use a test database
 	dbURL := "postgres://localhost:5432/socialhub_test?sslmode=disable"
-	
+
 	repo, err := repository.NewRepository(dbURL)
 	if err != nil {
 		// Skip if test database not available
 		t.Skip("Test database not available, skipping integration tests")
 		return nil, nil, nil
 	}
-	
+
 	cfg := &config.Config{
 		JWTSecret:     "test-secret-key",
 		JWTExpiry:     15 * time.Minute,
 		RefreshExpiry: 7 * 24 * time.Hour,
 		EmailEnabled:  false, // Disable email for unit tests
 	}
-	
+
 	authService := service.NewAuthService(repo, cfg, nil, nil)
-	
+
 	cleanup := func() {
 		// Clean up test data
 		repo.Close()
 	}
-	
+
 	return authService, repo, cleanup
 }
 
@@ -65,7 +65,7 @@ func TestEmailVerificationFlow(t *testing.T) {
 	t.Run("GenerateEmailVerificationToken", func(t *testing.T) {
 		// Create test user
 		userID := uuid.New().String()
-		
+
 		token, err := authService.GenerateEmailVerificationToken(context.Background(), userID)
 		if err != nil {
 			// Expected to fail without proper DB setup
@@ -142,7 +142,7 @@ func TestAuthHandlerEmailEndpoints(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 
 	// Create handler with nil service for endpoint testing
-	handler := NewAuthHandler(nil)
+	handler := NewAuthHandler(nil, "", 0, 0)
 	if handler == nil {
 		t.Fatal("Failed to create auth handler")
 	}
@@ -151,11 +151,11 @@ func TestAuthHandlerEmailEndpoints(t *testing.T) {
 		// Test verify email endpoint
 		reqBody := map[string]string{"token": "test-token"}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/verify-email", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
-		
+
 		// Handler would be called here, but we're testing structure
 		_ = req
 		_ = w
@@ -164,11 +164,11 @@ func TestAuthHandlerEmailEndpoints(t *testing.T) {
 	t.Run("ForgotPasswordEndpoint", func(t *testing.T) {
 		reqBody := map[string]string{"email": "test@example.com"}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req := httptest.NewRequest(http.MethodPost, "/api/v1/auth/forgot-password", bytes.NewReader(body))
 		req.Header.Set("Content-Type", "application/json")
 		w := httptest.NewRecorder()
-		
+
 		_ = req
 		_ = w
 	})
@@ -178,11 +178,8 @@ func TestAuthHandlerEmailEndpoints(t *testing.T) {
 func TestUserEmailFields(t *testing.T) {
 	t.Run("UserStructWithEmailFields", func(t *testing.T) {
 		user := &repository.User{
-			ID:                       uuid.New().String(),
-			Email:                    "test@example.com",
-			EmailVerified:            false,
-			EmailVerificationToken:   nil,
-			EmailVerificationExpires: nil,
+			Email:         "test@example.com",
+			EmailVerified: false,
 		}
 
 		if user.Email != "test@example.com" {

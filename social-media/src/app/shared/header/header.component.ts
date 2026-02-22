@@ -5,8 +5,9 @@ import { LucideAngularModule, Search, Bell, MessageSquare, Sun, Moon, LogOut, Us
 import { ThemeService } from '../services/theme.service';
 import { SearchService, SearchResult } from '../services/search.service';
 import { SearchResultsComponent } from '../search-results/search-results.component';
-import { NotificationsService } from '../services/notifications.service';
+import { NotificationService } from '../services/notification.service';
 import { AuthService } from '../services/auth.service';
+import { IMAGE_PLACEHOLDERS } from '../constants/app.constants';
 
 @Component({
   selector: 'app-header',
@@ -30,10 +31,12 @@ export class HeaderComponent {
   searchInputValue = '';
   showUserMenu = false;
 
+  avatarPlaceholder = IMAGE_PLACEHOLDERS.avatar;
+
   constructor(
     public themeService: ThemeService,
     private searchService: SearchService,
-    private notificationsService: NotificationsService,
+    private notificationService: NotificationService,
     public authService: AuthService
   ) {}
 
@@ -84,7 +87,7 @@ export class HeaderComponent {
   }
 
   get unreadNotifications(): number {
-    return this.notificationsService.unreadCount;
+    return this.notificationService.unreadCount();
   }
 
   logout(): void {

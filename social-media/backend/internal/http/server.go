@@ -30,7 +30,8 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 	// Apply middleware
 	router.Use(middleware.Recovery())
 	router.Use(middleware.Logger())
-	router.Use(middleware.CORS())
+	router.Use(middleware.CORS([]string{cfg.FrontendURL}))
+	router.Use(middleware.SecurityHeaders(cfg.Env))
 	router.Use(middleware.RequestID())
 
 	// Health endpoints
@@ -41,7 +42,7 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 	v1 := router.Group("/api/v1")
 	{
 		// Auth handlers
-		authHandler := handlers.NewAuthHandler(authService)
+		authHandler := handlers.NewAuthHandler(authService, cfg.JWTSecret, cfg.JWTExpiry, cfg.RefreshExpiry)
 
 		// Admin handlers (for email testing)
 		adminHandler := handlers.NewAdminHandler(emailService)
@@ -55,8 +56,12 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 		// User handlers
 		userHandler := handlers.NewUserHandler(authService)
 
+		// Notification handlers
+		notificationHandler := handlers.NewNotificationHandler()
+
 		// Admin routes (development only)
 		admin := v1.Group("/admin")
+		admin.Use(middleware.AdminAuth(cfg.AdminToken))
 		{
 			admin.POST("/test-email", adminHandler.SendTestEmail)
 			admin.POST("/preview-email", adminHandler.PreviewEmail)
@@ -65,6 +70,7 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 
 		// Public routes
 		auth := v1.Group("/auth")
+		auth.Use(middleware.RateLimitByIP(5, time.Minute))
 		{
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
@@ -102,30 +108,71 @@ func NewServer(cfg *config.Config, authService *service.AuthService, redisClient
 
 		// Analytics routes (protected)
 		analytics := v1.Group("/analytics")
-		analytics.Use(middleware.Auth(authService))
+		analytics.Use(middleware.Auth(authService, cfg.JWTSecret))
+		analytics.Use(middleware.RateLimitByUser(100, time.Minute))
 		{
 			analytics.GET("/engagement", analyticsHandler.GetEngagement)
 			analytics.GET("/followers", analyticsHandler.GetFollowers)
 			analytics.GET("/stats", analyticsHandler.GetStats)
+			analytics.GET("/compare", analyticsHandler.CompareWithPreviousPeriod)
+			analytics.GET("/top-posts", analyticsHandler.GetTopPosts)
 		}
 
 		// Protected routes
 		protected := v1.Group("")
-		protected.Use(middleware.Auth(authService))
+		protected.Use(middleware.Auth(authService, cfg.JWTSecret))
+		protected.Use(middleware.RateLimitByUser(100, time.Minute))
 		{
 			postService := service.NewPostService(authService.DB())
 			reactionService := service.NewReactionService(authService.DB())
 			commentService := service.NewCommentService(authService.DB())
 			followService := service.NewFollowService(authService.DB())
+			activityService := service.NewActivityService(authService.DB())
+			bookmarkService := service.NewBookmarkService(authService.DB())
 
 			handlers.RegisterPostRoutes(protected, postService, reactionService, commentService)
 			handlers.RegisterCommentRoutes(protected, commentService)
 			handlers.RegisterReactionRoutes(protected, reactionService)
 			handlers.RegisterFollowRoutes(protected, followService)
 
+			bookmarkHandler := handlers.NewBookmarkHandler(bookmarkService)
+			bookmarks := protected.Group("/bookmarks")
+			{
+				bookmarks.GET("", bookmarkHandler.ListBookmarks)
+				bookmarks.POST("", bookmarkHandler.CreateBookmark)
+				bookmarks.DELETE("/:postId", bookmarkHandler.DeleteBookmark)
+
+				bookmarks.GET("/collections", bookmarkHandler.ListCollections)
+				bookmarks.POST("/collections", bookmarkHandler.CreateCollection)
+				bookmarks.DELETE("/collections/:collectionId", bookmarkHandler.DeleteCollection)
+				bookmarks.POST("/add-to-collection", bookmarkHandler.AddToCollection)
+				bookmarks.POST("/move", bookmarkHandler.MoveBookmark)
+			}
+
+			conversationHandler := handlers.NewConversationHandler()
+			conversations := protected.Group("/conversations")
+			{
+				conversations.GET("", conversationHandler.ListConversations)
+				conversations.GET("/:id/messages", conversationHandler.ListMessages)
+			}
+
+			activityHandler := handlers.NewActivityHandler(activityService)
+			activity := protected.Group("/activity")
+			{
+				activity.GET("", activityHandler.GetFeed)
+				activity.POST("", activityHandler.Create)
+				activity.POST("/:id/read", activityHandler.MarkAsRead)
+				activity.POST("/read-all", activityHandler.MarkAllAsRead)
+			}
+
 			protected.POST("/auth/logout", authHandler.Logout)
 			protected.GET("/auth/me", authHandler.GetCurrentUser)
 			protected.PUT("/user/profile", authHandler.UpdateProfile)
+
+			// Notification routes
+			protected.GET("/notifications", notificationHandler.GetNotifications)
+			protected.POST("/notifications/:id/read", notificationHandler.MarkAsRead)
+			protected.POST("/notifications/read-all", notificationHandler.MarkAllAsRead)
 		}
 	}
 

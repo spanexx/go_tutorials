@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import { LucideAngularModule, UserPlus, Check, Loader } from 'lucide-angular';
 import { FollowService } from '../../services/follow.service';
 import { ToastService } from '../../services/toast.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-follow-button',
@@ -149,11 +150,12 @@ export class FollowButtonComponent implements OnInit {
 
   constructor(
     private followService: FollowService,
+    private authService: AuthService,
     private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
-    this.checkFollowStatus();
+    void this.followService.ensureMyFollowingLoaded().then(() => this.checkFollowStatus());
   }
 
   get buttonLabel(): string {
@@ -167,7 +169,7 @@ export class FollowButtonComponent implements OnInit {
   }
 
   private checkFollowStatus(): void {
-    const currentUserId = this.followService.currentUserId();
+    const currentUserId = this.authService.user?.id || '';
     
     if (this.userId === currentUserId) {
       this.isCurrentUser = true;

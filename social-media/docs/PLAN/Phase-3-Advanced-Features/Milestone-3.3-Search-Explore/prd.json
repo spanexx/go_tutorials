@@ -28,7 +28,7 @@
         "Minimum query length (2 characters)",
         "Maximum results per type (20)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.3.2",
@@ -44,7 +44,7 @@
         "Click suggestion to search",
         "Loading indicator during search"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.3.3",
@@ -62,7 +62,7 @@
         "Sort options (relevance, recent)",
         "Empty state when no results"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.3.4",
@@ -78,7 +78,7 @@
         "Infinite scroll for content",
         "Refresh button"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.3.5",
@@ -94,7 +94,7 @@
         "Click recent search to re-run",
         "Delete individual items with X button"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

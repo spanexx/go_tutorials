@@ -12,7 +12,7 @@
     </button>
   </div>
 
-  <p class="post-content">{{ post.content }}</p>
+  <p class="post-content" [innerHTML]="post.content | contentLink" (click)="onContentClick($event)"></p>
 
   <img *ngIf="post.image" [src]="post.image" [alt]="post.content" class="post-image" />
 
@@ -32,7 +32,7 @@
   }
 
   <div class="post-stats">
-    <span>{{ counts?.total || post.likes }} reactions</span>
+    <span>{{ counts.total || post.likes }} reactions</span>
     <span>{{ post.comments }} comments</span>
     <span>{{ post.shares }} shares</span>
   </div>
@@ -46,11 +46,11 @@
       <lucide-icon [img]="heartIcon" [class.fill-icon]="isLiked"></lucide-icon>
       <span class="label">{{ userReaction ? userReaction : 'Like' }}</span>
     </button>
-    <button class="action-btn">
+    <button class="action-btn" (click)="toggleComments()">
       <lucide-icon [img]="commentIcon"></lucide-icon>
       <span class="label">Comment</span>
     </button>
-    <button class="action-btn">
+    <button class="action-btn" (click)="openShare()">
       <lucide-icon [img]="shareIcon"></lucide-icon>
       <span class="label">Share</span>
     </button>
@@ -63,4 +63,28 @@
       <span class="label">Save</span>
     </button>
   </div>
+
+  @if (commentsOpen) {
+    <app-comment-input
+      [isReply]="!!replyingTo"
+      [placeholder]="replyingTo ? 'Write a reply...' : 'Share your thoughts...'"
+      [autoFocus]="true"
+      (submitted)="onCommentSubmitted($event)"
+      (cancelled)="onReplyCancelled()">
+    </app-comment-input>
+
+    <app-comment-list
+      [postId]="'' + post.id"
+      (replyClicked)="onReplyClicked($event)"
+      (likeClicked)="onLikeClicked($event)">
+    </app-comment-list>
+  }
+
+  <app-share-modal
+    [isOpen]="shareModalOpen"
+    [postId]="'' + post.id"
+    [postUrl]="shareUrl"
+    [postText]="post.content"
+    (closed)="closeShare()">
+  </app-share-modal>
 </article>

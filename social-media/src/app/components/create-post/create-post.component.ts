@@ -1,16 +1,18 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Image, X, Send, Smile, MapPin } from 'lucide-angular';
 import { PostService } from '../../shared/services/post.service';
 import { ToastService } from '../../shared/services/toast.service';
+import { HashtagSuggestionsComponent } from '../../shared/components/hashtag-suggestions/hashtag-suggestions.component';
+import { IMAGE_PLACEHOLDERS } from '../../shared/constants/app.constants';
 
 const MAX_CHARACTERS = 280;
 
 @Component({
   selector: 'app-create-post',
   standalone: true,
-  imports: [CommonModule, FormsModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, LucideAngularModule, HashtagSuggestionsComponent],
   templateUrl: './create-post.component.html',
   styleUrls: ['./create-post.component.scss']
 })
@@ -21,13 +23,21 @@ export class CreatePostComponent {
   smileIcon = Smile;
   locationIcon = MapPin;
 
+  avatarPlaceholder = IMAGE_PLACEHOLDERS.avatar;
+
   @Output() postCreated = new EventEmitter<void>();
+
+  @ViewChild('postTextarea') postTextarea?: ElementRef<HTMLTextAreaElement>;
+  @ViewChild(HashtagSuggestionsComponent) hashtagSuggestions?: HashtagSuggestionsComponent;
 
   postContent = '';
   selectedImage: string | null = null;
   selectedImageFile: File | null = null;
   showEmojiPicker = false;
   isPosting = false;
+
+  hashtagPosX = 0;
+  hashtagPosY = 0;
 
   readonly emojis: string[] = ['😀', '😂', '😍', '🥰', '😎', '🤔', '👍', '❤️', '🔥', '🎉', '👏', '💯', '✨', '🚀', '💪', '🙏'];
   
@@ -139,5 +149,35 @@ export class CreatePostComponent {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
     textarea.style.height = textarea.scrollHeight + 'px';
+
+    const rect = textarea.getBoundingClientRect();
+    this.hashtagPosX = rect.left;
+    this.hashtagPosY = rect.bottom;
+  }
+
+  onTextareaKeydown(event: KeyboardEvent): void {
+    if (this.hashtagSuggestions?.handleKeydown(event)) {
+      return;
+    }
+  }
+
+  onHashtagSelected(tag: string): void {
+    const textarea = this.postTextarea?.nativeElement;
+    if (!textarea) {
+      this.postContent += `#${tag} `;
+      return;
+    }
+
+    const cursor = textarea.selectionStart ?? this.postContent.length;
+    const before = this.postContent.slice(0, cursor);
+    const after = this.postContent.slice(cursor);
+    const replacedBefore = before.replace(/#([a-zA-Z0-9_]*)$/, `#${tag}`);
+    this.postContent = `${replacedBefore} ${after}`;
+
+    queueMicrotask(() => {
+      const nextPos = replacedBefore.length + 1;
+      textarea.focus();
+      textarea.setSelectionRange(nextPos, nextPos);
+    });
   }
 }

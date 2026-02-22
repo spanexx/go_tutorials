@@ -6,6 +6,10 @@
 // - Prevents self-following
 // CID: Phase-2 Milestone 2.5 - Social Graph (Follow System)
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { BaseApiService } from './base-api.service';
+import { AuthService } from './auth.service';
 
 export interface Follow {
   id: string;
@@ -29,11 +33,11 @@ export interface FollowState {
 @Injectable({
   providedIn: 'root'
 })
-export class FollowService {
+export class FollowService extends BaseApiService {
   private followState = signal<FollowState>({
     follows: [],
     counts: {},
-    currentUserId: 'current-user',
+    currentUserId: '',
     isLoading: false
   });
 
@@ -53,157 +57,125 @@ export class FollowService {
     return this.followState().counts[userId] || { followers: 0, following: 0 };
   }
 
-  constructor() {
-    this.initializeMockData();
+  private followingIds = signal<Set<string>>(new Set());
+
+  constructor(http: HttpClient, private authService: AuthService) {
+    super(http);
+    this.followState.update(s => ({ ...s, currentUserId: this.authService.user?.id ?? '' }));
   }
 
-  private initializeMockData(): void {
-    const currentUserId = 'current-user';
-    
-    const mockFollows: Follow[] = [
-      { id: 'follow-1', followerId: 'user-1', followingId: currentUserId, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24) },
-      { id: 'follow-2', followerId: 'user-2', followingId: currentUserId, createdAt: new Date(Date.now() - 1000 * 60 * 60 * 48) },
-      { id: 'follow-3', followerId: currentUserId, followingId: 'user-3', createdAt: new Date(Date.now() - 1000 * 60 * 60 * 12) },
-      { id: 'follow-4', followerId: currentUserId, followingId: 'user-4', createdAt: new Date(Date.now() - 1000 * 60 * 60 * 36) },
-      { id: 'follow-5', followerId: 'user-3', followingId: 'user-4', createdAt: new Date(Date.now() - 1000 * 60 * 60 * 6) },
-      { id: 'follow-6', followerId: 'user-5', followingId: 'user-1', createdAt: new Date(Date.now() - 1000 * 60 * 60 * 72) },
-    ];
+  async ensureMyFollowingLoaded(): Promise<void> {
+    const me = this.authService.user?.id;
+    if (!me) {
+      return;
+    }
+    if (this.followingIds().size > 0) {
+      return;
+    }
 
-    // Calculate counts
-    const counts: Record<string, FollowCounts> = {};
-    const users = new Set<string>();
-    
-    mockFollows.forEach(follow => {
-      users.add(follow.followerId);
-      users.add(follow.followingId);
-    });
+    await this.refreshMyFollowing();
+  }
 
-    users.forEach(userId => {
-      const followers = mockFollows.filter(f => f.followingId === userId).length;
-      const following = mockFollows.filter(f => f.followerId === userId).length;
-      counts[userId] = { followers, following };
-    });
+  async refreshMyFollowing(): Promise<void> {
+    const me = this.authService.user?.id;
+    if (!me) {
+      return;
+    }
 
-    this.followState.set({
-      follows: mockFollows,
-      counts,
-      currentUserId,
-      isLoading: false
-    });
+    this.followState.update(s => ({ ...s, isLoading: true, currentUserId: me }));
+    try {
+      const resp = await firstValueFrom(this.get<{ following: Array<{ follow: any; is_following_back?: boolean; user_username: string; user_name: string }>; total: number; has_more: boolean }>(`/users/id/${me}/following`, {
+        page: '1',
+        limit: '100'
+      }));
+
+      const ids = new Set<string>();
+      for (const f of resp.following ?? []) {
+        const id = f.follow?.following_id;
+        if (id) {
+          ids.add(String(id));
+        }
+      }
+      this.followingIds.set(ids);
+    } finally {
+      this.followState.update(s => ({ ...s, isLoading: false }));
+    }
   }
 
   /**
    * Follow a user
    */
   async followUser(userId: string): Promise<boolean> {
-    const state = this.followState();
-    
-    // Prevent self-following
-    if (userId === state.currentUserId) {
-      console.warn('Cannot follow yourself');
+    const me = this.authService.user?.id;
+    if (!me || userId === me) {
       return false;
     }
 
-    // Check if already following
-    const alreadyFollowing = state.follows.some(
-      f => f.followerId === state.currentUserId && f.followingId === userId
-    );
-
-    if (alreadyFollowing) {
+    await this.ensureMyFollowingLoaded();
+    if (this.isFollowing(userId)) {
       return false;
     }
 
-    this.followState.update(state => ({
-      ...state,
-      isLoading: true
-    }));
+    this.followState.update(s => ({ ...s, isLoading: true, currentUserId: me }));
+    try {
+      await firstValueFrom(this.post(`/users/id/${userId}/follow`, {}));
+      this.followingIds.update(set => new Set([...set, userId]));
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 300));
-
-    const newFollow: Follow = {
-      id: `follow-${Date.now()}`,
-      followerId: state.currentUserId,
-      followingId: userId,
-      createdAt: new Date()
-    };
-
-    this.followState.update(state => {
-      const newFollows = [...state.follows, newFollow];
-      
-      // Update counts
-      const newCounts = { ...state.counts };
-      
-      // Increment following count for current user
-      if (!newCounts[state.currentUserId]) {
-        newCounts[state.currentUserId] = { followers: 0, following: 0 };
-      }
-      newCounts[state.currentUserId].following++;
-      
-      // Increment followers count for followed user
-      if (!newCounts[userId]) {
-        newCounts[userId] = { followers: 0, following: 0 };
-      }
-      newCounts[userId].followers++;
-
-      return {
-        ...state,
-        follows: newFollows,
-        counts: newCounts,
-        isLoading: false
-      };
-    });
-
-    return true;
+      const currentCounts = this.followState().counts;
+      const meCounts = currentCounts[me] ?? { followers: 0, following: 0 };
+      const targetCounts = currentCounts[userId] ?? { followers: 0, following: 0 };
+      this.followState.update(s => ({
+        ...s,
+        counts: {
+          ...currentCounts,
+          [me]: { ...meCounts, following: meCounts.following + 1 },
+          [userId]: { ...targetCounts, followers: targetCounts.followers + 1 }
+        }
+      }));
+      return true;
+    } finally {
+      this.followState.update(s => ({ ...s, isLoading: false }));
+    }
   }
 
   /**
    * Unfollow a user
    */
   async unfollowUser(userId: string): Promise<boolean> {
-    const state = this.followState();
+    const me = this.authService.user?.id;
+    if (!me || userId === me) {
+      return false;
+    }
 
-    this.followState.update(state => ({
-      ...state,
-      isLoading: true
-    }));
+    await this.ensureMyFollowingLoaded();
+    if (!this.isFollowing(userId)) {
+      return false;
+    }
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 300));
+    this.followState.update(s => ({ ...s, isLoading: true, currentUserId: me }));
+    try {
+      await firstValueFrom(this.delete(`/users/id/${userId}/follow`));
+      this.followingIds.update(set => {
+        const next = new Set(set);
+        next.delete(userId);
+        return next;
+      });
 
-    this.followState.update(state => {
-      const followToRemove = state.follows.find(
-        f => f.followerId === state.currentUserId && f.followingId === userId
-      );
-
-      if (!followToRemove) {
-        return { ...state, isLoading: false };
-      }
-
-      const newFollows = state.follows.filter(f => f.id !== followToRemove.id);
-      
-      // Update counts
-      const newCounts = { ...state.counts };
-      
-      // Decrement following count for current user
-      if (newCounts[state.currentUserId]) {
-        newCounts[state.currentUserId].following = Math.max(0, newCounts[state.currentUserId].following - 1);
-      }
-      
-      // Decrement followers count for unfollowed user
-      if (newCounts[userId]) {
-        newCounts[userId].followers = Math.max(0, newCounts[userId].followers - 1);
-      }
-
-      return {
-        ...state,
-        follows: newFollows,
-        counts: newCounts,
-        isLoading: false
-      };
-    });
-
-    return true;
+      const currentCounts = this.followState().counts;
+      const meCounts = currentCounts[me] ?? { followers: 0, following: 0 };
+      const targetCounts = currentCounts[userId] ?? { followers: 0, following: 0 };
+      this.followState.update(s => ({
+        ...s,
+        counts: {
+          ...currentCounts,
+          [me]: { ...meCounts, following: Math.max(0, meCounts.following - 1) },
+          [userId]: { ...targetCounts, followers: Math.max(0, targetCounts.followers - 1) }
+        }
+      }));
+      return true;
+    } finally {
+      this.followState.update(s => ({ ...s, isLoading: false }));
+    }
   }
 
   /**
@@ -223,26 +195,21 @@ export class FollowService {
    * Check if current user is following another user
    */
   isFollowing(userId: string): boolean {
-    const state = this.followState();
-    return state.follows.some(
-      f => f.followerId === state.currentUserId && f.followingId === userId
-    );
+    return this.followingIds().has(userId);
   }
 
   /**
    * Get followers of a user
    */
-  getFollowers(userId: string): Follow[] {
-    const state = this.followState();
-    return state.follows.filter(f => f.followingId === userId);
+  async getFollowers(userId: string, page: number = 1, limit: number = 20): Promise<any> {
+    return firstValueFrom(this.get(`/users/id/${userId}/followers`, { page: String(page), limit: String(limit) }));
   }
 
   /**
    * Get users that a user is following
    */
-  getFollowing(userId: string): Follow[] {
-    const state = this.followState();
-    return state.follows.filter(f => f.followerId === userId);
+  async getFollowing(userId: string, page: number = 1, limit: number = 20): Promise<any> {
+    return firstValueFrom(this.get(`/users/id/${userId}/following`, { page: String(page), limit: String(limit) }));
   }
 
   /**
@@ -287,22 +254,14 @@ export class FollowService {
    * Set current user ID (for auth integration)
    */
   setCurrentUserId(userId: string): void {
-    this.followState.update(state => ({
-      ...state,
-      currentUserId: userId
-    }));
+    this.followState.update(state => ({ ...state, currentUserId: userId }));
   }
 
   /**
    * Refresh follow data (for API integration)
    */
   async refresh(): Promise<void> {
-    this.followState.update(state => ({ ...state, isLoading: true }));
-    
-    // Simulate API refresh
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    this.followState.update(state => ({ ...state, isLoading: false }));
+    await this.refreshMyFollowing();
   }
 
   /**

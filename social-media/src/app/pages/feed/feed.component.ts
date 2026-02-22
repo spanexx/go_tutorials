@@ -1,9 +1,10 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { PostCardComponent } from '../../components/post-card/post-card.component';
 import { CreatePostComponent } from '../../components/create-post/create-post.component';
 import { LucideAngularModule, Hash } from 'lucide-angular';
-import { PostService, Post } from '../../shared/services/post.service';
+import { PostService } from '../../shared/services/post.service';
 import { PostSkeletonComponent } from '../../shared/skeleton/post-skeleton.component';
 import { SkeletonComponent } from '../../shared/skeleton/skeleton.component';
 import { RefreshIndicatorComponent } from '../../shared/refresh-indicator/refresh-indicator.component';
@@ -11,39 +12,53 @@ import { RefreshService } from '../../shared/services/refresh.service';
 import { ToastService } from '../../shared/services/toast.service';
 import { InfiniteScrollDirective } from '../../shared/directives/infinite-scroll.directive';
 import { LoadingIndicatorComponent } from '../../shared/loading-indicator/loading-indicator.component';
+import { SearchService } from '../../shared/services/search.service';
 
 @Component({
   selector: 'app-feed',
   standalone: true,
-  imports: [CommonModule, PostCardComponent, CreatePostComponent, LucideAngularModule, PostSkeletonComponent, SkeletonComponent, RefreshIndicatorComponent, InfiniteScrollDirective, LoadingIndicatorComponent],
+  imports: [CommonModule, RouterModule, PostCardComponent, CreatePostComponent, LucideAngularModule, PostSkeletonComponent, SkeletonComponent, RefreshIndicatorComponent, InfiniteScrollDirective, LoadingIndicatorComponent],
   templateUrl: './feed.component.html',
   styleUrls: ['./feed.component.scss']
 })
-export class FeedComponent implements OnDestroy {
+export class FeedComponent implements OnInit, OnDestroy {
   hashtagIcon = Hash;
-  isLoading = true;
-  isRefreshing = false;
-  isLoadingMore = false;
-  hasMorePosts = true;
-  currentPage = 1;
-  readonly postsPerPage = 5;
+  
+  // Use signals for reactive state
+  currentPage = signal(1);
+  feedType = signal<'home' | 'trending' | 'latest'>('home');
+
+  // Computed signals
+  posts = computed(() => this.postService.posts());
+  isLoading = computed(() => this.postService.isLoading());
+  hasMorePosts = computed(() => this.postService.hasMore());
+  isRefreshing = signal(false);
+  isLoadingMore = signal(false);
 
   constructor(
     private postService: PostService,
     private refreshService: RefreshService,
+    public searchService: SearchService,
     private toastService: ToastService
-  ) {
-    // Simulate initial loading delay
-    setTimeout(() => {
-      this.isLoading = false;
-      this.refreshService.refresh();
-    }, 1500);
+  ) {}
+
+  ngOnInit(): void {
+    // Load initial feed data from real API
+    this.loadFeed();
+
+	// Warm sidebar data (best-effort)
+	void this.searchService.refreshTrendingHashtags();
+	void this.searchService.refreshSuggestedUsers(5);
   }
 
-  get posts(): Post[] {
-    const allPosts = this.postService.posts();
-    // For demo, limit initial posts and load more on scroll
-    return allPosts.slice(0, this.currentPage * this.postsPerPage);
+  async loadFeed(): Promise<void> {
+    try {
+      await this.postService.getFeed(this.feedType(), 1, 20).toPromise();
+      this.currentPage.set(1);
+    } catch (error) {
+      console.error('Failed to load feed:', error);
+      this.toastService.error('Error', 'Failed to load feed');
+    }
   }
 
   get showRefreshIndicator(): boolean {
@@ -51,30 +66,35 @@ export class FeedComponent implements OnDestroy {
   }
 
   async onRefresh(): Promise<void> {
-    this.isRefreshing = true;
-    await this.refreshService.refresh();
-    this.isRefreshing = false;
-    this.toastService.success('Feed updated', 'New posts have been loaded');
+    this.isRefreshing.set(true);
+    try {
+      await this.refreshService.refresh();
+      await this.loadFeed();
+      this.toastService.success('Feed updated', 'New posts have been loaded');
+    } catch (error) {
+      console.error('Failed to refresh feed:', error);
+    } finally {
+      this.isRefreshing.set(false);
+    }
   }
 
-  onLoadMore(): void {
-    if (this.isLoadingMore || !this.hasMorePosts) {
+  async onLoadMore(): Promise<void> {
+    if (this.isLoadingMore() || !this.hasMorePosts()) {
       return;
     }
 
-    this.isLoadingMore = true;
+    this.isLoadingMore.set(true);
     
-    // Simulate API call to load more posts
-    setTimeout(() => {
-      this.currentPage++;
-      this.isLoadingMore = false;
-      
-      // For demo, assume we have unlimited posts
-      // In real app, check if there are more posts to load
-      if (this.currentPage >= 10) {
-        this.hasMorePosts = false;
-      }
-    }, 1000);
+    try {
+      const nextPage = this.currentPage() + 1;
+      await this.postService.getFeed(this.feedType(), nextPage, 20).toPromise();
+      this.currentPage.set(nextPage);
+    } catch (error) {
+      console.error('Failed to load more posts:', error);
+      this.toastService.error('Error', 'Failed to load more posts');
+    } finally {
+      this.isLoadingMore.set(false);
+    }
   }
 
   onDismissNewPosts(): void {
@@ -83,5 +103,6 @@ export class FeedComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.refreshService.destroy();
+    this.postService.clear();
   }
 }

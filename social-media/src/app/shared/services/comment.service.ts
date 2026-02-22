@@ -9,6 +9,36 @@ import { HttpClient } from '@angular/common/http';
 import { BaseApiService } from './base-api.service';
 import { Comment, CommentInput, CommentState, createEmptyCommentState, addReplyToTree, removeCommentFromTree } from '../models/comment.model';
 
+type ApiComment = {
+  id: string;
+  post_id: string;
+  user_id: string;
+  parent_id?: string | null;
+  content: string;
+  created_at: string;
+  updated_at?: string;
+  likes_count?: number;
+  replies_count?: number;
+  replies?: ApiComment[];
+  user_name?: string;
+  user_username?: string;
+  user_avatar?: string;
+};
+
+type CommentsResponse = {
+  comments: ApiComment[];
+  total_count?: number;
+  has_more?: boolean;
+  page?: number;
+  limit?: number;
+};
+
+type CommentResponse = {
+  comment: ApiComment;
+  success: boolean;
+  message?: string;
+};
+
 @Injectable({
   providedIn: 'root'
 })
@@ -29,7 +59,12 @@ export class CommentService extends BaseApiService {
     }));
 
     try {
-      const comments = await this.get<Comment[]>(`/posts/${postId}/comments`).toPromise() || [];
+      const response = await this.get<CommentsResponse>(`/posts/${postId}/comments/tree`, {
+        page: '1',
+        limit: '100'
+      }).toPromise();
+
+      const comments = (response?.comments ?? []).map(c => this.mapApiCommentToModel(c));
       const count = this.countAllComments(comments);
       
       this.commentState.update(state => ({
@@ -65,14 +100,16 @@ export class CommentService extends BaseApiService {
    * Add a new comment to a post via API
    */
   async addComment(input: CommentInput): Promise<Comment> {
-    const newComment = await this.post<Comment>(`/posts/${input.postId}/comments`, {
+    const response = await this.post<CommentResponse>(`/posts/${input.postId}/comments`, {
       content: input.content,
       parent_id: input.parentId || null
     }).toPromise();
 
-    if (!newComment) {
+    if (!response?.comment) {
       throw new Error('Failed to create comment');
     }
+
+    const newComment = this.mapApiCommentToModel(response.comment);
 
     // Optimistic update
     this.commentState.update(state => {
@@ -146,7 +183,7 @@ export class CommentService extends BaseApiService {
    * Remove a comment via API
    */
   async removeComment(postId: string, commentId: string): Promise<void> {
-    await this.delete<void>(`/posts/${postId}/comments/${commentId}`).toPromise();
+    await this.delete<void>(`/comments/${commentId}`).toPromise();
 
     // Optimistic update
     this.commentState.update(state => {
@@ -196,9 +233,8 @@ export class CommentService extends BaseApiService {
    * Like a comment via API
    */
   async likeComment(postId: string, commentId: string): Promise<void> {
-    await this.post<void>(`/posts/${postId}/comments/${commentId}/like`, {}).toPromise();
-
-    // Optimistic update
+    // Phase 3 feature: backend endpoint not implemented yet. Keep UI responsive by
+    // toggling local state only.
     this.commentState.update(state => {
       const comments = state.comments[postId] || [];
       const updatedComments = this.toggleLikeInTree(comments, commentId);
@@ -207,6 +243,26 @@ export class CommentService extends BaseApiService {
         comments: { ...state.comments, [postId]: updatedComments }
       };
     });
+  }
+
+  private mapApiCommentToModel(api: ApiComment): Comment {
+    return {
+      id: api.id,
+      postId: api.post_id,
+      author: {
+        id: api.user_id,
+        name: api.user_name ?? 'Unknown',
+        username: api.user_username ?? 'unknown',
+        avatar: api.user_avatar ?? ''
+      },
+      content: api.content,
+      parentId: api.parent_id ?? null,
+      createdAt: new Date(api.created_at),
+      updatedAt: api.updated_at ? new Date(api.updated_at) : undefined,
+      likes: api.likes_count ?? 0,
+      replies: (api.replies ?? []).map(r => this.mapApiCommentToModel(r)),
+      isLiked: false
+    };
   }
 
   private toggleLikeInTree(comments: Comment[], commentId: string): Comment[] {

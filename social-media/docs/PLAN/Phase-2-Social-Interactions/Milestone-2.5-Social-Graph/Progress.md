@@ -14,6 +14,24 @@
 
 ## Progress Log
 
+### 2026-02-22 - Audit Execute: Production Readiness Fixes
+
+Audited Milestone 2.5 against the PRD and verified the implementation end-to-end. The milestone was marked complete but the follow system still relied on mock/local state in the frontend and had contract mismatches with the backend (backend follow APIs are ID-based; profile routes use usernames).
+
+- Refactored `FollowService` to be API-backed using:
+  - `POST /api/v1/users/id/:id/follow`
+  - `DELETE /api/v1/users/id/:id/follow`
+  - `GET /api/v1/users/id/:id/followers`
+  - `GET /api/v1/users/id/:id/following`
+- Fixed backend follower/following list responses to compute `is_following_back` relative to the authenticated viewer.
+- Updated followers/following pages to resolve `:id` (username) → user ID and load/paginate from backend.
+- Fixed `UserService` endpoints (`getUserByUsername`, correct `/users/id/:id`) and removed reliance on a non-existent bulk users-by-ids endpoint.
+- Wired follow button into profile header when viewing other users.
+
+**Verification:**
+- `go test ./...`
+- `npm run typecheck`
+
 ### 2026-02-21 - Item 2.5.1 Complete: Follow Model & Service
 
 **2.5.1 - Follow Model & Service** ✅

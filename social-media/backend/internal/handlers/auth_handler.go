@@ -18,11 +18,11 @@ type AuthHandler struct {
 }
 
 // NewAuthHandler creates a new auth handler
-func NewAuthHandler(authService *service.AuthService) *AuthHandler {
+func NewAuthHandler(authService *service.AuthService, jwtSecret string, jwtExpiry time.Duration, refreshExpiry time.Duration) *AuthHandler {
 	jwtManager := auth.NewJWTManager(
-		"dev-secret-key-change-in-production",
-		15*time.Minute,
-		7*24*time.Hour,
+		jwtSecret,
+		jwtExpiry,
+		refreshExpiry,
 	)
 
 	return &AuthHandler{
@@ -322,8 +322,8 @@ func (h *AuthHandler) GetCurrentUser(c *gin.Context) {
 // @Security BearerAuth
 // @Accept json
 // @Produce json
-// @Param request body UpdateProfileRequest true "Profile update"
-// @Success 200 {object} UserResponse
+// @Param request body handlers.UpdateProfileRequest true "Profile update"
+// @Success 200 {object} handlers.UserResponse
 // @Router /api/v1/user/profile [put]
 func (h *AuthHandler) UpdateProfile(c *gin.Context) {
 	userID := c.GetString("user_id")
@@ -465,4 +465,11 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Password reset successfully"})
+}
+
+// UpdateProfileRequest represents a profile update request
+type UpdateProfileRequest struct {
+	DisplayName string `json:"display_name"`
+	Bio         string `json:"bio"`
+	AvatarURL   string `json:"avatar_url"`
 }

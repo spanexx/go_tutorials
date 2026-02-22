@@ -43,11 +43,281 @@ type PostService struct {
 	db *sql.DB
 }
 
+// CountPostsByHashtag returns total count of posts for a hashtag
+func (s *PostService) CountPostsByHashtag(ctx context.Context, hashtag string) (int64, error) {
+	if hashtag == "" {
+		return 0, errors.New("hashtag is required")
+	}
+	if s.db == nil {
+		return 0, nil
+	}
+
+	var count int64
+	err := s.db.QueryRowContext(
+		ctx,
+		`SELECT COUNT(DISTINCT p.id)
+		 FROM posts p
+		 JOIN post_hashtags ph ON ph.post_id = p.id
+		 WHERE ph.hashtag = $1 AND p.deleted_at IS NULL`,
+		hashtag,
+	).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// GetPostsByHashtagWithDetails retrieves posts with a specific hashtag including author details
+func (s *PostService) GetPostsByHashtagWithDetails(ctx context.Context, input GetPostsByHashtagInput) ([]models.PostWithDetails, error) {
+	if input.Tag == "" {
+		return nil, errors.New("hashtag is required")
+	}
+	if input.Limit <= 0 {
+		input.Limit = DefaultLimit
+	}
+	if input.Limit > MaxLimit {
+		input.Limit = MaxLimit
+	}
+	if input.Offset < 0 {
+		input.Offset = 0
+	}
+	if s.db == nil {
+		return []models.PostWithDetails{}, nil
+	}
+
+	rows, err := s.db.QueryContext(
+		ctx,
+		`
+		SELECT
+			p.id, p.user_id, p.content, p.image_url, p.video_url,
+			p.likes_count, p.comments_count, p.shares_count, p.views_count,
+			p.is_edited, p.edited_at, p.created_at, p.updated_at, p.deleted_at,
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), u.is_verified,
+			(SELECT type FROM reactions WHERE post_id = p.id AND user_id = $2 AND deleted_at IS NULL LIMIT 1) AS user_reaction
+		FROM posts p
+		JOIN post_hashtags ph ON ph.post_id = p.id
+		JOIN users u ON u.id = p.user_id
+		WHERE ph.hashtag = $1 AND p.deleted_at IS NULL
+		ORDER BY p.created_at DESC
+		LIMIT $3 OFFSET $4
+		`,
+		input.Tag,
+		input.UserID,
+		input.Limit,
+		input.Offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]models.PostWithDetails, 0)
+	for rows.Next() {
+		p := models.PostWithDetails{}
+		var username, displayName, avatarURL string
+		var verified bool
+		var userReaction sql.NullString
+
+		if err := rows.Scan(
+			&p.ID,
+			&p.UserID,
+			&p.Content,
+			&p.ImageURL,
+			&p.VideoURL,
+			&p.LikesCount,
+			&p.CommentsCount,
+			&p.SharesCount,
+			&p.ViewsCount,
+			&p.IsEdited,
+			&p.EditedAt,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.DeletedAt,
+			&username,
+			&displayName,
+			&avatarURL,
+			&verified,
+			&userReaction,
+		); err != nil {
+			return nil, err
+		}
+
+		p.UserUsername = username
+		p.UserName = displayName
+		p.UserAvatar = avatarURL
+		p.UserIsVerified = verified
+		p.TotalLikes = int64(p.LikesCount)
+		p.TotalComments = int64(p.CommentsCount)
+		p.TotalShares = int64(p.SharesCount)
+		if userReaction.Valid {
+			p.UserReaction = userReaction.String
+		}
+
+		posts = append(posts, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
 // NewPostService creates a new PostService instance
 func NewPostService(db *sql.DB) *PostService {
 	return &PostService{
 		db: db,
 	}
+}
+
+// IncrementShareCount increments shares_count for a post
+func (s *PostService) IncrementShareCount(ctx context.Context, postID string) error {
+	if postID == "" {
+		return errors.New("post ID is required")
+	}
+	if s.db == nil {
+		return errors.New("database not configured")
+	}
+
+	res, err := s.db.ExecContext(
+		ctx,
+		`UPDATE posts SET shares_count = shares_count + 1, updated_at = NOW() WHERE id = $1 AND deleted_at IS NULL`,
+		postID,
+	)
+	if err != nil {
+		return err
+	}
+	rows, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rows == 0 {
+		return ErrPostNotFound
+	}
+	return nil
+}
+
+// CountPostsByUser returns total count of posts for a user.
+func (s *PostService) CountPostsByUser(ctx context.Context, userID string) (int64, error) {
+	if userID == "" {
+		return 0, errors.New("user ID is required")
+	}
+	if s.db == nil {
+		return 0, nil
+	}
+
+	var count int64
+	if err := s.db.QueryRowContext(
+		ctx,
+		`SELECT COUNT(*) FROM posts WHERE user_id = $1 AND deleted_at IS NULL`,
+		userID,
+	).Scan(&count); err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
+// GetPostsByUserWithDetails retrieves posts by a specific user including author details.
+// viewerUserID is optional and is used for computing the viewer's reaction.
+func (s *PostService) GetPostsByUserWithDetails(ctx context.Context, viewerUserID, targetUserID string, limit, offset int32) ([]models.PostWithDetails, error) {
+	if targetUserID == "" {
+		return nil, errors.New("user ID is required")
+	}
+	if limit <= 0 {
+		limit = DefaultLimit
+	}
+	if limit > MaxLimit {
+		limit = MaxLimit
+	}
+	if offset < 0 {
+		offset = DefaultOffset
+	}
+	if s.db == nil {
+		return []models.PostWithDetails{}, nil
+	}
+
+	rows, err := s.db.QueryContext(
+		ctx,
+		`
+		SELECT
+			p.id, p.user_id, p.content, p.image_url, p.video_url,
+			p.likes_count, p.comments_count, p.shares_count, p.views_count,
+			p.is_edited, p.edited_at, p.created_at, p.updated_at, p.deleted_at,
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), u.is_verified,
+			(SELECT type FROM reactions WHERE post_id = p.id AND user_id = $1 AND deleted_at IS NULL LIMIT 1) AS user_reaction
+		FROM posts p
+		JOIN users u ON u.id = p.user_id
+		WHERE p.user_id = $2 AND p.deleted_at IS NULL
+		ORDER BY p.created_at DESC
+		LIMIT $3 OFFSET $4
+		`,
+		viewerUserID,
+		targetUserID,
+		limit,
+		offset,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	posts := make([]models.PostWithDetails, 0)
+	for rows.Next() {
+		p := models.PostWithDetails{}
+		var username, displayName, avatarURL string
+		var verified bool
+		var userReaction sql.NullString
+
+		if err := rows.Scan(
+			&p.ID,
+			&p.UserID,
+			&p.Content,
+			&p.ImageURL,
+			&p.VideoURL,
+			&p.LikesCount,
+			&p.CommentsCount,
+			&p.SharesCount,
+			&p.ViewsCount,
+			&p.IsEdited,
+			&p.EditedAt,
+			&p.CreatedAt,
+			&p.UpdatedAt,
+			&p.DeletedAt,
+			&username,
+			&displayName,
+			&avatarURL,
+			&verified,
+			&userReaction,
+		); err != nil {
+			return nil, err
+		}
+
+		p.UserUsername = username
+		p.UserName = displayName
+		p.UserAvatar = avatarURL
+		p.UserIsVerified = verified
+		p.TotalLikes = int64(p.LikesCount)
+		p.TotalComments = int64(p.CommentsCount)
+		p.TotalShares = int64(p.SharesCount)
+		if userReaction.Valid {
+			p.UserReaction = userReaction.String
+		}
+
+		posts = append(posts, p)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return posts, nil
+}
+
+// GetPostsByHashtagInput represents input for getting posts by hashtag
+type GetPostsByHashtagInput struct {
+	UserID string
+	Tag    string
+	Limit  int32
+	Offset int32
 }
 
 // CreatePostInput represents input for creating a post
@@ -71,6 +341,8 @@ func (s *PostService) CreatePost(ctx context.Context, input CreatePostInput) (*m
 	// Extract hashtags and mentions
 	hashtags := extractHashtags(sanitizedContent)
 	_ = hashtags
+	mentions := extractMentions(sanitizedContent)
+	_ = mentions
 
 	if s.db == nil {
 		post := &models.Post{
@@ -238,7 +510,7 @@ func (s *PostService) GetFeed(ctx context.Context, input GetFeedInput) ([]models
 			p.id, p.user_id, p.content, p.image_url, p.video_url,
 			p.likes_count, p.comments_count, p.shares_count, p.views_count,
 			p.is_edited, p.edited_at, p.created_at, p.updated_at, p.deleted_at,
-			u.username, u.display_name, COALESCE(u.avatar_url, ''), u.is_verified,
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), COALESCE(u.email_verified, false),
 			(SELECT type FROM reactions WHERE post_id = p.id AND user_id = $1 LIMIT 1) AS user_reaction
 		FROM posts p
 		JOIN users u ON u.id = p.user_id

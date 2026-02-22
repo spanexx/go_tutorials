@@ -36,7 +36,7 @@ type FollowResponse struct {
 	Message string                 `json:"message"`
 }
 
-// FollowUser handles POST /api/v1/users/:id/follow
+// FollowUser handles POST /api/v1/users/id/:id/follow
 // @Summary Follow a user
 // @Description Follow a specific user
 // @Tags follows
@@ -47,7 +47,7 @@ type FollowResponse struct {
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 409 {object} ErrorResponse
-// @Router /api/v1/users/{id}/follow [post]
+// @Router /api/v1/users/id/{id}/follow [post]
 func (h *FollowHandler) FollowUser(c *gin.Context) {
 	followingID := c.Param("id")
 	if followingID == "" {
@@ -102,7 +102,7 @@ func (h *FollowHandler) FollowUser(c *gin.Context) {
 	})
 }
 
-// UnfollowUser handles DELETE /api/v1/users/:id/follow
+// UnfollowUser handles DELETE /api/v1/users/id/:id/follow
 // @Summary Unfollow a user
 // @Description Unfollow a specific user
 // @Tags follows
@@ -112,7 +112,7 @@ func (h *FollowHandler) FollowUser(c *gin.Context) {
 // @Failure 400 {object} ErrorResponse
 // @Failure 401 {object} ErrorResponse
 // @Failure 404 {object} ErrorResponse
-// @Router /api/v1/users/{id}/follow [delete]
+// @Router /api/v1/users/id/{id}/follow [delete]
 func (h *FollowHandler) UnfollowUser(c *gin.Context) {
 	followingID := c.Param("id")
 	if followingID == "" {
@@ -159,7 +159,7 @@ func (h *FollowHandler) UnfollowUser(c *gin.Context) {
 	})
 }
 
-// GetFollowers handles GET /api/v1/users/:id/followers
+// GetFollowers handles GET /api/v1/users/id/:id/followers
 // @Summary Get user's followers
 // @Description Get paginated list of users who follow a specific user
 // @Tags follows
@@ -169,7 +169,7 @@ func (h *FollowHandler) UnfollowUser(c *gin.Context) {
 // @Param limit query int false "Items per page" default(20)
 // @Success 200 {object} FollowersResponse
 // @Failure 400 {object} ErrorResponse
-// @Router /api/v1/users/{id}/followers [get]
+// @Router /api/v1/users/id/{id}/followers [get]
 func (h *FollowHandler) GetFollowers(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -210,9 +210,10 @@ func (h *FollowHandler) GetFollowers(c *gin.Context) {
 
 	// Get followers
 	followers, err := h.followService.GetFollowers(c.Request.Context(), service.GetFollowersInput{
-		UserID: userID,
-		Limit:  int32(limit),
-		Offset: offset,
+		UserID:   userID,
+		ViewerID: c.GetString("user_id"),
+		Limit:    int32(limit),
+		Offset:   offset,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -244,7 +245,7 @@ type FollowersResponse struct {
 	Success   bool                    `json:"success"`
 }
 
-// GetFollowing handles GET /api/v1/users/:id/following
+// GetFollowing handles GET /api/v1/users/id/:id/following
 // @Summary Get users that a user follows
 // @Description Get paginated list of users that a specific user follows
 // @Tags follows
@@ -254,7 +255,7 @@ type FollowersResponse struct {
 // @Param limit query int false "Items per page" default(20)
 // @Success 200 {object} FollowingResponse
 // @Failure 400 {object} ErrorResponse
-// @Router /api/v1/users/{id}/following [get]
+// @Router /api/v1/users/id/{id}/following [get]
 func (h *FollowHandler) GetFollowing(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -295,9 +296,10 @@ func (h *FollowHandler) GetFollowing(c *gin.Context) {
 
 	// Get following
 	following, err := h.followService.GetFollowing(c.Request.Context(), service.GetFollowingInput{
-		UserID: userID,
-		Limit:  int32(limit),
-		Offset: offset,
+		UserID:   userID,
+		ViewerID: c.GetString("user_id"),
+		Limit:    int32(limit),
+		Offset:   offset,
 	})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, ErrorResponse{
@@ -329,7 +331,7 @@ type FollowingResponse struct {
 	Success   bool                    `json:"success"`
 }
 
-// GetFollowCounts handles GET /api/v1/users/:id/follow/counts
+// GetFollowCounts handles GET /api/v1/users/id/:id/follow/counts
 // @Summary Get follow counts for a user
 // @Description Get follower and following counts for a specific user
 // @Tags follows
@@ -337,7 +339,7 @@ type FollowingResponse struct {
 // @Param id path string true "User ID"
 // @Success 200 {object} FollowCountsResponse
 // @Failure 400 {object} ErrorResponse
-// @Router /api/v1/users/{id}/follow/counts [get]
+// @Router /api/v1/users/id/{id}/follow/counts [get]
 func (h *FollowHandler) GetFollowCounts(c *gin.Context) {
 	userID := c.Param("id")
 	if userID == "" {
@@ -374,13 +376,13 @@ type FollowCountsResponse struct {
 func RegisterFollowRoutes(r *gin.RouterGroup, followService *service.FollowService) {
 	handler := NewFollowHandler(followService)
 
-	follows := r.Group("/users/:id/follow")
+	follows := r.Group("/users/id/:id/follow")
 	{
 		follows.POST("", handler.FollowUser)
 		follows.DELETE("", handler.UnfollowUser)
 	}
 
-	r.GET("/users/:id/followers", handler.GetFollowers)
-	r.GET("/users/:id/following", handler.GetFollowing)
-	r.GET("/users/:id/follow/counts", handler.GetFollowCounts)
+	r.GET("/users/id/:id/followers", handler.GetFollowers)
+	r.GET("/users/id/:id/following", handler.GetFollowing)
+	r.GET("/users/id/:id/follow/counts", handler.GetFollowCounts)
 }

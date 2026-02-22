@@ -1,5 +1,6 @@
 import { Injectable, signal, effect } from '@angular/core';
 import { Router } from '@angular/router';
+import { AuthService } from './auth.service';
 
 export interface Shortcut {
   keys: string;
@@ -34,7 +35,7 @@ export class KeyboardShortcutsService {
   private bufferTimeout: any;
   private isInputFocused = false;
 
-  constructor(private router: Router) {
+  constructor(private router: Router, private authService: AuthService) {
     this.initKeyboardListener();
   }
 
@@ -117,7 +118,7 @@ export class KeyboardShortcutsService {
             break;
           case 'p':
             event.preventDefault();
-            this.navigateTo('/profile/1');
+            this.navigateTo(this.getMyProfileRoute());
             break;
           case 'b':
             event.preventDefault();
@@ -141,6 +142,11 @@ export class KeyboardShortcutsService {
 
   private navigateTo(path: string): void {
     this.router.navigate([path]);
+  }
+
+  private getMyProfileRoute(): string {
+    const username = this.authService.user?.username;
+    return username ? `/profile/${username}` : '/feed';
   }
 
   private focusSearch(): void {

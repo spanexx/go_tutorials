@@ -6,6 +6,9 @@
 // - Signal-based activity feed with pagination support
 // CID: Phase-2 Milestone 2.4 - Sharing & Activity Feed
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { BaseApiService } from './base-api.service';
 
 export enum ActivityType {
   LIKE = 'LIKE',
@@ -60,7 +63,7 @@ export interface ActivityState {
 @Injectable({
   providedIn: 'root'
 })
-export class ActivityService {
+export class ActivityService extends BaseApiService {
   private activityState = signal<ActivityState>({
     feed: [],
     userActivity: {},
@@ -82,134 +85,41 @@ export class ActivityService {
   // Check if more activities available
   hasMore = computed(() => this.activityState().hasMore);
 
-  constructor() {
-    this.initializeMockData();
-  }
-
-  private initializeMockData(): void {
-    const mockUsers: User[] = [
-      { id: 'user-1', name: 'Alice Johnson', username: 'alice', avatar: '/avatars/alice.jpg' },
-      { id: 'user-2', name: 'Bob Smith', username: 'bob', avatar: '/avatars/bob.jpg' },
-      { id: 'user-3', name: 'Carol White', username: 'carol', avatar: '/avatars/carol.jpg' },
-      { id: 'user-4', name: 'David Brown', username: 'david', avatar: '/avatars/david.jpg' },
-      { id: 'user-5', name: 'Eve Davis', username: 'eve', avatar: '/avatars/eve.jpg' }
-    ];
-
-    const mockActivities: Activity[] = [
-      {
-        id: 'activity-1',
-        type: ActivityType.LIKE,
-        actor: mockUsers[0],
-        target: { id: 'post-1', type: 'post', content: 'Just shipped a new feature!' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-        read: false
-      },
-      {
-        id: 'activity-2',
-        type: ActivityType.COMMENT,
-        actor: mockUsers[1],
-        target: { id: 'post-2', type: 'post', content: 'Working on Angular updates' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-        read: false,
-        metadata: { comment: 'Great progress!' }
-      },
-      {
-        id: 'activity-3',
-        type: ActivityType.FOLLOW,
-        actor: mockUsers[2],
-        target: { id: 'user-current', type: 'user' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 2), // 2 hours ago
-        read: true
-      },
-      {
-        id: 'activity-4',
-        type: ActivityType.REACTION,
-        actor: mockUsers[3],
-        target: { id: 'post-3', type: 'post', content: 'Check out my latest project' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 5), // 5 hours ago
-        read: true,
-        metadata: { reactionType: 'Love' }
-      },
-      {
-        id: 'activity-5',
-        type: ActivityType.SHARE,
-        actor: mockUsers[4],
-        target: { id: 'post-4', type: 'post', content: 'TypeScript tips and tricks' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24), // 1 day ago
-        read: true
-      },
-      {
-        id: 'activity-6',
-        type: ActivityType.MENTION,
-        actor: mockUsers[0],
-        target: { id: 'post-5', type: 'post', content: 'Thanks @currentuser for the help!' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 2), // 2 days ago
-        read: true
-      },
-      {
-        id: 'activity-7',
-        type: ActivityType.REPLY,
-        actor: mockUsers[1],
-        target: { id: 'comment-1', type: 'comment', content: 'This is really helpful' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3), // 3 days ago
-        read: true
-      },
-      {
-        id: 'activity-8',
-        type: ActivityType.POST,
-        actor: mockUsers[2],
-        target: { id: 'post-6', type: 'post', title: 'New blog post published' },
-        timestamp: new Date(Date.now() - 1000 * 60 * 60 * 24 * 5), // 5 days ago
-        read: true
-      }
-    ];
-
-    const unreadCount = mockActivities.filter(a => !a.read).length;
-
-    this.activityState.set({
-      feed: mockActivities,
-      userActivity: {},
-      unreadCount,
-      isLoading: false,
-      hasMore: true,
-      cursor: 'cursor-8'
-    });
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   /**
    * Get activity feed with pagination
    */
-  getFeedActivity(limit: number = 20, cursor?: string): Promise<ActivityFeed> {
-    return new Promise((resolve) => {
-      this.activityState.update(state => ({ ...state, isLoading: true }));
+  async getFeedActivity(limit: number = 20, cursor?: string, type?: ActivityType): Promise<ActivityFeed> {
+    this.activityState.update(state => ({ ...state, isLoading: true }));
+    try {
+      const resp = await firstValueFrom(this.get<{ activities: any[]; has_more: boolean; cursor: string }>('/activity', {
+        limit: String(limit),
+        cursor,
+        type
+      }));
 
-      // Simulate API delay
-      setTimeout(() => {
-        const state = this.activityState();
-        const activities = state.feed;
-        
-        // Apply pagination
-        const startIndex = cursor ? activities.findIndex(a => a.id === cursor) + 1 : 0;
-        const paginatedActivities = activities.slice(startIndex, startIndex + limit);
-        
-        this.activityState.update(state => ({
-          ...state,
-          isLoading: false,
-          cursor: startIndex + limit < activities.length 
-            ? activities[startIndex + limit].id 
-            : null,
-          hasMore: startIndex + limit < activities.length
-        }));
+      const activities = (resp.activities ?? []).map(a => this.mapApiActivity(a));
 
-        resolve({
-          activities: paginatedActivities,
-          hasMore: startIndex + limit < activities.length,
-          cursor: startIndex + limit < activities.length 
-            ? activities[startIndex + limit].id 
-            : null
-        });
-      }, 300);
-    });
+      this.activityState.update(state => ({
+        ...state,
+        feed: cursor ? [...state.feed, ...activities] : activities,
+        unreadCount: (cursor ? [...state.feed, ...activities] : activities).filter(x => !x.read).length,
+        isLoading: false,
+        hasMore: resp.has_more,
+        cursor: resp.cursor || null
+      }));
+
+      return {
+        activities,
+        hasMore: resp.has_more,
+        cursor: resp.cursor || null
+      };
+    } finally {
+      this.activityState.update(state => ({ ...state, isLoading: false }));
+    }
   }
 
   /**
@@ -268,19 +178,22 @@ export class ActivityService {
    * Mark activity as read
    */
   markAsRead(activityId: string): void {
-    this.activityState.update(state => ({
-      ...state,
-      feed: state.feed.map(a => 
-        a.id === activityId ? { ...a, read: true } : a
-      ),
-      unreadCount: Math.max(0, state.unreadCount - 1)
-    }));
+    void firstValueFrom(this.post(`/activity/${activityId}/read`, {})).catch(() => {});
+    this.activityState.update(state => {
+      const updated = state.feed.map(a => (a.id === activityId ? { ...a, read: true } : a));
+      return {
+        ...state,
+        feed: updated,
+        unreadCount: updated.filter(a => !a.read).length
+      };
+    });
   }
 
   /**
    * Mark all activities as read
    */
   markAllAsRead(): void {
+    void firstValueFrom(this.post(`/activity/read-all`, {})).catch(() => {});
     this.activityState.update(state => ({
       ...state,
       feed: state.feed.map(a => ({ ...a, read: true })),
@@ -322,12 +235,30 @@ export class ActivityService {
    * Refresh activity feed
    */
   async refresh(): Promise<void> {
-    this.activityState.update(state => ({ ...state, isLoading: true }));
-    
-    // Simulate API refresh
-    await new Promise(resolve => setTimeout(resolve, 500));
-    
-    this.activityState.update(state => ({ ...state, isLoading: false }));
+    this.activityState.update(state => ({ ...state, cursor: null }));
+    await this.getFeedActivity(20);
+  }
+
+  private mapApiActivity(a: any): Activity {
+    return {
+      id: String(a.id),
+      type: a.type as ActivityType,
+      actor: {
+        id: String(a.actor?.id ?? ''),
+        name: String(a.actor?.name ?? ''),
+        username: String(a.actor?.username ?? ''),
+        avatar: a.actor?.avatar ?? undefined
+      },
+      target: {
+        id: String(a.target?.id ?? ''),
+        type: (a.target?.type ?? 'post') as any,
+        content: a.target?.content,
+        title: a.target?.title
+      },
+      timestamp: new Date(a.timestamp),
+      read: Boolean(a.read),
+      metadata: a.metadata ?? undefined
+    };
   }
 
   /**

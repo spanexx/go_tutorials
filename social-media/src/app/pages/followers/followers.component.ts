@@ -12,7 +12,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { LucideAngularModule, ArrowLeft, Users, UserPlus } from 'lucide-angular';
-import { FollowService, Follow } from '../../shared/services/follow.service';
+import { FollowService } from '../../shared/services/follow.service';
 import { UserService, UserProfile } from '../../shared/services/user.service';
 import { FollowButtonComponent } from '../../shared/components/follow-button/follow-button.component';
 
@@ -414,6 +414,7 @@ export class FollowersComponent implements OnInit {
   displayedFollowers: FollowerUser[] = [];
   totalCount = 0;
   isLoading = false;
+  hasMore = true;
   currentPage = 1;
   pageSize = 10;
 
@@ -427,8 +428,8 @@ export class FollowersComponent implements OnInit {
     this.route.paramMap.subscribe(params => {
       const id = params.get('id');
       if (id) {
-        this.profileId = id;
-        this.loadFollowers();
+        this.profileUsername = id;
+        void this.loadFollowers(true);
       }
     });
   }
@@ -437,59 +438,59 @@ export class FollowersComponent implements OnInit {
     return this.displayedFollowers.length < this.followers.length;
   }
 
-  async loadFollowers(): Promise<void> {
+  async loadFollowers(reset: boolean = false): Promise<void> {
+    if (this.isLoading) {
+      return;
+    }
     this.isLoading = true;
 
-    // Get followers from service
-    const follows = this.followService.getFollowers(this.profileId);
-    
-    // Fetch real user data from API
-    const userIds = follows.map((f: Follow) => f.followerId);
-    
-    try {
-      const users = await this.userService.getUsersByIds(userIds).toPromise() || [];
-      const userMap = new Map(users.map((u: UserProfile) => [u.id, u]));
-      
-      this.followers = follows.map((follow: Follow) => {
-        const user = userMap.get(follow.followerId);
-        const isFollowing = this.followService.isFollowing(follow.followerId);
-        const followBack = this.followService.isFollowing(follow.followerId);
-        
-        return {
-          id: follow.followerId,
-          name: user?.display_name || 'User',
-          username: user?.username || 'user',
-          avatar: user?.avatar_url || '/avatars/default.jpg',
-          bio: user?.bio || '',
-          isFollowing,
-          followBack
-        };
-      });
-    } catch (error) {
-      console.error('Failed to load follower details:', error);
-      // Fallback to IDs only if API fails
-      this.followers = follows.map((follow: Follow) => ({
-        id: follow.followerId,
-        name: 'User',
-        username: 'user',
-        avatar: '/avatars/default.jpg',
-        bio: '',
-        isFollowing: this.followService.isFollowing(follow.followerId),
-        followBack: this.followService.isFollowing(follow.followerId)
-      }));
+    if (reset) {
+      this.followers = [];
+      this.displayedFollowers = [];
+      this.currentPage = 1;
+      this.hasMore = true;
     }
 
-    this.totalCount = this.followers.length;
-    this.displayedFollowers = this.followers.slice(0, this.pageSize);
-    this.currentPage = 1;
-    this.isLoading = false;
+    try {
+      const profile = await this.userService.getUserByUsername(this.profileUsername).toPromise();
+      if (!profile?.id) {
+        this.isLoading = false;
+        return;
+      }
+
+      this.profileId = profile.id;
+      const resp = await this.followService.getFollowers(profile.id, this.currentPage, this.pageSize);
+
+      const items: any[] = resp?.followers ?? [];
+      const mapped = items.map((f: any) => {
+        const followerId = String(f.follower_id ?? f.follow?.follower_id ?? '');
+        return {
+          id: followerId,
+          name: f.user_name ?? 'User',
+          username: f.user_username ?? 'user',
+          avatar: f.user_avatar ?? '/avatars/default.jpg',
+          bio: '',
+          isFollowing: this.followService.isFollowing(followerId),
+          followBack: Boolean(f.is_following_back)
+        } as FollowerUser;
+      });
+
+      this.totalCount = resp?.total ?? this.totalCount;
+      this.hasMore = Boolean(resp?.has_more);
+
+      this.followers = [...this.followers, ...mapped];
+      this.displayedFollowers = this.followers;
+      this.currentPage++;
+    } catch (error) {
+      console.error('Failed to load followers:', error);
+    } finally {
+      this.isLoading = false;
+    }
   }
 
   loadMore(): void {
-    if (this.canLoadMore && !this.isLoading) {
-      this.currentPage++;
-      const endIndex = this.currentPage * this.pageSize;
-      this.displayedFollowers = this.followers.slice(0, endIndex);
+    if (this.hasMore && !this.isLoading) {
+      void this.loadFollowers(false);
     }
   }
 

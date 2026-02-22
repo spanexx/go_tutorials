@@ -23,6 +23,12 @@ export interface SearchResult {
   offset: number;
 }
 
+export interface SearchItem {
+  type: 'post' | 'user' | 'hashtag';
+  item: Post | SearchUser | SearchHashtag;
+  relevanceScore: number;
+}
+
 export interface SearchHashtag {
   tag: string;
   count: number;
@@ -54,47 +60,6 @@ export class SearchService extends BaseApiService {
 
   private trendingHashtagsSignal = signal<SearchHashtag[]>([]);
   private suggestedUsersSignal = signal<SearchUser[]>([]);
-
-  // Fallback data for when API is unavailable
-  private readonly fallbackUsers: SearchUser[] = [
-    {
-      id: '1',
-      username: 'sarahjohnson',
-      display_name: 'Sarah Johnson',
-      avatar_url: 'https://i.pravatar.cc/150?img=5',
-      bio: 'Frontend Developer | UI/UX Enthusiast',
-      followers: 12500
-    },
-    {
-      id: '2',
-      username: 'alexchen',
-      display_name: 'Alex Chen',
-      avatar_url: 'https://i.pravatar.cc/150?img=3',
-      bio: 'Full Stack Developer | Open Source Contributor',
-      followers: 8900
-    },
-    {
-      id: '3',
-      username: 'marcuswilliams',
-      display_name: 'Marcus Williams',
-      avatar_url: 'https://i.pravatar.cc/150?img=12',
-      bio: 'Tech Writer | TypeScript Advocate',
-      followers: 15300
-    }
-  ];
-
-  private readonly fallbackHashtags: SearchHashtag[] = [
-    { tag: 'WebDevelopment', count: 145000 },
-    { tag: 'Angular', count: 89000 },
-    { tag: 'TypeScript', count: 112000 },
-    { tag: 'JavaScript', count: 234000 },
-    { tag: 'UIDesign', count: 67000 },
-    { tag: 'Golang', count: 54000 },
-    { tag: 'Coding', count: 189000 },
-    { tag: 'Programming', count: 167000 },
-    { tag: 'Tech', count: 156000 },
-    { tag: 'Developer', count: 134000 }
-  ];
 
   constructor(
     http: HttpClient,
@@ -152,19 +117,14 @@ export class SearchService extends BaseApiService {
         this.isSearchingSignal.set(false);
       },
       error: (error) => {
-        debugWarn('SearchService', 'search() api failed, using fallback', error);
-        console.warn('Search API unavailable, using fallback data');
-        // Fallback to local search only
+        debugWarn('SearchService', 'search() api failed', error);
+        console.warn('Search API unavailable');
+        // Return empty results on API failure
         const localPosts = this.searchLocalPosts(query.toLowerCase().trim());
         this.searchResultsSignal.set({
           posts: localPosts.slice(0, limit),
-          users: this.fallbackUsers.filter(u =>
-            u.display_name.toLowerCase().includes(query.toLowerCase()) ||
-            u.username.toLowerCase().includes(query.toLowerCase())
-          ).slice(0, limit),
-          hashtags: this.fallbackHashtags.filter(h =>
-            h.tag.toLowerCase().includes(query.toLowerCase())
-          ).slice(0, limit),
+          users: [],
+          hashtags: [],
           query: query,
           total: localPosts.length,
           limit,
@@ -199,24 +159,18 @@ export class SearchService extends BaseApiService {
 
   /**
    * Get trending hashtags from backend
+   * Returns empty array if not cached and API fails
    */
   getTrendingHashtags(): SearchHashtag[] {
-    const cached = this.trendingHashtagsSignal();
-    if (cached.length > 0) {
-      return cached;
-    }
-    return [...this.fallbackHashtags].sort((a, b) => b.count - a.count).slice(0, 5);
+    return this.trendingHashtagsSignal();
   }
 
   /**
    * Get suggested users from backend
+   * Returns empty array if not cached and API fails
    */
   getSuggestedUsers(limit: number = 5): SearchUser[] {
-    const cached = this.suggestedUsersSignal();
-    if (cached.length > 0) {
-      return cached.slice(0, limit);
-    }
-    return [...this.fallbackUsers].slice(0, limit);
+    return this.suggestedUsersSignal().slice(0, limit);
   }
 
   async refreshTrendingHashtags(): Promise<void> {
@@ -256,5 +210,100 @@ export class SearchService extends BaseApiService {
       limit: 10,
       offset: 0
     });
+  }
+
+  /**
+   * Search posts only
+   * @param query - Search query (minimum 2 characters)
+   * @param limit - Maximum results (default 20)
+   * @returns Array of posts matching the query
+   */
+  searchPosts(query: string, limit: number = 20): Post[] {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+    return this.searchLocalPosts(query.toLowerCase().trim()).slice(0, limit);
+  }
+
+  /**
+   * Search users only
+   * @param query - Search query (minimum 2 characters)
+   * @param limit - Maximum results (default 20)
+   * @returns Array of users matching the query
+   */
+  searchUsers(query: string, limit: number = 20): SearchUser[] {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+    // Only search cached suggested users locally
+    const searchTerm = query.toLowerCase().trim();
+    return this.suggestedUsersSignal().filter(u =>
+      u.display_name.toLowerCase().includes(searchTerm) ||
+      u.username.toLowerCase().includes(searchTerm) ||
+      u.bio.toLowerCase().includes(searchTerm)
+    ).slice(0, limit);
+  }
+
+  /**
+   * Search hashtags only
+   * @param query - Search query (minimum 2 characters)
+   * @param limit - Maximum results (default 20)
+   * @returns Array of hashtags matching the query
+   */
+  searchHashtags(query: string, limit: number = 20): SearchHashtag[] {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+    // Only search cached trending hashtags locally
+    const searchTerm = query.toLowerCase().trim();
+    return this.trendingHashtagsSignal().filter(h =>
+      h.tag.toLowerCase().includes(searchTerm)
+    ).slice(0, limit);
+  }
+
+  /**
+   * Search all content types
+   * @param query - Search query (minimum 2 characters)
+   * @param limit - Maximum results per type (default 20)
+   * @returns Array of search items with type and relevance score
+   */
+  searchAll(query: string, limit: number = 20): SearchItem[] {
+    if (!query || query.trim().length < 2) {
+      return [];
+    }
+
+    const searchTerm = query.toLowerCase().trim();
+    const results: SearchItem[] = [];
+
+    // Search posts
+    const posts = this.searchPosts(query, limit);
+    posts.forEach(post => {
+      let score = 0;
+      if (post.content.toLowerCase().includes(searchTerm)) score += 10;
+      if (post.author.name.toLowerCase().includes(searchTerm)) score += 5;
+      if (post.author.username.toLowerCase().includes(searchTerm)) score += 5;
+      results.push({ type: 'post', item: post, relevanceScore: score });
+    });
+
+    // Search users
+    const users = this.searchUsers(query, limit);
+    users.forEach(user => {
+      let score = 0;
+      if (user.display_name.toLowerCase().includes(searchTerm)) score += 10;
+      if (user.username.toLowerCase().includes(searchTerm)) score += 10;
+      if (user.bio.toLowerCase().includes(searchTerm)) score += 3;
+      results.push({ type: 'user', item: user, relevanceScore: score });
+    });
+
+    // Search hashtags
+    const hashtags = this.searchHashtags(query, limit);
+    hashtags.forEach(hashtag => {
+      let score = hashtag.count / 10000; // Score by popularity
+      if (hashtag.tag.toLowerCase() === searchTerm) score += 50;
+      results.push({ type: 'hashtag', item: hashtag, relevanceScore: score });
+    });
+
+    // Sort by relevance score
+    return results.sort((a, b) => b.relevanceScore - a.relevanceScore);
   }
 }

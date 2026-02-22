@@ -31,7 +31,7 @@
         "Error handling for failed uploads",
         "Mock upload for development (base64 or blob URL)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.5.2",
@@ -48,7 +48,7 @@
         "Error messages for invalid files",
         "Maximum file size warning"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.5.3",
@@ -63,7 +63,7 @@
         "Image count badge for 3+ images",
         "Responsive grid adjustment"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.5.4",
@@ -80,7 +80,7 @@
         "Close button and ESC key",
         "Swipe gestures for mobile"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.5.5",
@@ -97,7 +97,7 @@
         "Default avatar fallback",
         "Update in real-time across app"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.5.6",

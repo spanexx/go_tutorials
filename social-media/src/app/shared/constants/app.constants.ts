@@ -53,7 +53,7 @@ export const USER_CONFIG = {
   minBioLength: 0,
   maxBioLength: 160,
   maxNameLength: 50,
-  avatarPlaceholder: 'https://i.pravatar.cc/150?img=1'
+  avatarPlaceholder: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='100%25' height='100%25' fill='%23E5E7EB'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%236B7280' font-family='Arial' font-size='24'%3EUser%3C/text%3E%3C/svg%3E"
 } as const;
 
 /**
@@ -192,9 +192,9 @@ export const DATE_FORMATS = {
  * Image placeholders
  */
 export const IMAGE_PLACEHOLDERS = {
-  avatar: 'https://i.pravatar.cc/150',
-  cover: 'https://picsum.photos/1200/300',
-  post: 'https://picsum.photos/600/400'
+  avatar: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='150' height='150'%3E%3Crect width='100%25' height='100%25' fill='%23E5E7EB'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%236B7280' font-family='Arial' font-size='24'%3EUser%3C/text%3E%3C/svg%3E",
+  cover: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1200' height='300'%3E%3Crect width='100%25' height='100%25' fill='%23F3F4F6'/%3E%3C/svg%3E",
+  post: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400'%3E%3Crect width='100%25' height='100%25' fill='%23F3F4F6'/%3E%3C/svg%3E"
 } as const;
 
 /**

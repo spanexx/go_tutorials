@@ -21,6 +21,13 @@ type RefreshTokenRequest struct {
 	RefreshToken string `json:"refresh_token" binding:"required"`
 }
 
+// UpdateProfileRequest represents a profile update request
+type UpdateProfileRequest struct {
+	DisplayName string `json:"display_name"`
+	Bio         string `json:"bio"`
+	AvatarURL   string `json:"avatar_url"`
+}
+
 // AuthResponse represents an authentication response
 type AuthResponse struct {
 	User         UserResponse `json:"user"`

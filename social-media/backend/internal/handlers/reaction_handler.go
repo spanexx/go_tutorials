@@ -4,6 +4,7 @@ package handlers
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 
@@ -319,6 +320,12 @@ type ReactionsResponse struct {
 	Success      bool                    `json:"success"`
 }
 
+// ReactionListResponse represents a list of reactions response
+type ReactionListResponse struct {
+	Reactions []models.ReactionWithUser `json:"reactions"`
+	Success   bool                      `json:"success"`
+}
+
 // GetUserReaction handles GET /api/v1/posts/:id/reactions/me
 // @Summary Get current user's reaction to a post
 // @Description Get the current user's reaction to a specific post
@@ -373,6 +380,60 @@ func (h *ReactionHandler) GetUserReaction(c *gin.Context) {
 	})
 }
 
+// ListReactions handles GET /api/v1/posts/:id/reactions/list
+// @Summary List reactions for a post
+// @Description List reactions (with user display info) for a post
+// @Tags reactions
+// @Produce json
+// @Param id path string true "Post ID"
+// @Param limit query int false "Max results" default(50)
+// @Param offset query int false "Offset" default(0)
+// @Success 200 {object} ReactionListResponse
+// @Failure 400 {object} ErrorResponse
+// @Failure 500 {object} ErrorResponse
+// @Router /api/v1/posts/{id}/reactions/list [get]
+func (h *ReactionHandler) ListReactions(c *gin.Context) {
+	postID := c.Param("id")
+	if postID == "" {
+		c.JSON(http.StatusBadRequest, ErrorResponse{
+			Error:   "invalid_id",
+			Message: "post ID is required",
+		})
+		return
+	}
+
+	limit := int32(50)
+	offset := int32(0)
+	if l := c.Query("limit"); l != "" {
+		if n, err := strconv.Atoi(l); err == nil && n > 0 {
+			limit = int32(n)
+		}
+	}
+	if o := c.Query("offset"); o != "" {
+		if n, err := strconv.Atoi(o); err == nil && n >= 0 {
+			offset = int32(n)
+		}
+	}
+
+	reactions, err := h.reactionService.GetReactions(c.Request.Context(), service.GetReactionsInput{
+		PostID: postID,
+		Limit:  limit,
+		Offset: offset,
+	})
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, ErrorResponse{
+			Error:   "fetch_failed",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, ReactionListResponse{
+		Reactions: reactions,
+		Success:   true,
+	})
+}
+
 // UserReactionResponse represents a user reaction response
 type UserReactionResponse struct {
 	Reaction *models.Reaction `json:"reaction"`
@@ -389,6 +450,7 @@ func RegisterReactionRoutes(r *gin.RouterGroup, reactionService *service.Reactio
 		reactions.DELETE("", handler.RemoveReaction)
 		reactions.POST("/toggle", handler.ToggleReaction)
 		reactions.GET("", handler.GetReactions)
+		reactions.GET("/list", handler.ListReactions)
 		reactions.GET("/me", handler.GetUserReaction)
 	}
 }

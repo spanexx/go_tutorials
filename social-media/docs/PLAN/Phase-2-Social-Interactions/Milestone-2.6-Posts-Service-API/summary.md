@@ -5,12 +5,15 @@ This milestone implements the Go Posts Service with full API support for posts, 
 
 ## Deliverables
 
-### Pending
-- Posts Service running on port 8081
+### Completed
+- Posts Service API endpoints for posts, comments, reactions, and feed
 - PostgreSQL schema with posts, comments, reactions, follows tables
 - REST API for CRUD operations on posts, comments, reactions
 - Feed algorithm (home, trending, latest)
-- Angular frontend fully integrated with real APIs
+- Angular frontend integrated with real APIs
+
+### Audit fix
+- Added `GET /api/v1/users/:user_id/posts` returning the same pagination contract as `/api/v1/feed` (`total_count`, `has_more`, `page`, `limit`) and post author details to match the frontend `PostService.getPostsByUser()`.
 
 ## Architecture Decisions
 - Separate Posts Service for separation of concerns
@@ -26,7 +29,7 @@ This milestone implements the Go Posts Service with full API support for posts, 
 - Load test feed endpoint
 
 ## Known Issues
-None - milestone not started
+None
 
 ## Documentation
 - See README.md for detailed acceptance criteria

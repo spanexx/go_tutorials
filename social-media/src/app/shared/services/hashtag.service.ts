@@ -10,6 +10,36 @@ import { BaseApiService } from './base-api.service';
 import { Post } from './post.service';
 import { debugLog, debugWarn } from '../utils/debug-logger';
 
+type SearchHashtag = {
+  tag: string;
+  count: number;
+};
+
+type SearchResponse = {
+  hashtags: SearchHashtag[];
+};
+
+type HashtagPostsResponse = {
+  posts: Array<{
+    id: string;
+    user_id: string;
+    content: string;
+    image_url?: string | null;
+    video_url?: string | null;
+    likes_count?: number;
+    comments_count?: number;
+    shares_count?: number;
+    created_at?: string;
+    user_name?: string;
+    user_username?: string;
+    user_avatar?: string;
+  }>;
+  page?: number;
+  limit?: number;
+  total_count?: number;
+  has_more?: boolean;
+};
+
 export interface Hashtag {
   tag: string;
   count: number;
@@ -56,11 +86,15 @@ export class HashtagService extends BaseApiService {
   /**
    * Get posts by hashtag from API
    */
-  async getPostsByHashtag(hashtag: string): Promise<string[]> {
+  async getPostsByHashtag(hashtag: string, page: number = 1, limit: number = 20): Promise<Post[]> {
     try {
       debugLog('HashtagService', 'getPostsByHashtag() started', { hashtag });
-      const response = await this.get<{ posts: string[] }>(`/hashtags/${hashtag}/posts`).toPromise();
-      return response?.posts || [];
+      const normalized = hashtag.toLowerCase().replace('#', '');
+      const response = await this.get<HashtagPostsResponse>(`/hashtag/${normalized}`, {
+        page: String(page),
+        limit: String(limit)
+      }).toPromise();
+      return (response?.posts ?? []).map(p => this.mapApiPostToPost(p));
     } catch (error) {
       debugWarn('HashtagService', 'getPostsByHashtag() failed', error);
       console.error(`Failed to get posts for hashtag #${hashtag}:`, error);
@@ -186,15 +220,20 @@ export class HashtagService extends BaseApiService {
     this.hashtagState.update(state => ({ ...state, isLoading: true }));
     
     try {
-      const trending = await this.get<Hashtag[]>('/hashtags/trending').toPromise() || [];
+      const trending = await this.get<SearchHashtag[]>('/hashtags/trending').toPromise() || [];
       const hashtagMap: Record<string, Hashtag> = {};
       trending.forEach(h => {
-        hashtagMap[h.tag.toLowerCase()] = h;
+        hashtagMap[h.tag.toLowerCase()] = {
+          tag: h.tag.toLowerCase(),
+          count: h.count,
+          trending: true,
+          lastUsed: new Date()
+        };
       });
-      
+
       this.hashtagState.set({
         hashtags: hashtagMap,
-        trending: trending.filter(h => h.trending).map(h => h.tag).slice(0, 5),
+        trending: trending.map(h => h.tag.toLowerCase()).slice(0, 10),
         isLoading: false
       });
     } catch (error) {
@@ -208,12 +247,27 @@ export class HashtagService extends BaseApiService {
    */
   async getHashtagInfo(tag: string): Promise<HashtagInfo> {
     const normalizedTag = tag.toLowerCase().replace('#', '');
-    
+
     try {
-      const info = await this.get<HashtagInfo>(`/hashtags/${normalizedTag}`).toPromise();
-      if (info) {
-        return info;
-      }
+      const [posts, searchResp] = await Promise.all([
+        this.getPostsByHashtag(normalizedTag, 1, 20),
+        this.get<SearchResponse>('/search', {
+          q: `#${normalizedTag}`,
+          type: 'hashtags',
+          limit: '1',
+          offset: '0'
+        }).toPromise()
+      ]);
+
+      const count = searchResp?.hashtags?.[0]?.count ?? posts.length;
+      const stats = this.getHashtagStats(normalizedTag);
+
+      return {
+        tag: normalizedTag,
+        count,
+        posts,
+        trending: stats?.trending || false
+      };
     } catch (error) {
       console.error(`Failed to get hashtag info for #${tag}:`, error);
     }
@@ -233,9 +287,14 @@ export class HashtagService extends BaseApiService {
    */
   async getTrendingHashtags(limit: number = 5): Promise<HashtagInfo[]> {
     try {
-      const trending = await this.get<HashtagInfo[]>(`/hashtags/trending`, { limit }).toPromise();
+      const trending = await this.get<SearchHashtag[]>(`/hashtags/trending`).toPromise();
       if (trending) {
-        return trending;
+        return trending.slice(0, limit).map(h => ({
+          tag: h.tag.toLowerCase(),
+          count: h.count,
+          posts: [],
+          trending: true
+        }));
       }
     } catch (error) {
       console.error('Failed to get trending hashtags:', error);
@@ -254,5 +313,26 @@ export class HashtagService extends BaseApiService {
           trending: hashtag.trending
         };
       });
+  }
+
+  private mapApiPostToPost(p: HashtagPostsResponse['posts'][number]): Post {
+    return {
+      id: p.id,
+      author: {
+        id: p.user_id,
+        name: p.user_name ?? 'Unknown',
+        username: p.user_username ?? 'unknown',
+        avatar: p.user_avatar ?? ''
+      },
+      content: p.content,
+      timestamp: p.created_at ?? '',
+      created_at: p.created_at,
+      likes: p.likes_count ?? 0,
+      replies: 0,
+      shares: p.shares_count ?? 0,
+      image: p.image_url ?? undefined,
+      image_url: p.image_url ?? undefined,
+      video_url: p.video_url ?? undefined
+    };
   }
 }

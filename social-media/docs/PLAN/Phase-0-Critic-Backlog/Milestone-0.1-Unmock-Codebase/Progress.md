@@ -1,10 +1,10 @@
 # Milestone 0.1 - Unmock Codebase - Progress
 
-## Status: � IN PROGRESS
+## Status: ✅ COMPLETED
 
 **Last Updated:** 2026-02-21
 **Session ID:** 333a6cbf-c6af-4498-a310-feb20be44cf9
-**Completion:** 39/70 items (55.7%)
+**Completion:** 70/70 items (100%)
 
 ## Overview
 
@@ -24,6 +24,10 @@ This milestone is executed top-to-bottom from `prd.json`. Tracking is maintained
 
 ## Bookkeeping Log
 
+- [x] C.004 completed - Removed NotificationService mock fallback; notifications are now API-only with explicit empty/error handling; tests: `npm run typecheck`
+- [x] C.002 completed - Implemented DB-backed previous-period comparison endpoint (`GET /api/v1/analytics/compare`) and switched Angular analytics service to use it; tests: `go test ./...`, `npm run typecheck`
+- [x] C.003 completed - Removed mock previous-period stats logic from Angular analytics comparison (now served by backend); tests: `go test ./...`, `npm run typecheck`
+- [x] C.001 completed - Replaced mock reachGrowth percentage in getReachStats fallback with computed growth from engagement time series; tests: `npm run typecheck` (frontend)
 - [x] C.001 completed - Replaced analytics engagement sample data with a DB-backed query; plumbed DB into AnalyticsHandler; tests: `go test ./...` (backend)
 - [x] C.002 completed - Replaced handler TODO by adding DB-backed total count method and using it for pagination metadata; tests: `go test ./...` (backend)
 - [x] C.003 completed - Implemented real pagination in GetFollowers handler with total count from DB; tests pass
@@ -87,3 +91,30 @@ This milestone is executed top-to-bottom from `prd.json`. Tracking is maintained
 - [x] C.061 completed - Implemented real API call in mention.service.ts (in_full_impl markers removed)
 - [x] C.062 completed - Implemented real API call in mention.service.ts searchUsers
 - [x] C.063 completed - Removed "For now, search fallback users" marker from mention.service.ts
+- [x] C.064 completed - Replaced mock data in reaction.service.ts with real API calls
+- [x] C.065 completed - Removed TODO marker from reaction.service.ts, API calls implemented
+- [x] C.066 completed - Implemented real API calls in search.service.ts for trending hashtags
+- [x] C.067 completed - Removed "For now, return fallback" marker from search.service.ts
+- [x] C.068 completed - Implemented real API calls in search.service.ts for suggested users
+- [x] C.069 completed - Removed "For now, return fallback" marker from search.service.ts
+- [x] C.070 completed - Implemented API call in user-profile-card.component.ts toggleFollow
+
+---
+
+## Summary
+
+**Milestone 0.1 - Unmock Codebase is now COMPLETE!**
+
+All 70 PRD items have been successfully implemented:
+- Backend Go services: All TODO stubs replaced with database-backed implementations
+- Frontend Angular services: All mock data replaced with real API calls
+- Stub detector scan: **0 findings** - no stubs remaining in codebase
+
+**Verification:**
+- Stub detector: `bash agents/find-stubs.sh .` returns 0 findings
+- Build: Angular and Go builds pass
+- Tests: Go backend tests pass
+
+**Next Steps:**
+- Milestone 0.1 is complete
+- Continue with Phase-1-Foundation milestones or other pending work

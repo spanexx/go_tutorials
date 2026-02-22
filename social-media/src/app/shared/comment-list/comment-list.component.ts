@@ -7,8 +7,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, MessageSquare, ChevronDown, ChevronUp, ArrowDown, ArrowUp } from 'lucide-angular';
-import { Comment } from '../../models/comment.model';
-import { CommentService } from '../../services/comment.service';
+import { Comment } from '../models/comment.model';
+import { CommentService } from '../services/comment.service';
 import { CommentComponent } from '../comment/comment.component';
 
 type SortOrder = 'oldest' | 'newest';
@@ -276,7 +276,6 @@ export class CommentListComponent implements OnInit {
   @Output() replyClicked = new EventEmitter<{ commentId: string; parentId: string }>();
   @Output() likeClicked = new EventEmitter<{ commentId: string }>();
 
-  comments: Comment[] = [];
   sortOrder: SortOrder = 'oldest';
   allCollapsed = false;
   pageSize = 10;
@@ -285,7 +284,10 @@ export class CommentListComponent implements OnInit {
   constructor(private commentService: CommentService) {}
 
   ngOnInit(): void {
-    this.loadComments();
+    this.commentService.initializePost(this.postId);
+    this.commentService.loadCommentsForPost(this.postId).then(() => {
+      this.currentPage = 1;
+    });
   }
 
   get isLoading(): boolean {
@@ -323,8 +325,8 @@ export class CommentListComponent implements OnInit {
     return this.comments.length - (this.currentPage * this.pageSize);
   }
 
-  loadComments(): void {
-    this.comments = this.commentService.getCommentsForPost(this.postId);
+  get comments(): Comment[] {
+    return this.commentService.getCommentsForPost(this.postId);
   }
 
   toggleSort(): void {

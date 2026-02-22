@@ -6,7 +6,9 @@ import { LucideAngularModule, Mail, Link, Calendar, Edit3, MapPin } from 'lucide
 import { AuthService } from '../../shared/services/auth.service';
 import { FollowService } from '../../shared/services/follow.service';
 import { ProfileSkeletonComponent } from '../../shared/skeleton/profile-skeleton.component';
+import { FollowButtonComponent } from '../../shared/components/follow-button/follow-button.component';
 import { environment } from '../../../environments/environment';
+import { IMAGE_PLACEHOLDERS } from '../../shared/constants/app.constants';
 
 interface UserProfileResponse {
   id: string;
@@ -27,7 +29,7 @@ interface UserProfileResponse {
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, LucideAngularModule, ProfileSkeletonComponent],
+  imports: [CommonModule, RouterModule, LucideAngularModule, ProfileSkeletonComponent, FollowButtonComponent],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']
 })
@@ -43,6 +45,7 @@ export class ProfileComponent {
   errorMessage = '';
   isCurrentUser = false;
   profileId = '';
+  profileUserId = '';
 
   user = {
     name: '',
@@ -63,6 +66,10 @@ export class ProfileComponent {
 
   private readonly apiUrl = environment.apiUrl + '/v1';
 
+  private isUUID(value: string): boolean {
+    return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(value);
+  }
+
   constructor(
     private authService: AuthService,
     private route: ActivatedRoute,
@@ -73,6 +80,8 @@ export class ProfileComponent {
       this.profileId = params['id'];
       this.loadProfile();
     });
+
+	void this.followService.ensureMyFollowingLoaded();
   }
 
   /**
@@ -108,7 +117,7 @@ export class ProfileComponent {
         username: currentUser.username || '',
         email: currentUser.email || '',
         bio: currentUser.bio || '',
-        avatar: currentUser.avatar || 'https://i.pravatar.cc/150?img=1',
+        avatar: '',
         location: '',
         website: '',
         joinedDate: '' // Would need to be added to User interface
@@ -118,8 +127,13 @@ export class ProfileComponent {
     }
 
     // Fetch from API for other users
-    this.http.get<UserProfileResponse>(`${this.apiUrl}/users/${this.profileId}`).subscribe({
+    const profileEndpoint = this.isUUID(this.profileId)
+      ? `${this.apiUrl}/users/id/${this.profileId}`
+      : `${this.apiUrl}/users/${this.profileId}`;
+
+    this.http.get<UserProfileResponse>(profileEndpoint).subscribe({
       next: (userData) => {
+        this.profileUserId = userData.id;
         this.user = {
           name: userData.display_name,
           username: userData.username,
@@ -152,12 +166,13 @@ export class ProfileComponent {
           username: this.profileId,
           email: '',
           bio: '',
-          avatar: `https://i.pravatar.cc/150?u=${this.profileId}`,
+          avatar: IMAGE_PLACEHOLDERS.avatar,
           location: '',
           website: '',
           joinedDate: ''
         };
         this.stats = { posts: 0, followers: 0, following: 0 };
+        this.profileUserId = '';
         this.isLoading = false;
       }
     });

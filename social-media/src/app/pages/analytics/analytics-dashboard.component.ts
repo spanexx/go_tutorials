@@ -1,16 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, TrendingUp, TrendingDown, Minus, Heart, MessageCircle, Share2, FileText, Hash, Users, BarChart3 } from 'lucide-angular';
+import { LucideAngularModule, TrendingUp, TrendingDown, Minus, Heart, MessageCircle, Share2, FileText, Hash, Users, BarChart3, RefreshCw, AlertTriangle } from 'lucide-angular';
 import { AnalyticsService, AnalyticsMetrics, EngagementData, FollowerGrowth } from '../../shared/services/analytics.service';
+import { AnalyticsOverviewCardsComponent } from '../../shared/components/analytics-overview-cards/analytics-overview-cards.component';
+import { FollowerGrowthChartComponent } from '../../shared/components/follower-growth-chart/follower-growth-chart.component';
+import { EngagementBreakdownChartComponent } from '../../shared/components/engagement-breakdown-chart/engagement-breakdown-chart.component';
+import { TopPostsSectionComponent } from '../../shared/components/top-posts-section/top-posts-section.component';
+import { ToastService } from '../../shared/services/toast.service';
 
 @Component({
   selector: 'app-analytics-dashboard',
   standalone: true,
-  imports: [CommonModule, LucideAngularModule],
+  imports: [CommonModule, LucideAngularModule, AnalyticsOverviewCardsComponent, FollowerGrowthChartComponent, EngagementBreakdownChartComponent, TopPostsSectionComponent],
   templateUrl: './analytics-dashboard.component.html',
   styleUrls: ['./analytics-dashboard.component.scss']
 })
 export class AnalyticsDashboardComponent {
+  chartIcon = BarChart3;
+  refreshIcon = RefreshCw;
+  alertIcon = AlertTriangle;
   trendingUpIcon = TrendingUp;
   trendingDownIcon = TrendingDown;
   minusIcon = Minus;
@@ -20,7 +28,11 @@ export class AnalyticsDashboardComponent {
   postIcon = FileText;
   hashtagIcon = Hash;
   usersIcon = Users;
-  chartIcon = BarChart3;
+
+  readonly periods: ('7d' | '30d' | '90d')[] = ['7d', '30d', '90d'];
+  selectedPeriod = signal<'7d' | '30d' | '90d'>('7d');
+  isLoading = signal(false);
+  hasError = signal(false);
 
   metrics: AnalyticsMetrics | null = null;
   engagementData: EngagementData[] = [];
@@ -29,17 +41,60 @@ export class AnalyticsDashboardComponent {
   engagementTrend: 'up' | 'down' | 'stable' = 'stable';
   topHashtags: { tag: string; count: number }[] = [];
 
-  constructor(private analyticsService: AnalyticsService) {
-    void this.loadAnalytics();
+  constructor(
+    private analyticsService: AnalyticsService,
+    private toastService: ToastService
+  ) {
+    this.loadAnalytics();
   }
 
   async loadAnalytics(): Promise<void> {
-    this.metrics = this.analyticsService.getMetrics();
-    this.engagementData = await this.analyticsService.getEngagementData();
-    this.followerGrowth = await this.analyticsService.getFollowerGrowth();
-    this.followerGrowthPercent = this.calculateFollowerGrowthPercentage();
-    this.engagementTrend = this.analyticsService.getEngagementTrend(this.engagementData);
-    this.topHashtags = this.analyticsService.getTopHashtags();
+    this.isLoading.set(true);
+    this.hasError.set(false);
+
+    try {
+      this.metrics = this.analyticsService.getMetrics();
+      this.engagementData = await this.analyticsService.getEngagementData();
+      this.followerGrowth = await this.analyticsService.getFollowerGrowth();
+      this.followerGrowthPercent = this.calculateFollowerGrowthPercentage();
+      this.engagementTrend = this.analyticsService.getEngagementTrend(this.engagementData);
+      this.topHashtags = this.analyticsService.getTopHashtags();
+    } catch (error) {
+      console.error('Failed to load analytics:', error);
+      this.hasError.set(true);
+      this.toastService.error('Error', 'Failed to load analytics data');
+    } finally {
+      this.isLoading.set(false);
+    }
+  }
+
+  /**
+   * Set time period
+   */
+  setPeriod(period: '7d' | '30d' | '90d'): void {
+    this.selectedPeriod.set(period);
+    this.loadAnalytics();
+  }
+
+  /**
+   * Refresh all analytics
+   */
+  async refreshAll(): Promise<void> {
+    await this.loadAnalytics();
+  }
+
+  /**
+   * Handle overview card click
+   */
+  onCardClick(type: 'posts' | 'followers' | 'engagement' | 'engagementRate'): void {
+    this.toastService.info('Coming Soon', `Detailed ${type} analytics will be available soon`);
+  }
+
+  /**
+   * Get top post safely
+   */
+  getTopPost(): any {
+    return this.metrics?.topPost;
   }
 
   calculateFollowerGrowthPercentage(): number {

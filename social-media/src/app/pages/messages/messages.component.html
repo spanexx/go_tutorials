@@ -2,8 +2,11 @@
     <div class="messages-header">
         <div class="header-left">
             <h1>Messages</h1>
+            @if (totalUnreadCount() > 0) {
+                <span class="unread-badge">{{ totalUnreadCount() }}</span>
+            }
         </div>
-        <button class="compose-btn">
+        <button class="compose-btn" title="New message">
             <lucide-angular [img]="editIcon"></lucide-angular>
         </button>
     </div>
@@ -12,113 +15,164 @@
         <aside class="conversations-list">
             <div class="search-box">
                 <lucide-angular [img]="searchIcon" class="search-icon"></lucide-angular>
-                <input type="text" placeholder="Search direct messages..." />
+                <input
+                    type="text"
+                    placeholder="Search direct messages..."
+                    [value]="searchQuery()"
+                    (input)="onSearchInput($event)"
+                />
             </div>
+
             <div class="conversation-scroll">
-                <div class="conversation-item active">
-                    <div class="avatar-wrapper">
-                        <img src="https://i.pravatar.cc/150?img=10" alt="Sarah Johnson" />
-                        <span class="status-indicator online"></span>
-                    </div>
-                    <div class="conversation-info">
-                        <div class="info-top">
-                            <p class="conversation-name">Sarah Johnson</p>
-                            <span class="timestamp">2m</span>
+                @if (isLoading()) {
+                    <div class="loading-conversations">
+                        <div class="skeleton-conversation" *ngFor="let i of [1,2,3]">
+                            <div class="skeleton-avatar"></div>
+                            <div class="skeleton-info">
+                                <div class="skeleton-line short"></div>
+                                <div class="skeleton-line"></div>
+                            </div>
                         </div>
-                        <p class="conversation-preview">That sounds great! Let's meet...</p>
                     </div>
-                </div>
-                <div class="conversation-item">
-                    <div class="avatar-wrapper">
-                        <img src="https://i.pravatar.cc/150?img=11" alt="Alex Chen" />
+                } @else if (filteredConversations().length === 0) {
+                    <div class="empty-conversations">
+                        <p>No conversations found</p>
                     </div>
-                    <div class="conversation-info">
-                        <div class="info-top">
-                            <p class="conversation-name">Alex Chen</p>
-                            <span class="timestamp">1h</span>
+                } @else {
+                    @for (conversation of filteredConversations(); track conversation.id) {
+                        <div
+                            class="conversation-item"
+                            [class.active]="activeConversation()?.id === conversation.id"
+                            [class.unread]="conversation.unread_count > 0"
+                            (click)="selectConversation(conversation)"
+                        >
+                            <div class="avatar-wrapper">
+                                <img
+                                    [src]="getOtherUser(conversation).avatar_url || avatarPlaceholder"
+                                    [alt]="getOtherUser(conversation).display_name"
+                                />
+                                @if (getOtherUser(conversation).is_online) {
+                                    <span class="status-indicator online"></span>
+                                }
+                            </div>
+                            <div class="conversation-info">
+                                <div class="info-top">
+                                    <p class="conversation-name">{{ getOtherUser(conversation).display_name }}</p>
+                                    <span class="timestamp">{{ formatTimestamp(conversation.last_message?.created_at || conversation.updated_at) }}</span>
+                                </div>
+                                <p class="conversation-preview">
+                                    {{ conversation.last_message?.content || 'No messages yet' }}
+                                </p>
+                            </div>
+                            @if (conversation.unread_count > 0) {
+                                <span class="unread-dot"></span>
+                            }
                         </div>
-                        <p class="conversation-preview">Thanks for your help with the project</p>
-                    </div>
-                </div>
-                <div class="conversation-item">
-                    <div class="avatar-wrapper">
-                        <img src="https://i.pravatar.cc/150?img=12" alt="Emma Davis" />
-                        <span class="status-indicator online"></span>
-                    </div>
-                    <div class="conversation-info">
-                        <div class="info-top">
-                            <p class="conversation-name">Emma Davis</p>
-                            <span class="timestamp">3h</span>
-                        </div>
-                        <p class="conversation-preview">See you at the conference!</p>
-                    </div>
-                </div>
+                    }
+                }
             </div>
         </aside>
 
         <main class="messages-main">
-            <header class="chat-header">
-                <div class="chat-user">
-                    <div class="avatar-wrapper sm">
-                        <img src="https://i.pravatar.cc/150?img=10" alt="Sarah Johnson" />
-                        <span class="status-indicator online"></span>
+            @if (activeConversation()) {
+                <header class="chat-header">
+                    <div class="chat-user">
+                        <div class="avatar-wrapper sm">
+                            <img
+                                [src]="getOtherUser(activeConversation()!).avatar_url || avatarPlaceholder"
+                                [alt]="getOtherUser(activeConversation()!).display_name"
+                            />
+                            @if (getOtherUser(activeConversation()!).is_online) {
+                                <span class="status-indicator online"></span>
+                            }
+                        </div>
+                        <div class="user-meta">
+                            <p class="chat-name">{{ getOtherUser(activeConversation()!).display_name }}</p>
+                            <p class="chat-status">
+                                {{ getOtherUser(activeConversation()!).is_online ? 'Active Now' : 'Offline' }}
+                            </p>
+                        </div>
                     </div>
-                    <div class="user-meta">
-                        <p class="chat-name">Sarah Johnson</p>
-                        <p class="chat-status">Active Now</p>
+                    <div class="chat-actions">
+                        <button class="action-btn" title="Call">
+                            <lucide-angular [img]="phoneIcon"></lucide-angular>
+                        </button>
+                        <button class="action-btn" title="Video">
+                            <lucide-angular [img]="videoIcon"></lucide-angular>
+                        </button>
+                        <button class="action-btn" title="Info">
+                            <lucide-angular [img]="infoIcon"></lucide-angular>
+                        </button>
                     </div>
-                </div>
-                <div class="chat-actions">
-                    <button class="action-btn" title="Call">
-                        <lucide-angular [img]="phoneIcon"></lucide-angular>
-                    </button>
-                    <button class="action-btn" title="Video">
-                        <lucide-angular [img]="videoIcon"></lucide-angular>
-                    </button>
-                    <button class="action-btn" title="Info">
-                        <lucide-angular [img]="infoIcon"></lucide-angular>
-                    </button>
-                </div>
-            </header>
+                </header>
 
-            <div class="messages-list">
-                <div class="date-divider">Today</div>
-                <div class="message other">
-                    <img src="https://i.pravatar.cc/150?img=10" class="mini-avatar" />
-                    <div class="message-content">
-                        <p>Hey! How are you doing?</p>
-                        <span class="msg-time">10:30 AM</span>
-                    </div>
+                <div class="messages-list">
+                    @if (messageService.isLoading()) {
+                        <div class="loading-messages">
+                            <div class="skeleton-message" *ngFor="let i of [1,2,3]">
+                                <div class="skeleton-content"></div>
+                            </div>
+                        </div>
+                    } @else if (activeMessages().length === 0) {
+                        <div class="empty-messages">
+                            <p>No messages yet. Start the conversation!</p>
+                        </div>
+                    } @else {
+                        @for (message of activeMessages(); track message.id) {
+                            <div class="message" [class.own]="isOwnMessage(message)" [class.other]="!isOwnMessage(message)">
+                                @if (!isOwnMessage(message)) {
+                                    <img
+                                        [src]="getOtherUser(activeConversation()!).avatar_url || avatarPlaceholder"
+                                        class="mini-avatar"
+                                    />
+                                }
+                                <div class="message-content">
+                                    <p>{{ message.content }}</p>
+                                    <span class="msg-time">{{ formatTimestamp(message.created_at) }}</span>
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
-                <div class="message own">
-                    <div class="message-content">
-                        <p>Hi Sarah! Doing great, thanks for asking</p>
-                        <span class="msg-time">10:32 AM</span>
-                    </div>
-                </div>
-                <div class="message other">
-                    <img src="https://i.pravatar.cc/150?img=10" class="mini-avatar" />
-                    <div class="message-content">
-                        <p>That sounds great! Let's meet up soon</p>
-                        <span class="msg-time">10:35 AM</span>
-                    </div>
-                </div>
-            </div>
 
-            <footer class="message-input-area">
-                <div class="input-container">
-                    <button class="attach-btn">
-                        <lucide-angular [img]="plusIcon"></lucide-angular>
+                <footer class="message-input-area">
+                    <div class="input-container">
+                        <button class="attach-btn" title="Add attachment">
+                            <lucide-angular [img]="plusIcon"></lucide-angular>
+                        </button>
+                        <input
+                            type="text"
+                            placeholder="Type a message..."
+                            [value]="newMessageContent()"
+                            (input)="onMessageInput($event)"
+                            (keydown.enter)="sendMessage()"
+                        />
+                        <button class="emoji-btn" title="Add emoji">
+                            <lucide-angular [img]="smileIcon"></lucide-angular>
+                        </button>
+                    </div>
+                    <button
+                        class="send-btn"
+                        [class.sending]="isSending()"
+                        [disabled]="!newMessageContent().trim() || isSending()"
+                        (click)="sendMessage()"
+                    >
+                        @if (isSending()) {
+                            <lucide-angular [img]="loaderIcon"></lucide-angular>
+                        } @else {
+                            <lucide-angular [img]="sendIcon"></lucide-angular>
+                        }
                     </button>
-                    <input type="text" placeholder="Type a message..." />
-                    <button class="emoji-btn">
-                        <lucide-angular [img]="smileIcon"></lucide-angular>
-                    </button>
+                </footer>
+            } @else {
+                <div class="no-conversation-selected">
+                    <div class="no-chat-content">
+                        <lucide-angular [img]="editIcon" class="no-chat-icon"></lucide-angular>
+                        <h3>Select a conversation</h3>
+                        <p>Choose a conversation from the list to start messaging</p>
+                    </div>
                 </div>
-                <button class="send-btn">
-                    <lucide-angular [img]="sendIcon"></lucide-angular>
-                </button>
-            </footer>
+            }
         </main>
     </div>
 </div>

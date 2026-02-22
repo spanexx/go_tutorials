@@ -177,9 +177,10 @@ func (s *FollowService) IsFollowing(ctx context.Context, followerID, followingID
 
 // GetFollowersInput represents input for getting followers
 type GetFollowersInput struct {
-	UserID string
-	Limit  int32
-	Offset int32
+	UserID   string
+	ViewerID string
+	Limit    int32
+	Offset   int32
 }
 
 // CountFollowers returns the total number of followers for a user
@@ -204,13 +205,16 @@ func (s *FollowService) GetFollowers(ctx context.Context, input GetFollowersInpu
 	if input.Limit > 100 {
 		input.Limit = 100
 	}
+	if s.db == nil {
+		return nil, errors.New("database not configured")
+	}
 
 	rows, err := s.db.QueryContext(
 		ctx,
 		`
 		SELECT 
 			f.id, f.follower_id, f.following_id, f.created_at,
-			u.username, u.display_name, u.avatar_url, u.is_verified
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), COALESCE(u.email_verified, false)
 		FROM follows f
 		JOIN users u ON f.follower_id = u.id
 		WHERE f.following_id = $1 AND f.deleted_at IS NULL
@@ -237,13 +241,23 @@ func (s *FollowService) GetFollowers(ctx context.Context, input GetFollowersInpu
 		); err != nil {
 			return nil, err
 		}
+
+		isFollowingBack := false
+		if input.ViewerID != "" {
+			_ = s.db.QueryRowContext(
+				ctx,
+				`SELECT EXISTS(SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = $2 AND deleted_at IS NULL)`,
+				input.ViewerID,
+				f.FollowerID,
+			).Scan(&isFollowingBack)
+		}
 		followers = append(followers, models.FollowWithUser{
 			Follow:          f,
 			UserName:        uName,
 			UserUsername:    uName,
 			UserAvatar:      uAvatar,
 			UserIsVerified:  uVerified,
-			IsFollowingBack: false,
+			IsFollowingBack: isFollowingBack,
 		})
 	}
 	if err := rows.Err(); err != nil {
@@ -254,9 +268,10 @@ func (s *FollowService) GetFollowers(ctx context.Context, input GetFollowersInpu
 
 // GetFollowingInput represents input for getting following
 type GetFollowingInput struct {
-	UserID string
-	Limit  int32
-	Offset int32
+	UserID   string
+	ViewerID string
+	Limit    int32
+	Offset   int32
 }
 
 // CountFollowing returns the total number of users a user follows
@@ -282,12 +297,15 @@ func (s *FollowService) GetFollowing(ctx context.Context, input GetFollowingInpu
 		input.Limit = 100
 	}
 
+	if s.db == nil {
+		return nil, errors.New("database not configured")
+	}
 	rows, err := s.db.QueryContext(
 		ctx,
 		`
 		SELECT 
 			f.id, f.follower_id, f.following_id, f.created_at,
-			u.username, u.display_name, u.avatar_url, u.is_verified
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), COALESCE(u.email_verified, false)
 		FROM follows f
 		JOIN users u ON f.following_id = u.id
 		WHERE f.follower_id = $1 AND f.deleted_at IS NULL
@@ -314,13 +332,23 @@ func (s *FollowService) GetFollowing(ctx context.Context, input GetFollowingInpu
 		); err != nil {
 			return nil, err
 		}
+
+		isFollowingBack := false
+		if input.ViewerID != "" {
+			_ = s.db.QueryRowContext(
+				ctx,
+				`SELECT EXISTS(SELECT 1 FROM follows WHERE follower_id = $1 AND following_id = $2 AND deleted_at IS NULL)`,
+				input.ViewerID,
+				f.FollowingID,
+			).Scan(&isFollowingBack)
+		}
 		following = append(following, models.FollowWithUser{
 			Follow:          f,
 			UserName:        uName,
 			UserUsername:    uName,
 			UserAvatar:      uAvatar,
 			UserIsVerified:  uVerified,
-			IsFollowingBack: false,
+			IsFollowingBack: isFollowingBack,
 		})
 	}
 	if err := rows.Err(); err != nil {
@@ -381,7 +409,7 @@ func (s *FollowService) GetMutualFollows(ctx context.Context, input GetMutualFol
 		`
 		SELECT
 			f1.id, f1.follower_id, f1.following_id, f1.created_at,
-			u.username, u.display_name, COALESCE(u.avatar_url, ''), u.is_verified
+			u.username, u.display_name, COALESCE(u.avatar_url, ''), COALESCE(u.email_verified, false)
 		FROM follows f1
 		JOIN follows f2 ON f2.following_id = f1.following_id
 		JOIN users u ON u.id = f1.following_id
@@ -462,7 +490,7 @@ func (s *FollowService) GetFollowSuggestions(ctx context.Context, input GetFollo
 			WHERE f.deleted_at IS NULL
 			GROUP BY f.following_id
 		)
-		SELECT u.id, u.username, u.display_name, COALESCE(u.avatar_url, ''), u.is_verified, sd.score
+		SELECT u.id, u.username, u.display_name, COALESCE(u.avatar_url, ''), COALESCE(u.email_verified, false), sd.score
 		FROM second_degree sd
 		JOIN users u ON u.id = sd.user_id
 		WHERE sd.user_id <> $1

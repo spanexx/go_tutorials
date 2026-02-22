@@ -1,16 +1,24 @@
 <div class="create-post">
   <div class="create-post-header">
-    <img src="https://i.pravatar.cc/150?img=1" alt="User Avatar" class="avatar" />
+    <img [src]="avatarPlaceholder" alt="User Avatar" class="avatar" />
     <div class="input-container">
       <textarea
         class="post-textarea"
         placeholder="What's on your mind?"
         [(ngModel)]="postContent"
         (input)="onTextareaInput($event)"
+        (keydown)="onTextareaKeydown($event)"
         (keydown.control.enter)="canPost ? onPostClick() : null"
         [class.error]="isOverLimit"
         #postTextarea
       ></textarea>
+
+      <app-hashtag-suggestions
+        [currentText]="postContent"
+        [positionX]="hashtagPosX"
+        [positionY]="hashtagPosY"
+        (hashtagSelected)="onHashtagSelected($event)">
+      </app-hashtag-suggestions>
       
       <!-- Character Count Progress -->
       <div class="character-count">

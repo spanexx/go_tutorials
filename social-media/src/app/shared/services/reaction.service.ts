@@ -110,6 +110,13 @@ export class ReactionService extends BaseApiService {
   }
 
   /**
+   * Load reactions for a post from the API into local signal state.
+   */
+  async loadPostReactions(postId: string): Promise<void> {
+    await this.loadReactionState(postId);
+  }
+
+  /**
    * Remove a reaction from a post with optimistic UI update
    */
   async removeReaction(postId: string): Promise<void> {
@@ -266,8 +273,24 @@ export class ReactionService extends BaseApiService {
    * Get reactions for a post
    */
   async getReactionsForPost(postId: string): Promise<Reaction[]> {
-    await this.loadReactionState(postId);
-    return [];
+    const response = await this.get<{ reactions: Array<{ id: string; user_id: string; post_id: string | null; type: ReactionType; created_at: string }>; success: boolean }>(
+      `/posts/${postId}/reactions/list`,
+      { limit: '50', offset: '0' }
+    ).toPromise();
+
+    if (!response?.reactions) {
+      return [];
+    }
+
+    return response.reactions
+      .filter(r => r.post_id)
+      .map(r => ({
+        id: r.id,
+        userId: r.user_id,
+        postId: r.post_id as string,
+        type: r.type,
+        createdAt: new Date(r.created_at)
+      }));
   }
 
   /**

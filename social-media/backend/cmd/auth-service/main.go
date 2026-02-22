@@ -1,11 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"path"
 	"path/filepath"
 	"strings"
 	"syscall"
@@ -18,6 +21,40 @@ import (
 	"github.com/socialhub/auth-service/internal/repository"
 	"github.com/socialhub/auth-service/internal/service"
 )
+
+func loadDotEnvFile(filePath string) {
+	f, err := os.Open(filePath)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		if strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		key, value, ok := strings.Cut(line, "=")
+		if !ok {
+			continue
+		}
+		key = strings.TrimSpace(key)
+		value = strings.TrimSpace(value)
+		value = strings.Trim(value, "\"'")
+		if key == "" {
+			continue
+		}
+		if os.Getenv(key) != "" {
+			continue
+		}
+		_ = os.Setenv(key, value)
+	}
+}
 
 // @title SocialHub Auth API
 // @version 1.0.0
@@ -47,11 +84,23 @@ func getRedisAddr(redisURL string) string {
 	return addr
 }
 func main() {
+	if os.Getenv("ENV") == "" || os.Getenv("ENV") == "development" {
+		if wd, err := os.Getwd(); err == nil {
+			loadDotEnvFile(path.Join(wd, ".env"))
+		}
+		if execPath, err := os.Executable(); err == nil {
+			execDir := filepath.Dir(execPath)
+			loadDotEnvFile(path.Join(execDir, ".env"))
+		}
+		loadDotEnvFile(".env")
+	}
+
 	// Load configuration
 	cfg, err := config.Load()
 	if err != nil {
 		log.Fatalf("Failed to load configuration: %v", err)
 	}
+	log.Printf("DATABASE_URL=%s", redactDatabaseURL(cfg.DatabaseURL))
 
 	log.Printf("Starting auth service on port %s", cfg.Port)
 
@@ -187,4 +236,18 @@ func main() {
 	}
 
 	log.Println("Auth service stopped")
+}
+
+func redactDatabaseURL(url string) string {
+	if url == "" {
+		return ""
+	}
+	if i := strings.Index(url, "://"); i != -1 {
+		prefix := url[:i+3]
+		rest := url[i+3:]
+		if at := strings.Index(rest, "@"); at != -1 {
+			return prefix + "***@" + rest[at+1:]
+		}
+	}
+	return fmt.Sprintf("%s", url)
 }

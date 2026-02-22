@@ -181,9 +181,22 @@
         font-size: 0.625rem;
         font-weight: 600;
         border: 2px solid hsl(var(--card));
+        transition: all 0.2s ease;
+        
+        &.has-new {
+          animation: pulse-new 2s infinite;
+        }
       }
     }
-
+    
+    .notifications-btn {
+      position: relative;
+      
+      &:hover .notification-badge.has-new {
+        animation: none;
+      }
+    }
+    
     .user-avatar {
       width: 36px;
       height: 36px;
@@ -363,6 +376,17 @@
           }
         }
       }
+    }
+  }
+  
+  @keyframes pulse-new {
+    0%, 100% {
+      transform: scale(1);
+      box-shadow: 0 0 0 0 hsl(var(--destructive) / 0.7);
+    }
+    50% {
+      transform: scale(1.1);
+      box-shadow: 0 0 0 4px hsl(var(--destructive) / 0);
     }
   }
 }

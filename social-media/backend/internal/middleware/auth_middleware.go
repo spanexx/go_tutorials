@@ -10,9 +10,9 @@ import (
 )
 
 // Auth creates middleware that validates JWT tokens and checks blacklist
-func Auth(authService *service.AuthService) gin.HandlerFunc {
+func Auth(authService *service.AuthService, jwtSecret string) gin.HandlerFunc {
 	jwtManager := auth.NewJWTManager(
-		"dev-secret-key-change-in-production",
+		jwtSecret,
 		0,
 		0,
 	)

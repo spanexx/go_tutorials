@@ -20,8 +20,8 @@ type Config struct {
 	RedisURL string
 
 	// JWT configuration
-	JWTSecret  string
-	JWTExpiry  time.Duration
+	JWTSecret     string
+	JWTExpiry     time.Duration
 	RefreshExpiry time.Duration
 
 	// Email configuration
@@ -35,6 +35,9 @@ type Config struct {
 
 	// Frontend configuration
 	FrontendURL string
+
+	// Admin configuration
+	AdminToken string
 
 	// Environment
 	Env string
@@ -67,7 +70,10 @@ func Load() (*Config, error) {
 		EmailFromAddress: getEnv("EMAIL_FROM_ADDRESS", "noreply@socialhub.example.com"),
 
 		// Frontend configuration
-		FrontendURL:      getEnv("FRONTEND_URL", "http://localhost:4200"),
+		FrontendURL: getEnv("FRONTEND_URL", "http://localhost:4200"),
+
+		// Admin configuration
+		AdminToken: getEnv("ADMIN_TOKEN", ""),
 
 		// Environment
 		Env: getEnv("ENV", "development"),

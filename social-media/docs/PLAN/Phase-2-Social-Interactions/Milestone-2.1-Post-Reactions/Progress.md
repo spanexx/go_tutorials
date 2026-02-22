@@ -13,6 +13,18 @@
 
 ## Progress Log
 
+### 2026-02-22 - Audit Execute: Production Readiness Fixes
+
+Audited Milestone 2.1 against the PRD and verified the actual implementation end-to-end (frontend + backend). Addressed gaps that would have caused stale UI state and missing functionality:
+
+- Added backend endpoint `GET /api/v1/posts/:id/reactions/list` to return reaction rows with user display info.
+- Completed `ReactionService.getReactionsForPost()` to call the new endpoint (no longer returns an empty array).
+- Made `PostCardComponent` reactively read reaction state from `ReactionService` and load initial reaction state from the API.
+
+**Verification:**
+- `go test ./...`
+- `npm run typecheck`
+
 ### 2026-02-21 - Item 2.1.1 Complete: Reaction Model & Service
 
 **2.1.1 - Reaction Model & Service** ✅

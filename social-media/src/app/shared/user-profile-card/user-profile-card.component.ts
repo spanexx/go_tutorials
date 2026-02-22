@@ -5,6 +5,7 @@ import { HttpClient } from '@angular/common/http';
 import { LucideAngularModule, Mail, Link, MapPin, Calendar, Check, UserPlus } from 'lucide-angular';
 import { AuthService } from '../../shared/services/auth.service';
 import { environment } from '../../../environments/environment';
+import { IMAGE_PLACEHOLDERS } from '../constants/app.constants';
 
 export interface UserProfileData {
   id: string;
@@ -137,7 +138,7 @@ export class UserProfileCardComponent implements OnChanges {
         username: currentUser.username,
         name: currentUser.name || '',
         bio: currentUser.bio || '',
-        avatar: currentUser.avatar || 'https://i.pravatar.cc/150?img=1',
+        avatar: currentUser.avatar || IMAGE_PLACEHOLDERS.avatar,
         followers: 0,
         following: 0,
         isFollowing: false,
@@ -150,7 +151,7 @@ export class UserProfileCardComponent implements OnChanges {
       username: this.username,
       name: this.formatName(this.username),
       bio: '',
-      avatar: `https://i.pravatar.cc/150?u=${this.username}`,
+      avatar: IMAGE_PLACEHOLDERS.avatar,
       followers: 0,
       following: 0,
       isFollowing: false,

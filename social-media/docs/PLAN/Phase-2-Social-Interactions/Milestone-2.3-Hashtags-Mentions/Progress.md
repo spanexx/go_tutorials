@@ -14,6 +14,22 @@
 
 ## Progress Log
 
+### 2026-02-22 - Audit Execute: Production Readiness Fixes
+
+Audited Milestone 2.3 against the PRD and verified the actual implementation end-to-end (frontend + backend + DB). Addressed gaps that prevented real navigation / API integration:
+
+- Aligned frontend `HashtagService` to real backend routes:
+  - `GET /api/v1/hashtags/trending`
+  - `GET /api/v1/hashtag/:tag`
+  - hashtag counts via `GET /api/v1/search?type=hashtags`
+- Implemented feed-style hashtag page response on the backend (`/api/v1/hashtag/:tag`) returning `posts`, `total_count`, `has_more`, `page`, `limit` with `PostWithDetails`.
+- Wired hashtag suggestions dropdown into `CreatePostComponent` (render + keyboard handling + insertion).
+- Made hashtags and @mentions actually clickable in rendered post content by adding `ContentLinkPipe` and using router navigation on click.
+
+**Verification:**
+- `go test ./...`
+- `npm run typecheck`
+
 ### 2026-02-21 - Item 2.3.1 Complete: Hashtag Parsing & Linking
 
 **2.3.1 - Hashtag Parsing & Linking** ✅

@@ -7,7 +7,7 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Heart, Reply, MoreHorizontal, ChevronDown, ChevronRight } from 'lucide-angular';
-import { Comment } from '../../models/comment.model';
+import { Comment } from '../models/comment.model';
 
 @Component({
   selector: 'app-comment',
@@ -25,7 +25,7 @@ import { Comment } from '../../models/comment.model';
             <span class="author-name" [attr.title]="'View profile of ' + comment.author.name">
               {{ comment.author.name }}
             </span>
-            <span class="author-username">@{{ comment.author.username }}</span>
+            <span class="author-username">&#64;{{ comment.author.username }}</span>
             <span class="comment-timestamp" [attr.title]="comment.createdAt | date:'medium'">
               {{ getRelativeTime(comment.createdAt) }}
             </span>

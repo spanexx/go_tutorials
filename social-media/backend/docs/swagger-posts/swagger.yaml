@@ -1,0 +1,1945 @@
+basePath: /api/v1
+definitions:
+  github_com_socialhub_auth-service_internal_service.FollowCounts:
+    properties:
+      followers:
+        type: integer
+      following:
+        type: integer
+    type: object
+  github_com_socialhub_auth-service_internal_service.ReactionCount:
+    properties:
+      count:
+        type: integer
+      type:
+        type: string
+    type: object
+  github_com_socialhub_auth-service_internal_service.ReactionCounts:
+    properties:
+      angry:
+        type: integer
+      laugh:
+        type: integer
+      like:
+        type: integer
+      love:
+        type: integer
+      sad:
+        type: integer
+      total:
+        type: integer
+      wow:
+        type: integer
+    type: object
+  github_com_socialhub_auth-service_pkg_models.CommentWithDetails:
+    properties:
+      content:
+        type: string
+      created_at:
+        type: string
+      edited_at:
+        $ref: '#/definitions/sql.NullTime'
+      id:
+        type: string
+      is_edited:
+        type: boolean
+      likes_count:
+        type: integer
+      parent_id:
+        $ref: '#/definitions/sql.NullString'
+      post_id:
+        type: string
+      replies:
+        description: Nested replies
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.CommentWithDetails'
+        type: array
+      replies_count:
+        type: integer
+      total_likes:
+        description: Aggregated counts
+        type: integer
+      total_replies:
+        type: integer
+      updated_at:
+        type: string
+      user_avatar:
+        type: string
+      user_id:
+        type: string
+      user_is_verified:
+        type: boolean
+      user_name:
+        description: User details
+        type: string
+      user_username:
+        type: string
+    type: object
+  github_com_socialhub_auth-service_pkg_models.FollowWithUser:
+    properties:
+      created_at:
+        type: string
+      follower_id:
+        type: string
+      following_id:
+        type: string
+      id:
+        type: string
+      is_following_back:
+        description: Whether this user follows back
+        type: boolean
+      user_avatar:
+        type: string
+      user_is_verified:
+        type: boolean
+      user_name:
+        description: User details
+        type: string
+      user_username:
+        type: string
+    type: object
+  github_com_socialhub_auth-service_pkg_models.Post:
+    properties:
+      comments_count:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: string
+      edited_at:
+        $ref: '#/definitions/sql.NullTime'
+      id:
+        type: string
+      image_url:
+        $ref: '#/definitions/sql.NullString'
+      is_edited:
+        type: boolean
+      likes_count:
+        type: integer
+      shares_count:
+        type: integer
+      updated_at:
+        type: string
+      user_id:
+        type: string
+      video_url:
+        $ref: '#/definitions/sql.NullString'
+      views_count:
+        type: integer
+    type: object
+  github_com_socialhub_auth-service_pkg_models.PostWithDetails:
+    properties:
+      comments_count:
+        type: integer
+      content:
+        type: string
+      created_at:
+        type: string
+      edited_at:
+        $ref: '#/definitions/sql.NullTime'
+      id:
+        type: string
+      image_url:
+        $ref: '#/definitions/sql.NullString'
+      is_edited:
+        type: boolean
+      likes_count:
+        type: integer
+      shares_count:
+        type: integer
+      total_comments:
+        type: integer
+      total_likes:
+        description: Aggregated counts
+        type: integer
+      total_shares:
+        type: integer
+      updated_at:
+        type: string
+      user_avatar:
+        type: string
+      user_id:
+        type: string
+      user_is_verified:
+        type: boolean
+      user_name:
+        description: User details
+        type: string
+      user_reaction:
+        description: User's reaction to this post
+        type: string
+      user_username:
+        type: string
+      video_url:
+        $ref: '#/definitions/sql.NullString'
+      views_count:
+        type: integer
+    type: object
+  github_com_socialhub_auth-service_pkg_models.Reaction:
+    properties:
+      comment_id:
+        $ref: '#/definitions/sql.NullString'
+      created_at:
+        type: string
+      id:
+        type: string
+      post_id:
+        $ref: '#/definitions/sql.NullString'
+      type:
+        type: string
+      updated_at:
+        type: string
+      user_id:
+        type: string
+    type: object
+  internal_handlers.AddCommentRequest:
+    properties:
+      content:
+        maxLength: 2000
+        minLength: 1
+        type: string
+      parent_id:
+        description: For nested replies
+        type: string
+    required:
+    - content
+    type: object
+  internal_handlers.AuthResponse:
+    properties:
+      access_token:
+        type: string
+      expires_in:
+        type: integer
+      refresh_token:
+        type: string
+      user:
+        $ref: '#/definitions/internal_handlers.UserResponse'
+    type: object
+  internal_handlers.CommentResponse:
+    properties:
+      comment:
+        $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.CommentWithDetails'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  internal_handlers.CommentsResponse:
+    properties:
+      comments:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.CommentWithDetails'
+        type: array
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      page:
+        type: integer
+      total_count:
+        type: integer
+    type: object
+  internal_handlers.CreatePostRequest:
+    properties:
+      content:
+        maxLength: 5000
+        minLength: 1
+        type: string
+      image_url:
+        type: string
+      video_url:
+        type: string
+    required:
+    - content
+    type: object
+  internal_handlers.EngagementData:
+    properties:
+      comments:
+        type: integer
+      date:
+        type: string
+      likes:
+        type: integer
+      shares:
+        type: integer
+      views:
+        type: integer
+    type: object
+  internal_handlers.ErrorResponse:
+    properties:
+      error:
+        type: string
+      message:
+        type: string
+    type: object
+  internal_handlers.FeedResponse:
+    properties:
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      page:
+        type: integer
+      posts:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.PostWithDetails'
+        type: array
+      total_count:
+        type: integer
+    type: object
+  internal_handlers.FollowCountsResponse:
+    properties:
+      counts:
+        $ref: '#/definitions/github_com_socialhub_auth-service_internal_service.FollowCounts'
+      success:
+        type: boolean
+    type: object
+  internal_handlers.FollowResponse:
+    properties:
+      follow:
+        $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.FollowWithUser'
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  internal_handlers.FollowerGrowth:
+    properties:
+      count:
+        type: integer
+      date:
+        type: string
+      lost:
+        type: integer
+      new:
+        type: integer
+    type: object
+  internal_handlers.FollowersResponse:
+    properties:
+      followers:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.FollowWithUser'
+        type: array
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      page:
+        type: integer
+      success:
+        type: boolean
+      total:
+        type: integer
+    type: object
+  internal_handlers.FollowingResponse:
+    properties:
+      following:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.FollowWithUser'
+        type: array
+      has_more:
+        type: boolean
+      limit:
+        type: integer
+      page:
+        type: integer
+      success:
+        type: boolean
+      total:
+        type: integer
+    type: object
+  internal_handlers.ForgotPasswordRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  internal_handlers.LoginRequest:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  internal_handlers.PostsResponse:
+    properties:
+      limit:
+        type: integer
+      page:
+        type: integer
+      posts:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.Post'
+        type: array
+    type: object
+  internal_handlers.PreviewEmailRequest:
+    properties:
+      name:
+        type: string
+      template:
+        type: string
+      token:
+        type: string
+    required:
+    - template
+    type: object
+  internal_handlers.ReactRequest:
+    properties:
+      type:
+        enum:
+        - like
+        - love
+        - laugh
+        - wow
+        - sad
+        - angry
+        type: string
+    required:
+    - type
+    type: object
+  internal_handlers.ReactionResponse:
+    properties:
+      message:
+        type: string
+      reaction:
+        $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.Reaction'
+      success:
+        type: boolean
+    type: object
+  internal_handlers.ReactionsResponse:
+    properties:
+      counts:
+        $ref: '#/definitions/github_com_socialhub_auth-service_internal_service.ReactionCounts'
+      success:
+        type: boolean
+      top_reactions:
+        items:
+          $ref: '#/definitions/github_com_socialhub_auth-service_internal_service.ReactionCount'
+        type: array
+    type: object
+  internal_handlers.RegisterRequest:
+    properties:
+      display_name:
+        type: string
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      username:
+        maxLength: 30
+        minLength: 3
+        type: string
+    required:
+    - display_name
+    - email
+    - password
+    - username
+    type: object
+  internal_handlers.ResendVerificationRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
+    type: object
+  internal_handlers.ResetPasswordRequest:
+    properties:
+      new_password:
+        minLength: 8
+        type: string
+      token:
+        type: string
+    required:
+    - new_password
+    - token
+    type: object
+  internal_handlers.SearchHashtag:
+    properties:
+      count:
+        type: integer
+      tag:
+        type: string
+    type: object
+  internal_handlers.SearchUser:
+    properties:
+      avatar_url:
+        type: string
+      bio:
+        type: string
+      display_name:
+        type: string
+      followers:
+        type: integer
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  internal_handlers.TestEmailRequest:
+    properties:
+      to:
+        type: string
+    required:
+    - to
+    type: object
+  internal_handlers.ToggleReactionResponse:
+    properties:
+      added:
+        type: boolean
+      message:
+        type: string
+      success:
+        type: boolean
+    type: object
+  internal_handlers.UpdateCommentRequest:
+    properties:
+      content:
+        maxLength: 2000
+        minLength: 1
+        type: string
+    required:
+    - content
+    type: object
+  internal_handlers.UpdatePostRequest:
+    properties:
+      content:
+        maxLength: 5000
+        minLength: 1
+        type: string
+      image_url:
+        type: string
+      video_url:
+        type: string
+    type: object
+  internal_handlers.UpdateProfileRequest:
+    properties:
+      avatar_url:
+        type: string
+      bio:
+        type: string
+      display_name:
+        type: string
+    type: object
+  internal_handlers.UserProfile:
+    properties:
+      avatar_url:
+        type: string
+      bio:
+        type: string
+      created_at:
+        type: string
+      display_name:
+        type: string
+      followers_count:
+        type: integer
+      following_count:
+        type: integer
+      id:
+        type: string
+      is_following:
+        type: boolean
+      is_verified:
+        type: boolean
+      posts_count:
+        type: integer
+      username:
+        type: string
+    type: object
+  internal_handlers.UserReactionResponse:
+    properties:
+      reaction:
+        $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.Reaction'
+      success:
+        type: boolean
+    type: object
+  internal_handlers.UserResponse:
+    properties:
+      avatar_url:
+        type: string
+      bio:
+        type: string
+      display_name:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      username:
+        type: string
+    type: object
+  sql.NullString:
+    properties:
+      string:
+        type: string
+      valid:
+        description: Valid is true if String is not NULL
+        type: boolean
+    type: object
+  sql.NullTime:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: support@socialhub.com
+    name: API Support
+  description: Comprehensive API for managing posts, comments, reactions, and feeds
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  termsOfService: http://swagger.io/terms/
+  title: SocialHub Posts API
+  version: "1.0"
+paths:
+  /api/v1/admin/email-config:
+    get:
+      description: Get current email configuration (development only)
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      summary: Get email configuration
+      tags:
+      - admin
+  /api/v1/admin/preview-email:
+    post:
+      consumes:
+      - application/json
+      description: Preview email template with sample data
+      parameters:
+      - description: Template name and variables
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.PreviewEmailRequest'
+      produces:
+      - text/html
+      responses:
+        "200":
+          description: HTML email preview
+          schema:
+            type: string
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Preview email template
+      tags:
+      - admin
+  /api/v1/admin/test-email:
+    post:
+      consumes:
+      - application/json
+      description: Send a test email (development only)
+      parameters:
+      - description: Recipient email
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.TestEmailRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Send test email
+      tags:
+      - admin
+  /api/v1/analytics/engagement:
+    get:
+      description: Get user engagement metrics over time
+      parameters:
+      - default: 7d
+        description: Time period (7d, 30d, 90d)
+        in: query
+        name: period
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.EngagementData'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get engagement analytics
+      tags:
+      - analytics
+  /api/v1/analytics/followers:
+    get:
+      description: Get user follower growth over time
+      parameters:
+      - default: 7d
+        description: Time period (7d, 30d, 90d)
+        in: query
+        name: period
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.FollowerGrowth'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get follower growth analytics
+      tags:
+      - analytics
+  /api/v1/analytics/stats:
+    get:
+      description: Get overall user statistics
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user statistics
+      tags:
+      - analytics
+  /api/v1/auth/forgot-password:
+    post:
+      consumes:
+      - application/json
+      description: Send password reset email
+      parameters:
+      - description: Email address
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ForgotPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Forgot password
+      tags:
+      - auth
+  /api/v1/auth/login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return tokens
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Login user
+      tags:
+      - auth
+  /api/v1/auth/logout:
+    post:
+      description: Invalidate user session
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Logout user
+      tags:
+      - auth
+  /api/v1/auth/me:
+    get:
+      description: Get current authenticated user details
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.UserResponse'
+      security:
+      - BearerAuth: []
+      summary: Get current user
+      tags:
+      - auth
+  /api/v1/auth/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Get new access token using refresh token
+      parameters:
+      - description: Refresh token
+        in: body
+        name: request
+        required: true
+        schema:
+          type: object
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            type: object
+        "401":
+          description: Unauthorized
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Refresh access token
+      tags:
+      - auth
+  /api/v1/auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account
+      parameters:
+      - description: Registration details
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.RegisterRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.AuthResponse'
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "409":
+          description: Conflict
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Register a new user
+      tags:
+      - auth
+  /api/v1/auth/resend-verification:
+    post:
+      consumes:
+      - application/json
+      description: Resend verification email to user
+      parameters:
+      - description: Email address
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ResendVerificationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Resend verification email
+      tags:
+      - auth
+  /api/v1/auth/reset-password:
+    post:
+      consumes:
+      - application/json
+      description: Reset password with token from email
+      parameters:
+      - description: Token and new password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ResetPasswordRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: Bad Request
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Reset password
+      tags:
+      - auth
+  /api/v1/auth/verify/{token}:
+    get:
+      description: Verify user email with token
+      parameters:
+      - description: Verification token
+        in: path
+        name: token
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Verify email
+      tags:
+      - auth
+  /api/v1/comments/{id}:
+    delete:
+      description: Delete a comment (only owner can delete)
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Delete a comment
+      tags:
+      - comments
+    put:
+      consumes:
+      - application/json
+      description: Update a comment's content (only owner can update)
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Comment update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Update a comment
+      tags:
+      - comments
+  /api/v1/comments/{id}/replies:
+    get:
+      description: Get nested replies to a specific comment
+      parameters:
+      - description: Comment ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CommentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get replies to a comment
+      tags:
+      - comments
+  /api/v1/feed:
+    get:
+      description: Get paginated feed with posts based on feed type
+      parameters:
+      - default: home
+        description: 'Feed type: home, trending, latest'
+        in: query
+        name: type
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FeedResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get user's feed
+      tags:
+      - posts
+  /api/v1/hashtag/{tag}:
+    get:
+      description: Get paginated posts with a specific hashtag
+      parameters:
+      - description: 'Hashtag (without #)'
+        in: path
+        name: tag
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PostsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get posts by hashtag
+      tags:
+      - posts
+  /api/v1/hashtags/trending:
+    get:
+      description: Get currently trending hashtags
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.SearchHashtag'
+            type: array
+      summary: Get trending hashtags
+      tags:
+      - search
+  /api/v1/posts:
+    post:
+      consumes:
+      - application/json
+      description: Create a new post with content and optional media
+      parameters:
+      - description: Post creation request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.CreatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Create a new post
+      tags:
+      - posts
+  /api/v1/posts/{id}:
+    delete:
+      description: Delete an existing post (only owner can delete)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Delete a post
+      tags:
+      - posts
+    get:
+      description: Get a specific post by its ID
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.PostWithDetails'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get a post by ID
+      tags:
+      - posts
+    put:
+      consumes:
+      - application/json
+      description: Update an existing post (only owner can update)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Post update request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdatePostRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_socialhub_auth-service_pkg_models.Post'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Update a post
+      tags:
+      - posts
+  /api/v1/posts/{id}/comments:
+    get:
+      description: Get paginated comments for a post (top-level comments only)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CommentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get comments for a post
+      tags:
+      - comments
+    post:
+      consumes:
+      - application/json
+      description: Add a comment or reply to a post (use parent_id for replies)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Comment request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.AddCommentRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/internal_handlers.CommentResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Add a comment to a post
+      tags:
+      - comments
+  /api/v1/posts/{id}/comments/tree:
+    get:
+      description: Get full comment tree with nested replies for a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.CommentsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get comment tree for a post
+      tags:
+      - comments
+  /api/v1/posts/{id}/reactions:
+    delete:
+      description: Remove a reaction from a post (idempotent - no error if reaction
+        doesn't exist)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Reaction type
+        enum:
+        - like
+        - love
+        - laugh
+        - wow
+        - sad
+        - angry
+        in: query
+        name: type
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.ReactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Remove a reaction from a post
+      tags:
+      - reactions
+    get:
+      description: Get all reactions for a post with counts by type
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.ReactionsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get reactions for a post
+      tags:
+      - reactions
+    post:
+      consumes:
+      - application/json
+      description: Add a reaction (like, love, laugh, wow, sad, angry) to a post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Reaction request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ReactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.ReactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Add a reaction to a post
+      tags:
+      - reactions
+  /api/v1/posts/{id}/reactions/me:
+    get:
+      description: Get the current user's reaction to a specific post
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.UserReactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get current user's reaction to a post
+      tags:
+      - reactions
+  /api/v1/posts/{id}/reactions/toggle:
+    post:
+      consumes:
+      - application/json
+      description: Toggle a reaction (add if not exists, remove if exists)
+      parameters:
+      - description: Post ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Reaction request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.ReactRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.ToggleReactionResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Toggle a reaction on a post
+      tags:
+      - reactions
+  /api/v1/search:
+    get:
+      description: Search across users, posts, and hashtags
+      parameters:
+      - description: Search query
+        in: query
+        name: q
+        required: true
+        type: string
+      - description: Filter by type (users, posts, hashtags)
+        in: query
+        name: type
+        type: string
+      - default: 10
+        description: Max results
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties: true
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Search
+      tags:
+      - search
+  /api/v1/user/profile:
+    put:
+      consumes:
+      - application/json
+      description: Update current user profile
+      parameters:
+      - description: Profile update
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_handlers.UpdateProfileRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.UserResponse'
+      security:
+      - BearerAuth: []
+      summary: Update profile
+      tags:
+      - auth
+  /api/v1/users/{id}/follow:
+    delete:
+      description: Unfollow a specific user
+      parameters:
+      - description: User ID to unfollow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FollowResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Unfollow a user
+      tags:
+      - follows
+    post:
+      consumes:
+      - application/json
+      description: Follow a specific user
+      parameters:
+      - description: User ID to follow
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FollowResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+        "409":
+          description: Conflict
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Follow a user
+      tags:
+      - follows
+  /api/v1/users/{id}/follow/counts:
+    get:
+      description: Get follower and following counts for a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FollowCountsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get follow counts for a user
+      tags:
+      - follows
+  /api/v1/users/{id}/followers:
+    get:
+      description: Get paginated list of users who follow a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FollowersResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get user's followers
+      tags:
+      - follows
+  /api/v1/users/{id}/following:
+    get:
+      description: Get paginated list of users that a specific user follows
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.FollowingResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get users that a user follows
+      tags:
+      - follows
+  /api/v1/users/{user_id}/posts:
+    get:
+      description: Get paginated posts by a specific user
+      parameters:
+      - description: User ID
+        in: path
+        name: user_id
+        required: true
+        type: string
+      - default: 1
+        description: Page number
+        in: query
+        name: page
+        type: integer
+      - default: 20
+        description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.PostsResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/internal_handlers.ErrorResponse'
+      summary: Get posts by user
+      tags:
+      - posts
+  /api/v1/users/{username}:
+    get:
+      description: Get user profile by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.UserProfile'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile
+      tags:
+      - users
+  /api/v1/users/{username}/follow:
+    post:
+      description: Follow a user by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Follow a user
+      tags:
+      - users
+  /api/v1/users/{username}/unfollow:
+    post:
+      description: Unfollow a user by username
+      parameters:
+      - description: Username
+        in: path
+        name: username
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Unfollow a user
+      tags:
+      - users
+  /api/v1/users/id/{id}:
+    get:
+      description: Get user profile by ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/internal_handlers.UserProfile'
+        "404":
+          description: Not Found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      security:
+      - BearerAuth: []
+      summary: Get user profile by ID
+      tags:
+      - users
+  /api/v1/users/suggested:
+    get:
+      description: Get suggested users to follow
+      parameters:
+      - default: 5
+        description: Max results
+        in: query
+        name: limit
+        type: integer
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/internal_handlers.SearchUser'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Get suggested users
+      tags:
+      - users
+  /healthz:
+    get:
+      description: Returns server health status
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /readyz:
+    get:
+      description: Checks if server is ready to handle requests
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "503":
+          description: Service Unavailable
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Readiness check
+      tags:
+      - health
+securityDefinitions:
+  BearerAuth:
+    description: 'Enter your bearer token in the format: Bearer {token}'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

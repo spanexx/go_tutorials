@@ -178,6 +178,12 @@ export class HashtagSuggestionsComponent implements OnChanges {
     }
 
     const searchText = hashtagMatch[1];
+
+    const hashtagsMap = this.hashtagService.hashtags();
+    if (Object.keys(hashtagsMap).length === 0) {
+      void this.hashtagService.refreshTrending().then(() => this.updateSuggestions());
+      return;
+    }
     
     // Get suggestions from service
     this.suggestions = this.hashtagService.searchHashtags(searchText, 5);
@@ -185,7 +191,6 @@ export class HashtagSuggestionsComponent implements OnChanges {
     // If no matches, show popular hashtags
     if (this.suggestions.length === 0 && searchText.length === 0) {
       const trendingTags = this.hashtagService.trending();
-      const hashtagsMap = this.hashtagService.hashtags();
       this.suggestions = trendingTags
         .slice(0, 5)
         .map(tag => hashtagsMap[tag.toLowerCase()])

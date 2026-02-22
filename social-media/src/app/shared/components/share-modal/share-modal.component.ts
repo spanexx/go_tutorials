@@ -7,7 +7,7 @@
 // CID: Phase-2 Milestone 2.4 - Sharing & Activity Feed
 import { Component, EventEmitter, Input, Output, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { LucideAngularModule, X, Copy, Link, Twitter, Facebook, Linkedin, MessageCircle, Mail, Qrcode, Code2, Check } from 'lucide-angular';
+import { LucideAngularModule, X, Copy, Link, Twitter, Facebook, Linkedin, MessageCircle, Mail, QrCode, Code2, Check } from 'lucide-angular';
 import { ShareService, SharePlatform } from '../../services/share.service';
 
 @Component({
@@ -404,7 +404,7 @@ export class ShareModalComponent {
   linkedinIcon = Linkedin;
   messageCircleIcon = MessageCircle;
   mailIcon = Mail;
-  qrIcon = Qrcode;
+  qrIcon = QrCode;
   codeIcon = Code2;
 
   @Input() isOpen = false;

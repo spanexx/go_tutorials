@@ -9,7 +9,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, TrendingUp, Hash } from 'lucide-angular';
-import { HashtagService, Hashtag } from '../../services/hashtag.service';
+import { HashtagService, HashtagInfo } from '../../services/hashtag.service';
 
 @Component({
   selector: 'app-trending-hashtags',
@@ -243,7 +243,7 @@ export class TrendingHashtagsComponent implements OnInit, OnDestroy {
   trendingIcon = TrendingUp;
   hashIcon = Hash;
 
-  trendingHashtags: Hashtag[] = [];
+  trendingHashtags: HashtagInfo[] = [];
   isLoading = false;
   private refreshSubscription?: ReturnType<typeof setInterval>;
 

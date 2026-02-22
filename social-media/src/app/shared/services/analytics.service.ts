@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { BaseApiService } from './base-api.service';
 import { PostService } from './post.service';
 
+export type AnalyticsPeriod = '7d' | '30d' | '90d';
+
 export interface AnalyticsMetrics {
   totalPosts: number;
   totalLikes: number;
@@ -56,30 +58,24 @@ export interface AnalyticsStats {
   providedIn: 'root'
 })
 export class AnalyticsService extends BaseApiService {
-  // Fallback mock data for development when API is unavailable
-  private readonly fallbackFollowerGrowth: FollowerGrowth[] = [
-    { date: 'Mon', count: 2340, new: 15, lost: 3 },
-    { date: 'Tue', count: 2385, new: 22, lost: 4 },
-    { date: 'Wed', count: 2450, new: 18, lost: 5 },
-    { date: 'Thu', count: 2520, new: 31, lost: 7 },
-    { date: 'Fri', count: 2610, new: 42, lost: 5 },
-    { date: 'Sat', count: 2705, new: 28, lost: 2 },
-    { date: 'Sun', count: 2850, new: 25, lost: 4 }
-  ];
-
-  private readonly fallbackEngagementData: EngagementData[] = [
-    { date: 'Mon', likes: 145, comments: 32, shares: 12, views: 1500 },
-    { date: 'Tue', likes: 198, comments: 45, shares: 18, views: 1800 },
-    { date: 'Wed', likes: 167, comments: 38, shares: 15, views: 1200 },
-    { date: 'Thu', likes: 234, comments: 56, shares: 24, views: 2100 },
-    { date: 'Fri', likes: 289, comments: 67, shares: 31, views: 2800 },
-    { date: 'Sat', likes: 312, comments: 78, shares: 35, views: 2300 },
-    { date: 'Sun', likes: 356, comments: 89, shares: 42, views: 1900 }
-  ];
-
   // Cached API data
   private cachedEngagementData: EngagementData[] | null = null;
   private cachedFollowerGrowth: FollowerGrowth[] | null = null;
+  private cachedTopPosts: any[] | null = null;
+
+  // Signal-based analytics state
+  private engagementDataSignal = signal<EngagementData[]>([]);
+  private followerGrowthSignal = signal<FollowerGrowth[]>([]);
+  private statsSignal = signal<AnalyticsStats | null>(null);
+  private isLoadingSignal = signal(false);
+  private periodSignal = signal<AnalyticsPeriod>('7d');
+
+  // Computed signals
+  readonly engagementData = computed(() => this.engagementDataSignal());
+  readonly followerGrowth = computed(() => this.followerGrowthSignal());
+  readonly stats = computed(() => this.statsSignal());
+  readonly isLoading = computed(() => this.isLoadingSignal());
+  readonly period = computed(() => this.periodSignal());
 
   constructor(
     http: HttpClient,
@@ -89,73 +85,93 @@ export class AnalyticsService extends BaseApiService {
   }
 
   /**
-   * Get engagement analytics data from API
-   * Falls back to cached or mock data if API fails
+   * Set the analytics period
    */
-  async getEngagementData(period: string = '7d'): Promise<EngagementData[]> {
+  setPeriod(period: AnalyticsPeriod): void {
+    this.periodSignal.set(period);
+    this.refreshAll();
+  }
+
+  /**
+   * Refresh all analytics data
+   */
+  async refreshAll(): Promise<void> {
+    this.isLoadingSignal.set(true);
+    await Promise.all([
+      this.getEngagementData(this.periodSignal()),
+      this.getFollowerGrowth(this.periodSignal()),
+      this.getStats()
+    ]);
+    this.isLoadingSignal.set(false);
+  }
+
+  /**
+   * Get engagement analytics data from API
+   * Returns empty array if API fails
+   */
+  async getEngagementData(period: AnalyticsPeriod = '7d'): Promise<EngagementData[]> {
     if (this.cachedEngagementData) {
+      this.engagementDataSignal.set(this.cachedEngagementData);
       return this.cachedEngagementData;
     }
-    
+
     try {
       const data = await this.get<EngagementData[]>(`/analytics/engagement`, { period }).toPromise();
       if (data) {
         this.cachedEngagementData = data;
+        this.engagementDataSignal.set(data);
         return data;
       }
     } catch (error) {
-      console.warn('Failed to fetch engagement data from API, using fallback');
+      console.warn('Failed to fetch engagement data from API');
     }
-    
-    return this.fallbackEngagementData;
+
+    this.engagementDataSignal.set([]);
+    return [];
   }
 
   /**
    * Get follower growth data from API
-   * Falls back to cached or mock data if API fails
+   * Returns empty array if API fails
    */
-  async getFollowerGrowth(period: string = '7d'): Promise<FollowerGrowth[]> {
+  async getFollowerGrowth(period: AnalyticsPeriod = '7d'): Promise<FollowerGrowth[]> {
     if (this.cachedFollowerGrowth) {
+      this.followerGrowthSignal.set(this.cachedFollowerGrowth);
       return this.cachedFollowerGrowth;
     }
-    
+
     try {
       const data = await this.get<FollowerGrowth[]>(`/analytics/followers`, { period }).toPromise();
       if (data) {
         this.cachedFollowerGrowth = data;
+        this.followerGrowthSignal.set(data);
         return data;
       }
     } catch (error) {
-      console.warn('Failed to fetch follower growth from API, using fallback');
+      console.warn('Failed to fetch follower growth from API');
     }
-    
-    return this.fallbackFollowerGrowth;
+
+    this.followerGrowthSignal.set([]);
+    return [];
   }
 
   /**
    * Get overall analytics stats from backend API
-   * Falls back to mock data if API fails
+   * Returns null if API fails
    */
-  async getStats(): Promise<AnalyticsStats> {
+  async getStats(): Promise<AnalyticsStats | null> {
     try {
       const stats = await this.get<AnalyticsStats>('/analytics/stats').toPromise();
       if (stats) {
+        this.statsSignal.set(stats);
         return stats;
       }
     } catch (error) {
-      console.warn('Failed to fetch analytics stats from API, using fallback');
+      console.warn('Failed to fetch analytics stats from API');
     }
     
-    // Fallback data
-    return {
-      total_posts: 156,
-      total_likes: 2847,
-      total_comments: 523,
-      total_shares: 189,
-      total_followers: 2850,
-      total_following: 245,
-      engagement_rate: 4.2
-    };
+    this.statsSignal.set(null);
+    return null;
   }
 
   /**
@@ -259,8 +275,76 @@ export class AnalyticsService extends BaseApiService {
       ]);
       this.cachedEngagementData = engagement || null;
       this.cachedFollowerGrowth = followers || null;
+      if (stats) this.statsSignal.set(stats);
     } catch (error) {
-      console.warn('Failed to load analytics from API, using fallback data');
+      console.warn('Failed to load analytics from API');
     }
+  }
+
+  /**
+   * Get top performing posts
+   * @param period - Time period (7d, 30d, 90d)
+   * @param limit - Maximum number of posts to return
+   */
+  async getTopPosts(period: AnalyticsPeriod = '7d', limit: number = 5): Promise<any[]> {
+    if (this.cachedTopPosts) {
+      return this.cachedTopPosts.slice(0, limit);
+    }
+
+    try {
+      const data = await this.get<any[]>(`/analytics/top-posts`, { period, limit }).toPromise();
+      if (data) {
+        this.cachedTopPosts = data;
+        return data.slice(0, limit);
+      }
+    } catch (error) {
+      console.warn('Failed to fetch top posts from API');
+    }
+
+    return [];
+  }
+
+  /**
+   * Get reach and impressions statistics
+   * @param period - Time period (7d, 30d, 90d)
+   */
+  async getReachStats(period: AnalyticsPeriod = '7d'): Promise<{
+    totalReach: number;
+    totalImpressions: number;
+    averageReach: number;
+    reachGrowth: number;
+  } | null> {
+    try {
+      const data = await this.get<any>(`/analytics/reach`, { period }).toPromise();
+      if (data) {
+        return data;
+      }
+    } catch (error) {
+      console.warn('Failed to fetch reach stats from API');
+    }
+    
+    return null;
+  }
+
+  /**
+   * Compare current period to previous period
+   * @param period - Current period (7d, 30d, 90d)
+   */
+  async compareWithPreviousPeriod(period: AnalyticsPeriod = '7d'): Promise<{
+    engagementChange: number;
+    followersChange: number;
+    postsChange: number;
+  }> {
+    const data = await this.get<{
+      engagementChange: number;
+      followersChange: number;
+      postsChange: number;
+    }>(`/analytics/compare`, { period }).toPromise();
+
+    return data ?? {
+      engagementChange: 0,
+      followersChange: 0,
+      postsChange: 0
+    };
   }
 }

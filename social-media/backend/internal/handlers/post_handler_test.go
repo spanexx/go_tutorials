@@ -20,9 +20,9 @@ import (
 // PostHandlerTestSuite is the test suite for post handler tests
 type PostHandlerTestSuite struct {
 	suite.Suite
-	router         *gin.Engine
-	postHandler    *handlers.PostHandler
-	postService    *service.PostService
+	router          *gin.Engine
+	postHandler     *handlers.PostHandler
+	postService     *service.PostService
 	reactionService *service.ReactionService
 	commentService  *service.CommentService
 }
@@ -30,22 +30,22 @@ type PostHandlerTestSuite struct {
 // SetupSuite runs before all tests
 func (suite *PostHandlerTestSuite) SetupSuite() {
 	gin.SetMode(gin.TestMode)
-	
+
 	// Initialize services (with nil DB for unit testing)
 	suite.postService = service.NewPostService(nil)
 	suite.reactionService = service.NewReactionService(nil)
 	suite.commentService = service.NewCommentService(nil)
-	
+
 	// Initialize handler
 	suite.postHandler = handlers.NewPostHandler(
 		suite.postService,
 		suite.reactionService,
 		suite.commentService,
 	)
-	
+
 	// Setup router with mock auth middleware
 	suite.router = gin.New()
-	
+
 	// Add mock auth middleware that reads X-User-ID header
 	suite.router.Use(func(c *gin.Context) {
 		if userID := c.GetHeader("X-User-ID"); userID != "" {
@@ -53,8 +53,8 @@ func (suite *PostHandlerTestSuite) SetupSuite() {
 		}
 		c.Next()
 	})
-	
-	handlers.RegisterPostRoutes(suite.router.Group("/api/v1"), 
+
+	handlers.RegisterPostRoutes(suite.router.Group("/api/v1"),
 		suite.postService, suite.reactionService, suite.commentService)
 }
 
@@ -71,48 +71,48 @@ func (suite *PostHandlerTestSuite) TestCreatePost() {
 			Content: "Test post content",
 		}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req, _ := http.NewRequest("POST", "/api/v1/posts", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
 		// Add user_id to context (simulating auth middleware)
 		req.Header.Set("X-User-ID", "test-user")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 201 Created (service returns empty post with nil DB)
 		assert.Equal(suite.T(), http.StatusCreated, w.Code)
 	})
-	
+
 	// Test invalid request (empty content)
 	suite.T().Run("empty content", func(t *testing.T) {
 		reqBody := handlers.CreatePostRequest{
 			Content: "",
 		}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req, _ := http.NewRequest("POST", "/api/v1/posts", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 	})
-	
+
 	// Test content too long
 	suite.T().Run("content too long", func(t *testing.T) {
 		reqBody := handlers.CreatePostRequest{
 			Content: string(make([]byte, 5001)),
 		}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req, _ := http.NewRequest("POST", "/api/v1/posts", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 	})
 }
@@ -122,21 +122,21 @@ func (suite *PostHandlerTestSuite) TestGetPost() {
 	// Test missing ID
 	suite.T().Run("missing ID", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/posts/", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 for missing route
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
-	
+
 	// Test valid ID (will return 404 since no DB)
 	suite.T().Run("valid ID", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/posts/test-post-id", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 since post doesn't exist
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
@@ -150,31 +150,31 @@ func (suite *PostHandlerTestSuite) TestUpdatePost() {
 			Content: "Updated content",
 		}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req, _ := http.NewRequest("PUT", "/api/v1/posts/", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 for missing route
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
-	
+
 	// Test valid update
 	suite.T().Run("valid update", func(t *testing.T) {
 		reqBody := handlers.UpdatePostRequest{
 			Content: "Updated content",
 		}
 		body, _ := json.Marshal(reqBody)
-		
+
 		req, _ := http.NewRequest("PUT", "/api/v1/posts/test-post-id", bytes.NewBuffer(body))
 		req.Header.Set("Content-Type", "application/json")
 		req.Header.Set("X-User-ID", "test-user")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 since post doesn't exist
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
@@ -185,14 +185,14 @@ func (suite *PostHandlerTestSuite) TestDeletePost() {
 	// Test missing ID
 	suite.T().Run("missing ID", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", "/api/v1/posts/", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 for missing route
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
-	
+
 	// Test valid delete
 	suite.T().Run("valid delete", func(t *testing.T) {
 		req, _ := http.NewRequest("DELETE", "/api/v1/posts/test-post-id", nil)
@@ -212,54 +212,54 @@ func (suite *PostHandlerTestSuite) TestGetFeed() {
 	suite.T().Run("default feed", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/feed", nil)
 		req.Header.Set("X-User-ID", "test-user")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty feed since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
 	})
-	
+
 	// Test trending feed
 	suite.T().Run("trending feed", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/feed?type=trending", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty feed since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
 	})
-	
+
 	// Test latest feed
 	suite.T().Run("latest feed", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/feed?type=latest", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty feed since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
 	})
-	
+
 	// Test invalid feed type
 	suite.T().Run("invalid feed type", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/feed?type=invalid", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 	})
-	
+
 	// Test pagination
 	suite.T().Run("with pagination", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/feed?page=2&limit=10", nil)
 		req.Header.Set("X-User-ID", "test-user")
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty feed since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
 	})
@@ -269,24 +269,51 @@ func (suite *PostHandlerTestSuite) TestGetFeed() {
 func (suite *PostHandlerTestSuite) TestGetPostsByUser() {
 	// Test missing user ID
 	suite.T().Run("missing user ID", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/v1/users//posts", nil)
-		
+		req, _ := http.NewRequest("GET", "/api/v1/user//posts", nil)
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 400 for bad request (empty user ID)
 		assert.Equal(suite.T(), http.StatusBadRequest, w.Code)
 	})
-	
+
 	// Test valid user ID
 	suite.T().Run("valid user ID", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/api/v1/users/test-user-id/posts", nil)
-		
+		req, _ := http.NewRequest("GET", "/api/v1/user/test-user-id/posts", nil)
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty posts since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
+	})
+}
+
+// TestGetPostsByUserV1 tests the frontend-compatible GET /api/v1/users/:user_id/posts endpoint.
+func (suite *PostHandlerTestSuite) TestGetPostsByUserV1() {
+	// Test valid user ID
+	suite.T().Run("valid user ID", func(t *testing.T) {
+		req, _ := http.NewRequest("GET", "/api/v1/users/by-id/test-user-id/posts?page=1&limit=20", nil)
+		w := httptest.NewRecorder()
+		suite.router.ServeHTTP(w, req)
+
+		assert.Equal(suite.T(), http.StatusOK, w.Code)
+
+		var body map[string]any
+		_ = json.Unmarshal(w.Body.Bytes(), &body)
+
+		_, hasPosts := body["posts"]
+		_, hasTotal := body["total_count"]
+		_, hasHasMore := body["has_more"]
+		_, hasPage := body["page"]
+		_, hasLimit := body["limit"]
+
+		assert.True(suite.T(), hasPosts)
+		assert.True(suite.T(), hasTotal)
+		assert.True(suite.T(), hasHasMore)
+		assert.True(suite.T(), hasPage)
+		assert.True(suite.T(), hasLimit)
 	})
 }
 
@@ -295,21 +322,21 @@ func (suite *PostHandlerTestSuite) TestGetPostsByHashtag() {
 	// Test missing hashtag
 	suite.T().Run("missing hashtag", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/hashtag/", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 404 for missing route
 		assert.Equal(suite.T(), http.StatusNotFound, w.Code)
 	})
-	
+
 	// Test valid hashtag
 	suite.T().Run("valid hashtag", func(t *testing.T) {
 		req, _ := http.NewRequest("GET", "/api/v1/hashtag/golang", nil)
-		
+
 		w := httptest.NewRecorder()
 		suite.router.ServeHTTP(w, req)
-		
+
 		// Returns 200 with empty posts since DB is nil
 		assert.Equal(suite.T(), http.StatusOK, w.Code)
 	})
@@ -323,17 +350,18 @@ func (suite *PostHandlerTestSuite) TestCreatePostRequestValidation() {
 			Content:  "Valid content",
 			ImageURL: "https://example.com/image.jpg",
 		}
-		
+
 		assert.NotEmpty(suite.T(), req.Content)
 		assert.LessOrEqual(suite.T(), len(req.Content), 5000)
+		assert.NotEmpty(suite.T(), req.ImageURL)
 	})
-	
+
 	// Test image URL optional
 	suite.T().Run("image URL optional", func(t *testing.T) {
 		req := handlers.CreatePostRequest{
 			Content: "Valid content without image",
 		}
-		
+
 		assert.NotEmpty(suite.T(), req.Content)
 		assert.Empty(suite.T(), req.ImageURL)
 	})
@@ -346,17 +374,17 @@ func (suite *PostHandlerTestSuite) TestUpdatePostRequestValidation() {
 		req := handlers.UpdatePostRequest{
 			Content: "Updated content",
 		}
-		
+
 		assert.NotEmpty(suite.T(), req.Content)
 		assert.LessOrEqual(suite.T(), len(req.Content), 5000)
 	})
-	
+
 	// Test empty content allowed for update
 	suite.T().Run("empty content allowed", func(t *testing.T) {
 		req := handlers.UpdatePostRequest{
 			Content: "",
 		}
-		
+
 		// Empty content is allowed (omitempty in binding tag)
 		assert.Empty(suite.T(), req.Content)
 	})
@@ -367,18 +395,18 @@ func (suite *PostHandlerTestSuite) TestPaginationQuery() {
 	// Test default values
 	suite.T().Run("default values", func(t *testing.T) {
 		query := handlers.GetFeedQuery{}
-		
+
 		assert.Equal(suite.T(), 0, query.Page)
 		assert.Equal(suite.T(), 0, query.Limit)
 	})
-	
+
 	// Test max limit
 	suite.T().Run("max limit", func(t *testing.T) {
 		query := handlers.GetFeedQuery{
 			Page:  1,
 			Limit: 100,
 		}
-		
+
 		assert.Equal(suite.T(), 1, query.Page)
 		assert.Equal(suite.T(), 100, query.Limit)
 	})
@@ -393,7 +421,7 @@ func (suite *PostHandlerTestSuite) TestFeedResponse() {
 		Page:       1,
 		Limit:      20,
 	}
-	
+
 	assert.NotNil(suite.T(), response.Posts)
 	assert.Equal(suite.T(), int64(0), response.TotalCount)
 	assert.False(suite.T(), response.HasMore)
@@ -407,7 +435,7 @@ func (suite *PostHandlerTestSuite) TestErrorResponse() {
 		Error:   "test_error",
 		Message: "Test error message",
 	}
-	
+
 	assert.Equal(suite.T(), "test_error", response.Error)
 	assert.Equal(suite.T(), "Test error message", response.Message)
 }

@@ -7,7 +7,7 @@
 // - Mark as read functionality
 // - Infinite scroll support
 // CID: Phase-2 Milestone 2.4 - Sharing & Activity Feed
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { LucideAngularModule, Activity as ActivityIcon, Check, CheckCheck, Heart, MessageCircle, Share2, User, FileText, AtSign, Smile, CornerDownRight, UserPlus, Filter } from 'lucide-angular';
@@ -61,7 +61,7 @@ export class ActivityFeedComponent implements OnInit {
   constructor(public activityService: ActivityService) {}
 
   ngOnInit(): void {
-    this.loadActivities();
+    void this.activityService.refresh().then(() => this.loadActivities());
   }
 
   // Cleanup methods can be added here when needed
@@ -144,10 +144,12 @@ export class ActivityFeedComponent implements OnInit {
 
   markAsRead(activityId: string): void {
     this.activityService.markAsRead(activityId);
+    this.loadActivities();
   }
 
   markAllAsRead(): void {
     this.activityService.markAllAsRead();
+    this.loadActivities();
   }
 
   getIcon(type: ActivityType): any {

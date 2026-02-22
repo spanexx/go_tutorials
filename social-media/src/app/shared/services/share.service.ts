@@ -6,6 +6,9 @@
 // - Copy to clipboard functionality
 // CID: Phase-2 Milestone 2.4 - Sharing & Activity Feed
 import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { firstValueFrom } from 'rxjs';
+import { BaseApiService } from './base-api.service';
 
 export interface SharePlatform {
   id: string;
@@ -30,17 +33,16 @@ export interface ShareState {
 @Injectable({
   providedIn: 'root'
 })
-export class ShareService {
+export class ShareService extends BaseApiService {
   private shareState = signal<ShareState>({
     stats: {},
     isSharing: false,
     lastShared: null
   });
 
-  // Get share stats for a post
-  getShareStats = computed((postId: string) => 
-    this.shareState().stats[postId] || this.createDefaultStats(postId)
-  );
+  getShareStats(postId: string): ShareStats {
+    return this.shareState().stats[postId] || this.createDefaultStats(postId);
+  }
 
   // Check if currently sharing
   isSharing = computed(() => this.shareState().isSharing);
@@ -87,34 +89,8 @@ export class ShareService {
     }
   ];
 
-  constructor() {
-    // Initialize with mock data for development
-    this.initializeMockData();
-  }
-
-  private initializeMockData(): void {
-    const mockPosts = ['post-1', 'post-2', 'post-3'];
-    const stats: Record<string, ShareStats> = {};
-
-    mockPosts.forEach(postId => {
-      stats[postId] = {
-        postId,
-        totalShares: Math.floor(Math.random() * 50),
-        platformShares: {
-          twitter: Math.floor(Math.random() * 20),
-          facebook: Math.floor(Math.random() * 15),
-          linkedin: Math.floor(Math.random() * 10),
-          whatsapp: Math.floor(Math.random() * 10),
-          email: Math.floor(Math.random() * 5)
-        }
-      };
-    });
-
-    this.shareState.set({
-      stats,
-      isSharing: false,
-      lastShared: null
-    });
+  constructor(http: HttpClient) {
+    super(http);
   }
 
   private createDefaultStats(postId: string): ShareStats {
@@ -171,6 +147,7 @@ export class ShareService {
 
       // Track the share
       this.trackShare(postId, platformId);
+      void this.trackShareOnServer(postId);
 
       // Open share dialog in a new window
       const width = 600;
@@ -201,6 +178,7 @@ export class ShareService {
     try {
       await navigator.clipboard.writeText(postUrl);
       this.trackShare(postId, 'copy');
+      void this.trackShareOnServer(postId);
       this.shareState.update(state => ({
         ...state,
         lastShared: postId
@@ -218,6 +196,7 @@ export class ShareService {
       try {
         document.execCommand('copy');
         this.trackShare(postId, 'copy');
+        void this.trackShareOnServer(postId);
         this.shareState.update(state => ({
           ...state,
           lastShared: postId
@@ -228,6 +207,14 @@ export class ShareService {
         document.body.removeChild(textArea);
         return false;
       }
+    }
+  }
+
+  private async trackShareOnServer(postId: string): Promise<void> {
+    try {
+      await firstValueFrom(this.post(`/posts/${postId}/share`, {}));
+    } catch {
+      // ignore
     }
   }
 
@@ -279,6 +266,5 @@ export class ShareService {
       isSharing: false,
       lastShared: null
     });
-    this.initializeMockData();
   }
 }

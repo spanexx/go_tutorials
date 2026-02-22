@@ -29,20 +29,20 @@ export class UserService extends BaseApiService {
    * Get user profile by ID
    */
   getUserById(userId: string): Observable<UserProfile> {
-    return this.get<UserProfile>(`/users/${userId}`);
+    return this.get<UserProfile>(`/users/id/${userId}`);
   }
 
   /**
-   * Get multiple users by their IDs
+   * Get user profile by username
    */
-  getUsersByIds(userIds: string[]): Observable<UserProfile[]> {
-    return this.get<UserProfile[]>('/users', { ids: userIds.join(',') });
+  getUserByUsername(username: string): Observable<UserProfile> {
+    return this.get<UserProfile>(`/users/${username}`);
   }
 
   /**
    * Get current user's profile
    */
   getCurrentUser(): Observable<UserProfile> {
-    return this.get<UserProfile>('/users/me');
+    return this.get<UserProfile>('/auth/me');
   }
 }

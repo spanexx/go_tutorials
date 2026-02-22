@@ -7,8 +7,12 @@ import { ExploreComponent } from './pages/explore/explore.component';
 import { MessagesComponent } from './pages/messages/messages.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
 import { BookmarksComponent } from './pages/bookmarks/bookmarks.component';
+import { CollectionDetailComponent } from './pages/bookmarks/collection-detail/collection-detail.component';
+import { SearchResultsPageComponent } from './pages/search/search-results.component';
 import { SettingsComponent } from './pages/settings/settings.component';
+import { NotificationSettingsComponent } from './pages/settings/notification-settings/notification-settings.component';
 import { HashtagComponent } from './pages/hashtag/hashtag.component';
+import { PostComponent } from './pages/post/post.component';
 import { FollowersComponent } from './pages/followers/followers.component';
 import { FollowingComponent } from './pages/following/following.component';
 import { LoginComponent } from './pages/auth/login/login.component';
@@ -29,6 +33,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordComponent, canActivate: [guestGuard] },
   { path: 'reset-password', component: ResetPasswordComponent, canActivate: [guestGuard] },
   { path: 'feed', component: FeedComponent, canActivate: [authGuard] },
+  { path: 'post/:id', component: PostComponent, canActivate: [authGuard] },
   { path: 'profile/:id', component: ProfileComponent, canActivate: [authGuard] },
   { path: 'profile/:id/edit', component: ProfileEditComponent, canActivate: [authGuard] },
   { path: 'profile/:id/followers', component: FollowersComponent, canActivate: [authGuard] },
@@ -36,8 +41,11 @@ export const routes: Routes = [
   { path: 'explore', component: ExploreComponent, canActivate: [authGuard] },
   { path: 'messages', component: MessagesComponent, canActivate: [authGuard] },
   { path: 'notifications', component: NotificationsComponent, canActivate: [authGuard] },
-  { path: 'bookmarks', component: BookmarksComponent, canActivate: [authGuard] },
   { path: 'settings', component: SettingsComponent, canActivate: [authGuard] },
+  { path: 'settings/notifications', component: NotificationSettingsComponent, canActivate: [authGuard] },
+  { path: 'search', component: SearchResultsPageComponent, canActivate: [authGuard] },
+  { path: 'bookmarks', component: BookmarksComponent, canActivate: [authGuard] },
+  { path: 'bookmarks/collection/:id', component: CollectionDetailComponent, canActivate: [authGuard] },
   { path: 'analytics', component: AnalyticsDashboardComponent, canActivate: [authGuard] },
   { path: 'hashtag/:tag', component: HashtagComponent, canActivate: [authGuard] },
   { path: '404', component: NotFoundComponent },

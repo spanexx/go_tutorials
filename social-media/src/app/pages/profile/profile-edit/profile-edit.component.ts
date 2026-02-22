@@ -5,6 +5,7 @@ import { Router, RouterModule } from '@angular/router';
 import { LucideAngularModule, User, Mail, Image, Save, X, Camera } from 'lucide-angular';
 import { AuthService } from '../../../shared/services/auth.service';
 import { ToastService } from '../../../shared/services/toast.service';
+import { IMAGE_PLACEHOLDERS } from '../../../shared/constants/app.constants';
 
 @Component({
   selector: 'app-profile-edit',
@@ -26,6 +27,8 @@ export class ProfileEditComponent {
   bio = '';
   avatar = '';
   coverImage = '';
+
+  avatarPlaceholder = IMAGE_PLACEHOLDERS.avatar;
   
   isLoading = false;
   isSaving = false;

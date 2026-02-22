@@ -39,10 +39,12 @@
         <lucide-icon [img]="themeService.getTheme() === 'dark' ? sunIcon : moonIcon" class="action-icon"></lucide-icon>
       </button>
       @if (authService.isAuthenticated) {
-        <a [routerLink]="['/notifications']" class="action-btn" title="Notifications">
+        <a [routerLink]="['/notifications']" class="action-btn notifications-btn" title="Notifications">
           <lucide-icon [img]="bellIcon" class="action-icon"></lucide-icon>
           @if (unreadNotifications > 0) {
-            <span class="notification-badge">{{ unreadNotifications }}</span>
+            <span class="notification-badge" [class.has-new]="unreadNotifications > 0">
+              {{ unreadNotifications > 99 ? '99+' : unreadNotifications }}
+            </span>
           }
         </a>
         <button class="action-btn" title="Messages">
@@ -53,14 +55,14 @@
       @if (authService.isAuthenticated && authService.user) {
         <div class="user-menu-wrapper" (click)="toggleUserMenu()" (clickOutside)="closeUserMenu()">
           <button class="user-menu-trigger">
-            <img [src]="authService.user.avatar || 'https://i.pravatar.cc/150?img=1'" alt="User Avatar" class="user-avatar" />
+            <img [src]="authService.user.avatar || avatarPlaceholder" alt="User Avatar" class="user-avatar" />
             <lucide-icon [img]="chevronIcon" class="chevron-icon"></lucide-icon>
           </button>
 
           @if (showUserMenu) {
             <div class="user-menu-dropdown">
               <div class="user-menu-header">
-                <img [src]="authService.user.avatar || 'https://i.pravatar.cc/150?img=1'" alt="User Avatar" class="dropdown-avatar" />
+                <img [src]="authService.user.avatar || avatarPlaceholder" alt="User Avatar" class="dropdown-avatar" />
                 <div class="user-menu-info">
                   <p class="user-menu-name">{{ authService.user.name }}</p>
                   <p class="user-menu-handle">&#64;{{ authService.user.username }}</p>
