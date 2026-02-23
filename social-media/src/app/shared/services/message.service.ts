@@ -258,4 +258,50 @@ export class MessageService extends BaseApiService {
   getTotalUnreadCount(): number {
     return this.messageState().conversations.reduce((sum, c) => sum + c.unread_count, 0);
   }
+
+  /**
+   * Add a message to a conversation (for real-time updates)
+   */
+  addMessage(conversationId: string, message: Message): void {
+    this.messageState.update(state => ({
+      ...state,
+      currentMessages: {
+        ...state.currentMessages,
+        [conversationId]: [...(state.currentMessages[conversationId] || []), message]
+      }
+    }));
+  }
+
+  /**
+   * Increment unread count for a conversation (for real-time updates)
+   */
+  incrementUnreadCount(conversationId: string): void {
+    this.messageState.update(state => ({
+      ...state,
+      conversations: state.conversations.map(c =>
+        c.id === conversationId ? { ...c, unread_count: c.unread_count + 1 } : c
+      )
+    }));
+  }
+
+  /**
+   * Mark a message as read (for real-time updates)
+   */
+  markMessageAsRead(messageId: string): void {
+    this.messageState.update(state => {
+      const updatedMessages = { ...state.currentMessages };
+      
+      // Update message in all conversations
+      Object.keys(updatedMessages).forEach(convId => {
+        updatedMessages[convId] = updatedMessages[convId].map(msg =>
+          msg.id === messageId ? { ...msg, is_read: true } : msg
+        );
+      });
+
+      return {
+        ...state,
+        currentMessages: updatedMessages
+      };
+    });
+  }
 }

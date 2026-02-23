@@ -34,7 +34,7 @@
         "Ping/pong for connection health checks (30s interval)",
         "Graceful shutdown drains connections"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.2",
@@ -49,7 +49,7 @@
         "Connection metadata: userID, channels, lastSeen, userAgent",
         "Max connections per user"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.3",
@@ -64,7 +64,7 @@
         "Heartbeat messages for keepalive",
         "Version field for protocol evolution"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.4",
@@ -78,7 +78,7 @@
         "Badge count update (unread count)",
         "Batch notifications for high-volume users"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.5",
@@ -93,7 +93,7 @@
         "Delivery confirmation",
         "Online/offline message handling"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.6",
@@ -108,7 +108,7 @@
         "Show User is typing in UI",
         "Respects user privacy settings"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.7",
@@ -124,7 +124,7 @@
         "Presence broadcast to followers",
         "Last seen timestamp for offline users"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.8",
@@ -139,7 +139,7 @@
         "Per-message read tracking",
         "Privacy setting to disable read receipts"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.9",
@@ -155,7 +155,7 @@
         "Last message ID tracking",
         "Max queue size (100 messages per user)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.10",
@@ -170,7 +170,7 @@
         "Polling interval: 5 seconds (client-side)",
         "Seamless upgrade to WebSocket if available"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.11",
@@ -186,7 +186,7 @@
         "RxJS-based event streams",
         "Fallback to HTTP polling"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.12",
@@ -201,7 +201,7 @@
         "Mark as read syncs with server",
         "Desktop notifications (Notification API)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.13",
@@ -216,7 +216,7 @@
         "Unread count in conversation list",
         "Message delivery status"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.14",
@@ -230,7 +230,7 @@
         "Live reaction/comment counts",
         "Throttle updates (batch every 30 seconds)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.15",
@@ -245,7 +245,7 @@
         "E2E tests with Angular frontend",
         "Test coverage >80%"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.7.16",
@@ -261,7 +261,7 @@
         "HTTP polling endpoint docs",
         "Client implementation guide"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

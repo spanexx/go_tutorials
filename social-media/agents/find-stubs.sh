@@ -5,7 +5,14 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TOOL_DIR="$SCRIPT_DIR/tools"
-WORKSPACE_DIR="${1:-.}"
+
+# Determine workspace directory (accept first arg as workspace, default to current dir)
+if [ -n "${1:-}" ] && [ -d "${1:-}" ]; then
+  WORKSPACE_DIR="$(cd "${1:-}" && pwd)"
+  shift || true
+else
+  WORKSPACE_DIR="$(pwd)"
+fi
 
 # Build the tool if needed
 if [ ! -f "$TOOL_DIR/stub-detector" ]; then
@@ -14,11 +21,6 @@ if [ ! -f "$TOOL_DIR/stub-detector" ]; then
   go build -o stub-detector main.go
   cd - > /dev/null
   echo "✅ Build complete"
-fi
-
-# Shift first arg if it's a directory (workspace)
-if [ -d "$WORKSPACE_DIR" ]; then
-  shift 2>/dev/null || true
 fi
 
 # Run the detector

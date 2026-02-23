@@ -1,0 +1,6 @@
+[   37083ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4200/api/v1/auth/register:0
+[   37085ms] [ERROR] HTTP Error 504: {url: /api/v1/auth/register, method: POST, error: Error: 504} @ http://localhost:4200/main.js:14430
+[   37086ms] [ERROR] [AuthService] register() error HttpErrorResponse @ http://localhost:4200/main.js:20876
+[   37086ms] [ERROR] [AUTH-SERVICE] Registration error: HttpErrorResponse @ http://localhost:4200/main.js:16376
+[   37087ms] [ERROR] [RegisterComponent] register failed {error: Registration failed, fieldErrors: undefined} @ http://localhost:4200/main.js:20876
+[   37088ms] [ERROR] [AUTH-CLIENT] Registration failed: Registration failed @ http://localhost:4200/main.js:2056

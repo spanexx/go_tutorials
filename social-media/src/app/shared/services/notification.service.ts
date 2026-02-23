@@ -115,6 +115,17 @@ export class NotificationService extends BaseApiService {
   }
 
   /**
+   * Add a new notification to the list
+   * @param notification - Notification to add
+   */
+  addNotification(notification: Notification): void {
+    this.notificationsSignal.update(notifications => {
+      // Add to beginning of list (newest first)
+      return [notification, ...notifications];
+    });
+  }
+
+  /**
    * Mark a notification as read
    * @param notificationId - ID of notification to mark as read
    */

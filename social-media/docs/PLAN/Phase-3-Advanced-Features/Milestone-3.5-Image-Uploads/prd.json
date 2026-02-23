@@ -112,7 +112,7 @@
         "WebP conversion (optional)",
         "Responsive images (srcset)"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

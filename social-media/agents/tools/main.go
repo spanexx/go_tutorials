@@ -39,6 +39,7 @@ var patterns = []struct {
 	{"mock", regexp.MustCompile(`//\s*[Mm]ock\b`)},
 	{"stub", regexp.MustCompile(`//\s*[Ss]tub\b`)},
 	{"not_implemented", regexp.MustCompile(`//\s*(?:not\s+implemented|unimplemented)`)},
+	{"simulate", regexp.MustCompile(`(?i)//\s*simul\w*\b`)},
 }
 
 var tsPatterns = []struct {

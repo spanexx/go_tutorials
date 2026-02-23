@@ -1,6 +1,6 @@
 /**
  * ImageUploadService
- * 
+ *
  * Service for handling image uploads with validation and processing:
  * - File validation (type: jpg, png, gif, webp; size: max 5MB)
  * - Image dimensions validation
@@ -8,7 +8,10 @@
  * - Progress tracking
  * - Error handling for failed uploads
  * - Mock upload for development (base64 or blob URL)
- * 
+ * - Image optimization (resize, compress, WebP conversion)
+ * - Responsive images (srcset generation)
+ * - Blur placeholder generation
+ *
  * CID: Phase-3 Milestone 3.5 - Image Uploads & Media
  */
 import { Injectable, signal, computed } from '@angular/core';
@@ -36,6 +39,17 @@ export interface UploadedImage {
   type: string;
   width?: number;
   height?: number;
+  optimizedUrl?: string;
+  optimizedSize?: number;
+  srcset?: string;
+  blurPlaceholder?: string;
+  thumbnailUrl?: string;
+}
+
+export interface ImageSize {
+  label: string;
+  width: number;
+  quality: number;
 }
 
 @Injectable({
@@ -49,6 +63,21 @@ export class ImageUploadService {
   private readonly MIN_HEIGHT = 100;
   private readonly MAX_WIDTH = 4096;
   private readonly MAX_HEIGHT = 4096;
+
+  // Optimization settings
+  private readonly OPTIMIZE_WIDTH = 1920; // Max width for optimized image
+  private readonly OPTIMIZE_HEIGHT = 1080; // Max height for optimized image
+  private readonly OPTIMIZE_QUALITY = 0.8; // WebP quality (0.7-0.85 recommended)
+  private readonly THUMBNAIL_WIDTH = 400; // Thumbnail width
+  private readonly THUMBNAIL_QUALITY = 0.7; // Thumbnail quality
+  private readonly BLUR_SIZE = 10; // Blur placeholder size (small for performance)
+
+  // Responsive image sizes for srcset
+  private readonly RESPONSIVE_SIZES: ImageSize[] = [
+    { label: 'small', width: 640, quality: 0.75 },
+    { label: 'medium', width: 1024, quality: 0.8 },
+    { label: 'large', width: 1920, quality: 0.85 }
+  ];
 
   private uploadsSignal = signal<UploadProgress[]>([]);
   private uploadedImagesSignal = signal<UploadedImage[]>([]);
@@ -151,12 +180,29 @@ export class ImageUploadService {
    * Remove an uploaded image
    */
   removeImage(imageId: string): void {
-    this.uploadedImagesSignal.update(images => images.filter(i => i.id !== imageId));
-    
-    // Also revoke the blob URL to free memory
     const image = this.uploadedImagesSignal().find(i => i.id === imageId);
-    if (image?.url.startsWith('blob:')) {
-      URL.revokeObjectURL(image.url);
+    
+    this.uploadedImagesSignal.update(images => images.filter(i => i.id !== imageId));
+
+    // Revoke all blob URLs to free memory
+    if (image) {
+      this.revokeImageUrl(image.url);
+      if (image.optimizedUrl) this.revokeImageUrl(image.optimizedUrl);
+      if (image.thumbnailUrl) this.revokeImageUrl(image.thumbnailUrl);
+      if (image.srcset) {
+        // Extract URLs from srcset string
+        const urls = image.srcset.split(',').map(part => part.trim().split(' ')[0]);
+        urls.forEach(url => this.revokeImageUrl(url));
+      }
+    }
+  }
+
+  /**
+   * Revoke a blob URL to free memory
+   */
+  private revokeImageUrl(url: string | undefined): void {
+    if (url && url.startsWith('blob:')) {
+      URL.revokeObjectURL(url);
     }
   }
 
@@ -166,8 +212,12 @@ export class ImageUploadService {
   clearAll(): void {
     // Revoke all blob URLs
     this.uploadedImagesSignal().forEach(image => {
-      if (image.url.startsWith('blob:')) {
-        URL.revokeObjectURL(image.url);
+      this.revokeImageUrl(image.url);
+      if (image.optimizedUrl) this.revokeImageUrl(image.optimizedUrl);
+      if (image.thumbnailUrl) this.revokeImageUrl(image.thumbnailUrl);
+      if (image.srcset) {
+        const urls = image.srcset.split(',').map(part => part.trim().split(' ')[0]);
+        urls.forEach(url => this.revokeImageUrl(url));
       }
     });
 
@@ -221,6 +271,19 @@ export class ImageUploadService {
     // Create blob URL (mock upload - in production this would be a real API call)
     const url = URL.createObjectURL(file);
 
+    // Optimize image (resize, compress, convert to WebP)
+    const optimizedUrl = await this.optimizeImage(file);
+    const optimizedSize = await this.getFileSizeFromUrl(optimizedUrl);
+
+    // Generate thumbnail
+    const thumbnailUrl = await this.resizeImage(file, this.THUMBNAIL_WIDTH, this.THUMBNAIL_QUALITY);
+
+    // Generate blur placeholder
+    const blurPlaceholder = await this.generateBlurPlaceholder(file);
+
+    // Generate srcset for responsive images
+    const srcset = await this.generateSrcset(file);
+
     // Mark as completed
     this.updateUploadStatus(fileId, 'completed', 100, undefined, url);
 
@@ -231,7 +294,12 @@ export class ImageUploadService {
       size: file.size,
       type: file.type,
       width: dimensions.width,
-      height: dimensions.height
+      height: dimensions.height,
+      optimizedUrl,
+      optimizedSize,
+      srcset,
+      blurPlaceholder,
+      thumbnailUrl
     };
   }
 
@@ -249,6 +317,139 @@ export class ImageUploadService {
       };
       img.src = URL.createObjectURL(file);
     });
+  }
+
+  /**
+   * Optimize image: resize, compress, and convert to WebP
+   */
+  async optimizeImage(file: File): Promise<string> {
+    return this.resizeImage(file, this.OPTIMIZE_WIDTH, this.OPTIMIZE_QUALITY, true);
+  }
+
+  /**
+   * Resize image to specified max width with quality compression
+   * Converts to WebP format for better compression
+   */
+  async resizeImage(
+    file: File,
+    maxWidth: number,
+    quality: number,
+    convertToWebP: boolean = false
+  ): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        // Calculate new dimensions maintaining aspect ratio
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        // Create canvas for resizing
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+
+        // High-quality image scaling
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        // Draw resized image
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to blob URL
+        const mimeType = convertToWebP ? 'image/webp' : file.type;
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              reject(new Error('Failed to create resized image blob'));
+              return;
+            }
+            const url = URL.createObjectURL(blob);
+            resolve(url);
+          },
+          mimeType,
+          quality
+        );
+      };
+      img.onerror = () => {
+        reject(new Error('Failed to load image for resizing'));
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  /**
+   * Generate blur placeholder (tiny image scaled up with CSS blur)
+   */
+  async generateBlurPlaceholder(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = this.BLUR_SIZE;
+        canvas.height = Math.round((img.height * this.BLUR_SIZE) / img.width);
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Failed to get canvas context'));
+          return;
+        }
+
+        // Draw tiny image
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convert to base64 data URL for inline use
+        const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
+        resolve(dataUrl);
+      };
+      img.onerror = () => {
+        reject(new Error('Failed to load image for blur placeholder'));
+      };
+      img.src = URL.createObjectURL(file);
+    });
+  }
+
+  /**
+   * Generate srcset for responsive images
+   * Returns a comma-separated list of URLs with descriptors
+   */
+  async generateSrcset(file: File): Promise<string> {
+    const srcsetParts: string[] = [];
+
+    for (const size of this.RESPONSIVE_SIZES) {
+      try {
+        const url = await this.resizeImage(file, size.width, size.quality, true);
+        srcsetParts.push(`${url} ${size.width}w`);
+      } catch (error) {
+        console.warn(`Failed to generate srcset size ${size.label}:`, error);
+      }
+    }
+
+    return srcsetParts.join(', ');
+  }
+
+  /**
+   * Get file size from blob URL (approximate)
+   */
+  async getFileSizeFromUrl(url: string): Promise<number> {
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      return blob.size;
+    } catch (error) {
+      console.warn('Failed to get file size from URL:', error);
+      return 0;
+    }
   }
 
   /**

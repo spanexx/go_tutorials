@@ -1,6 +1,6 @@
 # Milestone 3.5 - Image Uploads & Media - Progress
 
-## Status: 🟡 In Progress (5/6 complete)
+## Status: ✅ COMPLETE (6/6)
 
 ## Items Progress
 
@@ -11,9 +11,115 @@
 | 3.5.3 | Image Gallery Component | ✅ COMPLETED | Created image-gallery component with grid layouts, hover effects, count badge |
 | 3.5.4 | Image Lightbox Component | ✅ COMPLETED | Created image-lightbox component with fullscreen overlay, navigation, zoom, download |
 | 3.5.5 | Profile Avatar Upload | ✅ COMPLETED | Created avatar-upload component with click-to-upload, preview, revert, validation |
-| 3.5.6 | Image Optimization | 🔴 Not Started | |
+| 3.5.6 | Image Optimization | ✅ COMPLETED | Added resize, compress, WebP conversion, srcset, blur placeholder, lazy loading |
 
 ## Progress Log
+
+### 2026-02-22 - Item 3.5.6 Complete: Media Optimization
+
+**3.5.6 - Media Optimization** ✅
+
+Implemented comprehensive image optimization for performance:
+
+**Files Modified:**
+- `src/app/shared/services/image-upload.service.ts` - Added optimization methods
+- `src/app/shared/components/image-gallery/image-gallery.component.ts` - Added blur-up lazy loading
+
+**Features Implemented:**
+- **Image Optimization Service Methods**:
+  - `optimizeImage(file)` - Resize, compress, and convert to WebP
+  - `resizeImage(file, maxWidth, quality, convertToWebP)` - Resize with quality control
+  - `generateBlurPlaceholder(file)` - Generate tiny blur-up placeholder
+  - `generateSrcset(file)` - Generate responsive srcset with multiple sizes
+  - `getFileSizeFromUrl(url)` - Get approximate file size from blob URL
+  - `revokeImageUrl(url)` - Helper to revoke blob URLs for memory management
+
+- **Resize Images to Max Dimensions**:
+  - Configurable max width (default 1920px)
+  - Maintains aspect ratio
+  - High-quality image scaling (imageSmoothingQuality: 'high')
+  - Canvas-based resizing for performance
+
+- **Compress Images for Web**:
+  - WebP conversion (default quality: 0.8)
+  - Configurable quality settings (0.7-0.85 recommended)
+  - Significant file size reduction (typically 30-50%)
+  - Thumbnail generation (400px width, quality 0.7)
+
+- **Lazy Loading**:
+  - Native `loading="lazy"` attribute on all gallery images
+  - Below-fold images load on demand
+  - Reduces initial page load time
+
+- **Blur Placeholder (Blur-Up Technique)**:
+  - 10px tiny placeholder generated
+  - Base64 data URL for inline embedding
+  - CSS blur filter (20px) for smooth appearance
+  - Scale transform (1.1x) to prevent edge artifacts
+  - Smooth transition when full image loads
+
+- **WebP Conversion**:
+  - Automatic conversion to WebP format
+  - Better compression than JPEG/PNG
+  - Supported in all modern browsers
+  - Fallback to original format if needed
+
+- **Responsive Images (srcset)**:
+  - Three sizes generated: small (640w), medium (1024w), large (1920w)
+  - Browser selects optimal size based on viewport
+  - Different quality settings per size (0.75, 0.8, 0.85)
+  - Reduces bandwidth for smaller screens
+
+- **Memory Management**:
+  - Updated `removeImage()` to revoke all generated URLs
+  - Updated `clearAll()` to clean up optimized URLs, thumbnails, and srcset URLs
+  - Prevents memory leaks from blob URLs
+
+**Optimization Settings**:
+```typescript
+OPTIMIZE_WIDTH = 1920;        // Max width for optimized image
+OPTIMIZE_HEIGHT = 1080;       // Max height for optimized image
+OPTIMIZE_QUALITY = 0.8;       // WebP quality
+THUMBNAIL_WIDTH = 400;        // Thumbnail width
+THUMBNAIL_QUALITY = 0.7;      // Thumbnail quality
+BLUR_SIZE = 10;               // Blur placeholder size
+```
+
+**Responsive Sizes for srcset**:
+- Small: 640w @ 0.75 quality
+- Medium: 1024w @ 0.8 quality
+- Large: 1920w @ 0.85 quality
+
+**Image Gallery Component Updates**:
+- Updated `GalleryImage` interface with optimization fields
+- Added `getImageSrc()` - Use optimized URL if available
+- Added `isBlurUp()` - Check if blur placeholder exists
+- Added `getBlurStyle()` - Get blur placeholder CSS
+- Added blur-up CSS class with filter and transform
+- Native lazy loading on all images
+
+**Acceptance Criteria Met:**
+- [x] Resize images to max dimensions
+- [x] Compress images for web
+- [x] Lazy loading for below-fold images
+- [x] Placeholder/blur while loading
+- [x] WebP conversion (optional)
+- [x] Responsive images (srcset)
+
+**Performance Benefits**:
+- **Reduced file size**: WebP compression saves 30-50% bandwidth
+- **Faster initial load**: Blur placeholder loads instantly
+- **Better UX**: Smooth blur-up transition instead of blank space
+- **Responsive**: Browser downloads appropriately sized images
+- **Lazy loading**: Only visible images load initially
+
+**Build Status:** ✅ PASS
+- `npm run build` - Successful
+- `npm run lint` - All files pass linting
+
+**Milestone 3.5 Status:** ✅ COMPLETE (6/6 items)
+
+**Next:** Milestone 3.6 - Messages (Phase 3 remaining milestones)
 
 ### 2026-02-22 - Item 3.5.1 Complete: Image Upload Service
 

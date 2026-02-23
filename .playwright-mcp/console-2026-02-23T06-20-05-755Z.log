@@ -1,0 +1,6 @@
+[   31750ms] [ERROR] Failed to load resource: the server responded with a status of 504 (Gateway Timeout) @ http://localhost:4200/api/v1/auth/login:0
+[   31754ms] [ERROR] HTTP Error 504: {url: /api/v1/auth/login, method: POST, error: Error: 504} @ http://localhost:4200/main.js:14430
+[   31756ms] [ERROR] [AuthService] login() error HttpErrorResponse @ http://localhost:4200/main.js:20876
+[   31756ms] [ERROR] [AUTH-SERVICE] Login error: HttpErrorResponse @ http://localhost:4200/main.js:16289
+[   31757ms] [ERROR] [LoginComponent] login failed {error: Login failed, fieldErrors: undefined} @ http://localhost:4200/main.js:20876
+[   31758ms] [ERROR] [AUTH-CLIENT] Login failed: Login failed @ http://localhost:4200/main.js:1763

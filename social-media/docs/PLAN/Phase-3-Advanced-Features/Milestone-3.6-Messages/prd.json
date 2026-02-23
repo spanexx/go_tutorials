@@ -28,7 +28,7 @@
         "Signal-based conversations state",
         "Mock data for development"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.6.2",
@@ -45,7 +45,7 @@
         "New conversation button",
         "Search conversations"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.6.3",
@@ -62,7 +62,7 @@
         "Scroll to bottom on new message",
         "Load more history on scroll up"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.6.4",
@@ -78,7 +78,7 @@
         "File attachment (placeholder)",
         "Typing indicator trigger"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "3.6.5",
@@ -93,7 +93,7 @@
         "Prevent duplicate conversations",
         "Navigate to new conversation"
       ],
-      "passes": false
+      "passes": true
     }
   ],
   "affected_files": [

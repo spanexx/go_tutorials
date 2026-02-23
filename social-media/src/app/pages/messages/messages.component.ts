@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { LucideAngularModule, Search, Edit, Phone, Video, Info, Plus, Smile, Send, Loader2 } from 'lucide-angular';
 import { MessageService } from '../../shared/services/message.service';
-import { Conversation, Message } from '../../shared/models/message.model';
+import { Conversation, Message, User } from '../../shared/models/message.model';
 import { IMAGE_PLACEHOLDERS } from '../../shared/constants/app.constants';
+import { AuthService } from '../../shared/services/auth.service';
 
 @Component({
   selector: 'app-messages',
@@ -38,6 +39,9 @@ export class MessagesComponent implements OnInit {
   activeMessages = computed(() => this.messageService.activeMessages());
   totalUnreadCount = computed(() => this.messageService.getTotalUnreadCount());
 
+  // Current user ID for message ownership
+  currentUserId = computed(() => this.authService.user?.id || '');
+
   filteredConversations = computed(() => {
     const query = this.searchQuery().toLowerCase();
     if (!query) return this.conversations();
@@ -49,7 +53,10 @@ export class MessagesComponent implements OnInit {
     });
   });
 
-  constructor(public messageService: MessageService) {}
+  constructor(
+    public messageService: MessageService,
+    private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.loadConversations();
@@ -92,10 +99,13 @@ export class MessagesComponent implements OnInit {
     this.newMessageContent.set(input.value);
   }
 
-  getOtherUser(conversation: Conversation): any {
-    // In a real app, get current user ID from auth service
-    // For now, return first participant (will need auth integration)
-    return conversation.participants[0] || { id: '', username: '', display_name: '', avatar_url: '' };
+  getOtherUser(conversation: Conversation): User {
+    // Filter out current user from participants to get the other user
+    const currentId = this.currentUserId();
+    const otherUser = conversation.participants.find(p => p.id !== currentId);
+    
+    // Return the other participant, or a default user if not found
+    return otherUser || { id: '', username: '', display_name: '', avatar_url: '' };
   }
 
   formatTimestamp(timestamp: string): string {
@@ -117,7 +127,8 @@ export class MessagesComponent implements OnInit {
   }
 
   isOwnMessage(message: Message): boolean {
-    // In real app, compare with current user ID from auth service
-    return false; // Placeholder - needs auth integration
+    // Compare message sender ID with current user ID from AuthService
+    const currentId = this.currentUserId();
+    return currentId !== '' && message.sender_id === currentId;
   }
 }

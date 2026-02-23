@@ -1,6 +1,6 @@
 /**
  * ImageGalleryComponent
- * 
+ *
  * Gallery display for posts with multiple images:
  * - Grid layout for multiple images (2x2, 1+2, etc.)
  * - Single image full width
@@ -8,10 +8,12 @@
  * - Click to open lightbox
  * - Image count badge for 3+ images
  * - Responsive grid adjustment
- * 
+ * - Blur-up lazy loading
+ * - Responsive images with srcset
+ *
  * CID: Phase-3 Milestone 3.5 - Image Uploads & Media
  */
-import { Component, Input, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Input, Output, EventEmitter, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Maximize2, Images } from 'lucide-angular';
 
@@ -21,6 +23,10 @@ export interface GalleryImage {
   alt?: string;
   width?: number;
   height?: number;
+  optimizedUrl?: string;
+  srcset?: string;
+  blurPlaceholder?: string;
+  thumbnailUrl?: string;
 }
 
 @Component({
@@ -29,26 +35,29 @@ export interface GalleryImage {
   imports: [CommonModule, LucideAngularModule],
   template: `
     @if (images().length > 0) {
-      <div 
-        class="image-gallery" 
+      <div
+        class="image-gallery"
         [class]="gridClass()"
         (click)="openLightbox($event)"
       >
         @for (image of displayImages(); track image.id; let i = $index) {
           <div class="gallery-item" [class]="getItemClass(i)">
-            <img 
-              [src]="image.url" 
-              [alt]="image.alt || 'Gallery image'" 
+            <img
+              [src]="getImageSrc(image)"
+              [srcset]="image.srcset || ''"
+              [alt]="image.alt || 'Gallery image'"
               class="gallery-image"
               loading="lazy"
+              [class.blur-up]="isBlurUp(image)"
+              [style.background-image]="getBlurStyle(image)"
             />
-            
+
             @if (showOverlay(i)) {
               <div class="image-overlay">
                 <lucide-icon [img]="maximizeIcon" [size]="24"></lucide-icon>
               </div>
             }
-            
+
             @if (showCountBadge()) {
               <div class="count-badge">
                 <lucide-icon [img]="imagesIcon" [size]="14"></lucide-icon>
@@ -171,6 +180,14 @@ export interface GalleryImage {
         width: 100%;
         height: 100%;
         transition: transform 0.3s ease;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+
+        &.blur-up {
+          filter: blur(20px);
+          transform: scale(1.1);
+        }
       }
 
       .image-overlay {
@@ -283,18 +300,42 @@ export class ImageGalleryComponent {
     if (!this.lightboxEnabled) return;
 
     event.stopPropagation();
-    
+
     // Get the clicked image index
     const target = event.target as HTMLElement;
     const galleryItem = target.closest('.gallery-item');
-    
+
     if (galleryItem) {
       const index = Array.from(galleryItem.parentElement?.children || []).indexOf(galleryItem);
       const image = this.imagesSignal()[index];
-      
+
       if (image) {
         this.imageClick.emit({ image, index });
       }
     }
+  }
+
+  /**
+   * Get image src - use optimized URL if available, otherwise original
+   */
+  getImageSrc(image: GalleryImage): string {
+    return image.optimizedUrl || image.url;
+  }
+
+  /**
+   * Check if blur-up effect should be applied
+   */
+  isBlurUp(image: GalleryImage): boolean {
+    return !!image.blurPlaceholder;
+  }
+
+  /**
+   * Get blur placeholder background style
+   */
+  getBlurStyle(image: GalleryImage): string {
+    if (image.blurPlaceholder) {
+      return `url("${image.blurPlaceholder}")`;
+    }
+    return 'none';
   }
 }

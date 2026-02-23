@@ -2,66 +2,66 @@
   "milestone": "0.1",
   "title": "Unmock Codebase",
   "problem": "Convert mocked/stubbed implementations and TODO-style markers into real implementations.",
-  "generated_at": "2026-02-22T14:38:36Z",
+  "generated_at": "2026-02-23T06:05:20Z",
   "max_items": 200,
   "findings_count": 4,
-  "files_with_findings": 2,
+  "files_with_findings": 4,
   "items": [
     {
       "id": "C.001",
-      "title": "Unmock stub: mock in src/app/shared/services/analytics.service.ts:383",
+      "title": "Unmock stub: simulate in src/app/pages/explore/explore.component.ts:124",
       "type": "tech_debt",
-      "description": "reachGrowth: 5.2 // Mock growth percentage",
-      "file": "src/app/shared/services/analytics.service.ts",
-      "line": 383,
-      "kind": "mock",
+      "description": "// Simulate API call",
+      "file": "src/app/pages/explore/explore.component.ts",
+      "line": 124,
+      "kind": "simulate",
       "acceptance_criteria": [
         "Replace stub with real implementation",
         "Remove TODO/placeholder markers"
       ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.002",
-      "title": "Unmock stub: for_now in src/app/shared/services/analytics.service.ts:397",
+      "title": "Unmock stub: simulate in src/app/shared/components/avatar-upload/avatar-upload.component.ts:413",
       "type": "tech_debt",
-      "description": "// For now, return mock comparison data",
-      "file": "src/app/shared/services/analytics.service.ts",
-      "line": 397,
-      "kind": "for_now",
+      "description": "// Simulate upload progress",
+      "file": "src/app/shared/components/avatar-upload/avatar-upload.component.ts",
+      "line": 413,
+      "kind": "simulate",
       "acceptance_criteria": [
         "Replace stub with real implementation",
         "Remove TODO/placeholder markers"
       ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.003",
-      "title": "Unmock stub: mock in src/app/shared/services/analytics.service.ts:400",
+      "title": "Unmock stub: simulate in src/app/shared/services/image-upload.service.ts:268",
       "type": "tech_debt",
-      "description": "// Mock previous period stats (slightly lower)",
-      "file": "src/app/shared/services/analytics.service.ts",
-      "line": 400,
-      "kind": "mock",
+      "description": "// Simulate upload progress",
+      "file": "src/app/shared/services/image-upload.service.ts",
+      "line": 268,
+      "kind": "simulate",
       "acceptance_criteria": [
         "Replace stub with real implementation",
         "Remove TODO/placeholder markers"
       ],
-      "passes": true
+      "passes": false
     },
     {
       "id": "C.004",
-      "title": "Unmock stub: mock in src/app/shared/services/notification.service.ts:96",
+      "title": "Unmock stub: simulate in src/app/shared/services/refresh.service.ts:50",
       "type": "tech_debt",
-      "description": "// Mock data for development",
-      "file": "src/app/shared/services/notification.service.ts",
-      "line": 96,
-      "kind": "mock",
+      "description": "// Simulate API call to check for new posts",
+      "file": "src/app/shared/services/refresh.service.ts",
+      "line": 50,
+      "kind": "simulate",
       "acceptance_criteria": [
         "Replace stub with real implementation",
         "Remove TODO/placeholder markers"
       ],
-      "passes": true
+      "passes": false
     }
   ]
 }

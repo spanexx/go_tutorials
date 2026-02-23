@@ -1,0 +1,3193 @@
+{
+  "version": "2.0.0",
+  "workspace": {
+    "id": "ws-1771870575721759821",
+    "name": "go_tutorials",
+    "path": "/home/spanexx/Shared/Learn/go_tutorials",
+    "created_at": "2026-02-23T19:16:15.721768712+01:00",
+    "updated_at": "2026-02-23T19:17:41.160901524+01:00"
+  },
+  "phases": [
+    {
+      "id": "phase-1",
+      "name": "Phase 0: Critic Backlog",
+      "description": "Backend unmocking and basic functionality",
+      "order": 1,
+      "status": "pending",
+      "milestones": [
+        {
+          "id": "milestone-1-1",
+          "name": "Milestone 0.1: Unmock Codebase",
+          "description": "Eliminate mock data and implement real database-backed services",
+          "order": 1,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:16:43.714013465+01:00",
+          "updated_at": "2026-02-23T19:16:43.714013753+01:00"
+        }
+      ],
+      "created_at": "2026-02-23T19:16:23.830770257+01:00",
+      "updated_at": "2026-02-23T19:16:23.830770404+01:00"
+    },
+    {
+      "id": "phase-1",
+      "name": "Phase 1: Foundation",
+      "description": "Authentication, Core UI, Feed, Backend Foundation, Email Service",
+      "order": 1,
+      "status": "pending",
+      "milestones": [],
+      "created_at": "2026-02-23T19:16:26.885153299+01:00",
+      "updated_at": "2026-02-23T19:16:26.885153426+01:00"
+    },
+    {
+      "id": "phase-2",
+      "name": "Phase 2: Social Interactions",
+      "description": "Reactions, Comments, Hashtags, Sharing, Social Graph, Posts API",
+      "order": 2,
+      "status": "pending",
+      "milestones": [
+        {
+          "id": "milestone-2-2",
+          "name": "Milestone 1.1: Authentication System",
+          "description": "Frontend login/register pages and authentication service with state management",
+          "order": 2,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-1",
+              "title": "Login Page Implementation",
+              "description": "Create login form with validation and auth integration",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.254376848+01:00",
+              "updated_at": "2026-02-23T19:17:36.254377256+01:00"
+            },
+            {
+              "id": "task-2",
+              "title": "Registration Page Implementation",
+              "description": "Create registration form with email validation and password confirmation",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.279906248+01:00",
+              "updated_at": "2026-02-23T19:17:36.279906566+01:00"
+            },
+            {
+              "id": "task-3",
+              "title": "Authentication Service \u0026 State Management",
+              "description": "Implement AuthService with signals and localStorage persistence",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.300083736+01:00",
+              "updated_at": "2026-02-23T19:17:36.300084126+01:00"
+            },
+            {
+              "id": "task-4",
+              "title": "Route Guards Implementation",
+              "description": "Create authGuard and guestGuard for protected routes",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.321392425+01:00",
+              "updated_at": "2026-02-23T19:17:36.32139266+01:00"
+            },
+            {
+              "id": "task-5",
+              "title": "User Menu \u0026 Logout Functionality",
+              "description": "Add user dropdown menu with profile, settings, logout options",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.337424164+01:00",
+              "updated_at": "2026-02-23T19:17:36.33742439+01:00"
+            },
+            {
+              "id": "task-54",
+              "title": "Login Page Implementation",
+              "description": "Create login form with validation and auth integration",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:39.977875382+01:00",
+              "updated_at": "2026-02-23T19:17:39.977875592+01:00"
+            },
+            {
+              "id": "task-55",
+              "title": "Registration Page Implementation",
+              "description": "Create registration form with email validation and password confirmation",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:39.998035394+01:00",
+              "updated_at": "2026-02-23T19:17:39.998035671+01:00"
+            },
+            {
+              "id": "task-56",
+              "title": "Authentication Service \u0026 State Management",
+              "description": "Implement AuthService with signals and localStorage persistence",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.016895872+01:00",
+              "updated_at": "2026-02-23T19:17:40.016896048+01:00"
+            },
+            {
+              "id": "task-57",
+              "title": "Route Guards Implementation",
+              "description": "Create authGuard and guestGuard for protected routes",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.034600951+01:00",
+              "updated_at": "2026-02-23T19:17:40.034601106+01:00"
+            },
+            {
+              "id": "task-58",
+              "title": "User Menu \u0026 Logout Functionality",
+              "description": "Add user dropdown menu with profile, settings, logout options",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.057927577+01:00",
+              "updated_at": "2026-02-23T19:17:40.05792786+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:16:47.335179047+01:00",
+          "updated_at": "2026-02-23T19:16:47.335179197+01:00"
+        },
+        {
+          "id": "milestone-2-3",
+          "name": "Milestone 1.2: Core UI Components",
+          "description": "Reusable components: card, button, input, modal, sidebar, navbar",
+          "order": 3,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-6",
+              "title": "Card Component",
+              "description": "Reusable card component with header, body, footer sections",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.350949608+01:00",
+              "updated_at": "2026-02-23T19:17:36.350949763+01:00"
+            },
+            {
+              "id": "task-7",
+              "title": "Button Component",
+              "description": "Button component with variants, sizes, loading states",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.364128604+01:00",
+              "updated_at": "2026-02-23T19:17:36.364128751+01:00"
+            },
+            {
+              "id": "task-8",
+              "title": "Input Component",
+              "description": "Text input with validation, error messages, labels",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.377895156+01:00",
+              "updated_at": "2026-02-23T19:17:36.377895401+01:00"
+            },
+            {
+              "id": "task-9",
+              "title": "Modal Component",
+              "description": "Modal dialog with overlay, close button, actions",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.393043897+01:00",
+              "updated_at": "2026-02-23T19:17:36.393044119+01:00"
+            },
+            {
+              "id": "task-10",
+              "title": "Sidebar Navigation",
+              "description": "Responsive sidebar with menu items and collapse",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.407502491+01:00",
+              "updated_at": "2026-02-23T19:17:36.407502657+01:00"
+            },
+            {
+              "id": "task-11",
+              "title": "Navbar Component",
+              "description": "Top navigation bar with logo, menu, user profile",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.420335556+01:00",
+              "updated_at": "2026-02-23T19:17:36.420335703+01:00"
+            },
+            {
+              "id": "task-59",
+              "title": "Card Component",
+              "description": "Reusable card component with header, body, footer sections",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.080875713+01:00",
+              "updated_at": "2026-02-23T19:17:40.080876035+01:00"
+            },
+            {
+              "id": "task-60",
+              "title": "Button Component",
+              "description": "Button component with variants, sizes, loading states",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.103047118+01:00",
+              "updated_at": "2026-02-23T19:17:40.103047331+01:00"
+            },
+            {
+              "id": "task-61",
+              "title": "Input Component",
+              "description": "Text input with validation, error messages, labels",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.128098007+01:00",
+              "updated_at": "2026-02-23T19:17:40.128098362+01:00"
+            },
+            {
+              "id": "task-62",
+              "title": "Modal Component",
+              "description": "Modal dialog with overlay, close button, actions",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.150767156+01:00",
+              "updated_at": "2026-02-23T19:17:40.15076737+01:00"
+            },
+            {
+              "id": "task-63",
+              "title": "Sidebar Navigation",
+              "description": "Responsive sidebar with menu items and collapse",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.168628798+01:00",
+              "updated_at": "2026-02-23T19:17:40.168628946+01:00"
+            },
+            {
+              "id": "task-64",
+              "title": "Navbar Component",
+              "description": "Top navigation bar with logo, menu, user profile",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.185924712+01:00",
+              "updated_at": "2026-02-23T19:17:40.185924871+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:16:50.435227361+01:00",
+          "updated_at": "2026-02-23T19:16:50.435227538+01:00"
+        },
+        {
+          "id": "milestone-2-4",
+          "name": "Milestone 1.3: Feed Page",
+          "description": "Homepage feed with posts, pagination, lazy loading, filtering",
+          "order": 4,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.766396697+01:00",
+          "updated_at": "2026-02-23T19:17:01.766396937+01:00"
+        },
+        {
+          "id": "milestone-2-5",
+          "name": "Milestone 1.5: Go Backend Foundation",
+          "description": "Auth service with database, JWT, migrations, OpenAPI docs",
+          "order": 5,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.780308489+01:00",
+          "updated_at": "2026-02-23T19:17:01.780308691+01:00"
+        },
+        {
+          "id": "milestone-2-6",
+          "name": "Milestone 1.6: Email Service Integration",
+          "description": "Email notifications for registration, password reset, activity",
+          "order": 6,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.792485844+01:00",
+          "updated_at": "2026-02-23T19:17:01.792486057+01:00"
+        },
+        {
+          "id": "milestone-2-27",
+          "name": "Milestone 1.3: Feed Page",
+          "description": "Homepage feed with posts, pagination, lazy loading, filtering",
+          "order": 27,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.059725983+01:00",
+          "updated_at": "2026-02-23T19:17:05.059726202+01:00"
+        },
+        {
+          "id": "milestone-2-28",
+          "name": "Milestone 1.5: Go Backend Foundation",
+          "description": "Auth service with database, JWT, migrations, OpenAPI docs",
+          "order": 28,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-12",
+              "title": "Project Structure \u0026 Module Setup",
+              "description": "Initialize Go module with standard project layout",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.435247762+01:00",
+              "updated_at": "2026-02-23T19:17:36.435247929+01:00"
+            },
+            {
+              "id": "task-13",
+              "title": "Database Schema \u0026 Migrations",
+              "description": "Create PostgreSQL users table with migrations",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.448453975+01:00",
+              "updated_at": "2026-02-23T19:17:36.448454125+01:00"
+            },
+            {
+              "id": "task-14",
+              "title": "Configuration Management",
+              "description": "Implement Config struct with environment variables",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.46350409+01:00",
+              "updated_at": "2026-02-23T19:17:36.46350426+01:00"
+            },
+            {
+              "id": "task-15",
+              "title": "HTTP Server \u0026 Router Setup",
+              "description": "Set up Gin HTTP server with middleware",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.477672321+01:00",
+              "updated_at": "2026-02-23T19:17:36.47767252+01:00"
+            },
+            {
+              "id": "task-16",
+              "title": "Repository Layer (sqlc)",
+              "description": "Implement type-safe database access using sqlc",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.492256879+01:00",
+              "updated_at": "2026-02-23T19:17:36.492257059+01:00"
+            },
+            {
+              "id": "task-17",
+              "title": "Service Layer \u0026 Business Logic",
+              "description": "Implement authentication business logic in service layer",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.504570237+01:00",
+              "updated_at": "2026-02-23T19:17:36.504570478+01:00"
+            },
+            {
+              "id": "task-18",
+              "title": "JWT Authentication Middleware",
+              "description": "Implement JWT token generation, validation, and middleware",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.518121189+01:00",
+              "updated_at": "2026-02-23T19:17:36.518121387+01:00"
+            },
+            {
+              "id": "task-19",
+              "title": "HTTP Handlers \u0026 Routes",
+              "description": "Create HTTP handlers for auth endpoints",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.532284479+01:00",
+              "updated_at": "2026-02-23T19:17:36.532284651+01:00"
+            },
+            {
+              "id": "task-20",
+              "title": "API Documentation (OpenAPI/Swagger)",
+              "description": "Generate OpenAPI 3.0 documentation for all endpoints",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.547506912+01:00",
+              "updated_at": "2026-02-23T19:17:36.54750704+01:00"
+            },
+            {
+              "id": "task-21",
+              "title": "Integration Tests",
+              "description": "Write comprehensive integration tests for auth service",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.562500303+01:00",
+              "updated_at": "2026-02-23T19:17:36.562500453+01:00"
+            },
+            {
+              "id": "task-22",
+              "title": "Docker Setup",
+              "description": "Create docker-compose.yml for PostgreSQL and Redis",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.577606761+01:00",
+              "updated_at": "2026-02-23T19:17:36.577607433+01:00"
+            },
+            {
+              "id": "task-23",
+              "title": "Makefile \u0026 Build Scripts",
+              "description": "Create Makefile with build, run, test, migrate commands",
+              "status": "todo",
+              "priority": "low",
+              "created_at": "2026-02-23T19:17:36.594845958+01:00",
+              "updated_at": "2026-02-23T19:17:36.59484624+01:00"
+            },
+            {
+              "id": "task-65",
+              "title": "Project Structure \u0026 Module Setup",
+              "description": "Initialize Go module with standard project layout",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.205747921+01:00",
+              "updated_at": "2026-02-23T19:17:40.205748206+01:00"
+            },
+            {
+              "id": "task-66",
+              "title": "Database Schema \u0026 Migrations",
+              "description": "Create PostgreSQL users table with migrations",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.229796629+01:00",
+              "updated_at": "2026-02-23T19:17:40.229796822+01:00"
+            },
+            {
+              "id": "task-67",
+              "title": "Configuration Management",
+              "description": "Implement Config struct with environment variables",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.249759105+01:00",
+              "updated_at": "2026-02-23T19:17:40.249759269+01:00"
+            },
+            {
+              "id": "task-68",
+              "title": "HTTP Server \u0026 Router Setup",
+              "description": "Set up Gin HTTP server with middleware",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.273982808+01:00",
+              "updated_at": "2026-02-23T19:17:40.273983156+01:00"
+            },
+            {
+              "id": "task-69",
+              "title": "Repository Layer (sqlc)",
+              "description": "Implement type-safe database access using sqlc",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.290522662+01:00",
+              "updated_at": "2026-02-23T19:17:40.290522863+01:00"
+            },
+            {
+              "id": "task-70",
+              "title": "Service Layer \u0026 Business Logic",
+              "description": "Implement authentication business logic in service layer",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.319170789+01:00",
+              "updated_at": "2026-02-23T19:17:40.319170998+01:00"
+            },
+            {
+              "id": "task-71",
+              "title": "JWT Authentication Middleware",
+              "description": "Implement JWT token generation, validation, and middleware",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.343795457+01:00",
+              "updated_at": "2026-02-23T19:17:40.343795717+01:00"
+            },
+            {
+              "id": "task-72",
+              "title": "HTTP Handlers \u0026 Routes",
+              "description": "Create HTTP handlers for auth endpoints",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.364003048+01:00",
+              "updated_at": "2026-02-23T19:17:40.364003205+01:00"
+            },
+            {
+              "id": "task-73",
+              "title": "API Documentation (OpenAPI/Swagger)",
+              "description": "Generate OpenAPI 3.0 documentation for all endpoints",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.382449767+01:00",
+              "updated_at": "2026-02-23T19:17:40.382449928+01:00"
+            },
+            {
+              "id": "task-74",
+              "title": "Integration Tests",
+              "description": "Write comprehensive integration tests for auth service",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.400285522+01:00",
+              "updated_at": "2026-02-23T19:17:40.400285724+01:00"
+            },
+            {
+              "id": "task-75",
+              "title": "Docker Setup",
+              "description": "Create docker-compose.yml for PostgreSQL and Redis",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.420089634+01:00",
+              "updated_at": "2026-02-23T19:17:40.420090048+01:00"
+            },
+            {
+              "id": "task-76",
+              "title": "Makefile \u0026 Build Scripts",
+              "description": "Create Makefile with build, run, test, migrate commands",
+              "status": "todo",
+              "priority": "low",
+              "created_at": "2026-02-23T19:17:40.445110379+01:00",
+              "updated_at": "2026-02-23T19:17:40.445110758+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:17:05.076110768+01:00",
+          "updated_at": "2026-02-23T19:17:05.076110996+01:00"
+        },
+        {
+          "id": "milestone-2-29",
+          "name": "Milestone 1.6: Email Service Integration",
+          "description": "Email notifications for registration, password reset, activity",
+          "order": 29,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.094857997+01:00",
+          "updated_at": "2026-02-23T19:17:05.094858162+01:00"
+        }
+      ],
+      "created_at": "2026-02-23T19:16:29.992855769+01:00",
+      "updated_at": "2026-02-23T19:16:29.992856198+01:00"
+    },
+    {
+      "id": "phase-3",
+      "name": "Phase 3: Advanced Features",
+      "description": "Notifications, Bookmarks, Search, Analytics, Images, Messages, Realtime",
+      "order": 3,
+      "status": "pending",
+      "milestones": [
+        {
+          "id": "milestone-3-7",
+          "name": "Milestone 2.1: Post Reactions",
+          "description": "Like/react functionality with counts and user feedback",
+          "order": 7,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.814126009+01:00",
+          "updated_at": "2026-02-23T19:17:01.814126169+01:00"
+        },
+        {
+          "id": "milestone-3-8",
+          "name": "Milestone 2.2: Comments \u0026 Replies",
+          "description": "Nested commenting system with real-time updates",
+          "order": 8,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.830740339+01:00",
+          "updated_at": "2026-02-23T19:17:01.830740733+01:00"
+        },
+        {
+          "id": "milestone-3-9",
+          "name": "Milestone 2.3: Hashtags \u0026 Mentions",
+          "description": "Tag parsing, searching, mention notifications",
+          "order": 9,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.854155671+01:00",
+          "updated_at": "2026-02-23T19:17:01.854155869+01:00"
+        },
+        {
+          "id": "milestone-3-10",
+          "name": "Milestone 2.4: Sharing \u0026 Activity",
+          "description": "Share posts, activity feed, engagement metrics",
+          "order": 10,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.869226896+01:00",
+          "updated_at": "2026-02-23T19:17:01.86922708+01:00"
+        },
+        {
+          "id": "milestone-3-11",
+          "name": "Milestone 2.5: Social Graph",
+          "description": "Follow/unfollow system, follower lists, recommendations",
+          "order": 11,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.885252234+01:00",
+          "updated_at": "2026-02-23T19:17:01.885252415+01:00"
+        },
+        {
+          "id": "milestone-3-12",
+          "name": "Milestone 2.6: Posts Service API",
+          "description": "Full CRUD posts, comments, reactions with feed algorithms",
+          "order": 12,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.90132066+01:00",
+          "updated_at": "2026-02-23T19:17:01.901320849+01:00"
+        },
+        {
+          "id": "milestone-3-30",
+          "name": "Milestone 2.1: Post Reactions",
+          "description": "Like/react functionality with counts and user feedback",
+          "order": 30,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-24",
+              "title": "Reaction Types \u0026 Data Model",
+              "description": "Define reaction types (like, love, happy, angry, sad) and schema",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.610218096+01:00",
+              "updated_at": "2026-02-23T19:17:36.61021828+01:00"
+            },
+            {
+              "id": "task-25",
+              "title": "Backend Reaction Service",
+              "description": "Implement React, RemoveReaction, GetReactions methods",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.62585516+01:00",
+              "updated_at": "2026-02-23T19:17:36.625855318+01:00"
+            },
+            {
+              "id": "task-26",
+              "title": "Reaction API Endpoints",
+              "description": "Create POST/DELETE endpoints for react/unreact",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.642340472+01:00",
+              "updated_at": "2026-02-23T19:17:36.642340742+01:00"
+            },
+            {
+              "id": "task-27",
+              "title": "Frontend Reaction Component",
+              "description": "Create reaction button/picker component with animation",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.658068848+01:00",
+              "updated_at": "2026-02-23T19:17:36.658069028+01:00"
+            },
+            {
+              "id": "task-28",
+              "title": "Reaction Counts Display",
+              "description": "Display reaction counts per type under posts",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.673934599+01:00",
+              "updated_at": "2026-02-23T19:17:36.673934779+01:00"
+            },
+            {
+              "id": "task-29",
+              "title": "User Reaction History",
+              "description": "Track and display user's reaction history",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.692070097+01:00",
+              "updated_at": "2026-02-23T19:17:36.692070335+01:00"
+            },
+            {
+              "id": "task-77",
+              "title": "Reaction Types \u0026 Data Model",
+              "description": "Define reaction types (like, love, happy, angry, sad) and schema",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.466185055+01:00",
+              "updated_at": "2026-02-23T19:17:40.466185177+01:00"
+            },
+            {
+              "id": "task-78",
+              "title": "Backend Reaction Service",
+              "description": "Implement React, RemoveReaction, GetReactions methods",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.485849107+01:00",
+              "updated_at": "2026-02-23T19:17:40.485849277+01:00"
+            },
+            {
+              "id": "task-79",
+              "title": "Reaction API Endpoints",
+              "description": "Create POST/DELETE endpoints for react/unreact",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.508556297+01:00",
+              "updated_at": "2026-02-23T19:17:40.508556483+01:00"
+            },
+            {
+              "id": "task-80",
+              "title": "Frontend Reaction Component",
+              "description": "Create reaction button/picker component with animation",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.531038442+01:00",
+              "updated_at": "2026-02-23T19:17:40.531038593+01:00"
+            },
+            {
+              "id": "task-81",
+              "title": "Reaction Counts Display",
+              "description": "Display reaction counts per type under posts",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.550296511+01:00",
+              "updated_at": "2026-02-23T19:17:40.550296675+01:00"
+            },
+            {
+              "id": "task-82",
+              "title": "User Reaction History",
+              "description": "Track and display user's reaction history",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.577884395+01:00",
+              "updated_at": "2026-02-23T19:17:40.577884717+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:17:05.116570111+01:00",
+          "updated_at": "2026-02-23T19:17:05.116570321+01:00"
+        },
+        {
+          "id": "milestone-3-31",
+          "name": "Milestone 2.2: Comments \u0026 Replies",
+          "description": "Nested commenting system with real-time updates",
+          "order": 31,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.13244373+01:00",
+          "updated_at": "2026-02-23T19:17:05.132443883+01:00"
+        },
+        {
+          "id": "milestone-3-32",
+          "name": "Milestone 2.3: Hashtags \u0026 Mentions",
+          "description": "Tag parsing, searching, mention notifications",
+          "order": 32,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.148088135+01:00",
+          "updated_at": "2026-02-23T19:17:05.148088545+01:00"
+        },
+        {
+          "id": "milestone-3-33",
+          "name": "Milestone 2.4: Sharing \u0026 Activity",
+          "description": "Share posts, activity feed, engagement metrics",
+          "order": 33,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.165447788+01:00",
+          "updated_at": "2026-02-23T19:17:05.165447958+01:00"
+        },
+        {
+          "id": "milestone-3-34",
+          "name": "Milestone 2.5: Social Graph",
+          "description": "Follow/unfollow system, follower lists, recommendations",
+          "order": 34,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.187953428+01:00",
+          "updated_at": "2026-02-23T19:17:05.187953605+01:00"
+        },
+        {
+          "id": "milestone-3-35",
+          "name": "Milestone 2.6: Posts Service API",
+          "description": "Full CRUD posts, comments, reactions with feed algorithms",
+          "order": 35,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-30",
+              "title": "Posts CRUD Endpoints",
+              "description": "Implement POST/GET/PUT/DELETE endpoints for posts",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.709997589+01:00",
+              "updated_at": "2026-02-23T19:17:36.709997833+01:00"
+            },
+            {
+              "id": "task-31",
+              "title": "Posts Database Schema",
+              "description": "Create posts, comments, reactions tables with relationships",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.725135034+01:00",
+              "updated_at": "2026-02-23T19:17:36.72513527+01:00"
+            },
+            {
+              "id": "task-32",
+              "title": "Feed Algorithm Implementation",
+              "description": "Implement home, trending, and latest feed algorithms",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.740332279+01:00",
+              "updated_at": "2026-02-23T19:17:36.740332458+01:00"
+            },
+            {
+              "id": "task-33",
+              "title": "Comments CRUD",
+              "description": "Implement nested comments with CRUD operations",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.758639106+01:00",
+              "updated_at": "2026-02-23T19:17:36.758639387+01:00"
+            },
+            {
+              "id": "task-34",
+              "title": "Post Search \u0026 Filtering",
+              "description": "Implement search by user, hashtag, content, date range",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.779219102+01:00",
+              "updated_at": "2026-02-23T19:17:36.779219415+01:00"
+            },
+            {
+              "id": "task-35",
+              "title": "Pagination \u0026 Limits",
+              "description": "Implement cursor-based pagination for feeds and comments",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.803442611+01:00",
+              "updated_at": "2026-02-23T19:17:36.803442914+01:00"
+            },
+            {
+              "id": "task-36",
+              "title": "Posts Integration Tests",
+              "description": "Write integration tests for all posts endpoints",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.825181511+01:00",
+              "updated_at": "2026-02-23T19:17:36.825181802+01:00"
+            },
+            {
+              "id": "task-37",
+              "title": "Frontend Posts Service",
+              "description": "Create Angular service for posts API communication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.843794842+01:00",
+              "updated_at": "2026-02-23T19:17:36.843795013+01:00"
+            },
+            {
+              "id": "task-83",
+              "title": "Posts CRUD Endpoints",
+              "description": "Implement POST/GET/PUT/DELETE endpoints for posts",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.598420085+01:00",
+              "updated_at": "2026-02-23T19:17:40.598420277+01:00"
+            },
+            {
+              "id": "task-84",
+              "title": "Posts Database Schema",
+              "description": "Create posts, comments, reactions tables with relationships",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.621509311+01:00",
+              "updated_at": "2026-02-23T19:17:40.621509747+01:00"
+            },
+            {
+              "id": "task-85",
+              "title": "Feed Algorithm Implementation",
+              "description": "Implement home, trending, and latest feed algorithms",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.644631059+01:00",
+              "updated_at": "2026-02-23T19:17:40.644631468+01:00"
+            },
+            {
+              "id": "task-86",
+              "title": "Comments CRUD",
+              "description": "Implement nested comments with CRUD operations",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.668536258+01:00",
+              "updated_at": "2026-02-23T19:17:40.668536567+01:00"
+            },
+            {
+              "id": "task-87",
+              "title": "Post Search \u0026 Filtering",
+              "description": "Implement search by user, hashtag, content, date range",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.689605565+01:00",
+              "updated_at": "2026-02-23T19:17:40.689605779+01:00"
+            },
+            {
+              "id": "task-88",
+              "title": "Pagination \u0026 Limits",
+              "description": "Implement cursor-based pagination for feeds and comments",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.708691633+01:00",
+              "updated_at": "2026-02-23T19:17:40.708691906+01:00"
+            },
+            {
+              "id": "task-89",
+              "title": "Posts Integration Tests",
+              "description": "Write integration tests for all posts endpoints",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.724711424+01:00",
+              "updated_at": "2026-02-23T19:17:40.724711602+01:00"
+            },
+            {
+              "id": "task-90",
+              "title": "Frontend Posts Service",
+              "description": "Create Angular service for posts API communication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.749104162+01:00",
+              "updated_at": "2026-02-23T19:17:40.749104437+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:17:05.2082156+01:00",
+          "updated_at": "2026-02-23T19:17:05.20821577+01:00"
+        }
+      ],
+      "created_at": "2026-02-23T19:16:33.147153725+01:00",
+      "updated_at": "2026-02-23T19:16:33.147154067+01:00"
+    },
+    {
+      "id": "phase-4",
+      "name": "Phase 4: Polish \u0026 Scale",
+      "description": "Real-time, PWA, Accessibility, i18n, Performance, Admin, Production Backend",
+      "order": 4,
+      "status": "pending",
+      "milestones": [
+        {
+          "id": "milestone-4-13",
+          "name": "Milestone 3.1: Notifications",
+          "description": "Real-time notifications for likes, comments, follows",
+          "order": 13,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.918174004+01:00",
+          "updated_at": "2026-02-23T19:17:01.918174214+01:00"
+        },
+        {
+          "id": "milestone-4-14",
+          "name": "Milestone 3.2: Bookmarks",
+          "description": "Save/bookmark posts, bookmark management",
+          "order": 14,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.938136506+01:00",
+          "updated_at": "2026-02-23T19:17:01.938136699+01:00"
+        },
+        {
+          "id": "milestone-4-15",
+          "name": "Milestone 3.3: Search \u0026 Explore",
+          "description": "Full-text search, trending topics, discover page",
+          "order": 15,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.955542951+01:00",
+          "updated_at": "2026-02-23T19:17:01.955543124+01:00"
+        },
+        {
+          "id": "milestone-4-16",
+          "name": "Milestone 3.4: Analytics",
+          "description": "User analytics, engagement metrics, insights dashboard",
+          "order": 16,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.968503974+01:00",
+          "updated_at": "2026-02-23T19:17:01.968504103+01:00"
+        },
+        {
+          "id": "milestone-4-17",
+          "name": "Milestone 3.5: Image Uploads",
+          "description": "Image upload, storage, optimization, gallery",
+          "order": 17,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.981858465+01:00",
+          "updated_at": "2026-02-23T19:17:01.981858639+01:00"
+        },
+        {
+          "id": "milestone-4-18",
+          "name": "Milestone 3.6: Messages",
+          "description": "Direct messaging, conversation history, notifications",
+          "order": 18,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:01.997146365+01:00",
+          "updated_at": "2026-02-23T19:17:01.997146644+01:00"
+        },
+        {
+          "id": "milestone-4-19",
+          "name": "Milestone 3.7: Realtime Service",
+          "description": "WebSocket server, real-time notifications, presence, typing",
+          "order": 19,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.017490646+01:00",
+          "updated_at": "2026-02-23T19:17:02.017490862+01:00"
+        },
+        {
+          "id": "milestone-4-36",
+          "name": "Milestone 3.1: Notifications",
+          "description": "Real-time notifications for likes, comments, follows",
+          "order": 36,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.223391025+01:00",
+          "updated_at": "2026-02-23T19:17:05.223391198+01:00"
+        },
+        {
+          "id": "milestone-4-37",
+          "name": "Milestone 3.2: Bookmarks",
+          "description": "Save/bookmark posts, bookmark management",
+          "order": 37,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.236132594+01:00",
+          "updated_at": "2026-02-23T19:17:05.236132746+01:00"
+        },
+        {
+          "id": "milestone-4-38",
+          "name": "Milestone 3.3: Search \u0026 Explore",
+          "description": "Full-text search, trending topics, discover page",
+          "order": 38,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.253831966+01:00",
+          "updated_at": "2026-02-23T19:17:05.25383219+01:00"
+        },
+        {
+          "id": "milestone-4-39",
+          "name": "Milestone 3.4: Analytics",
+          "description": "User analytics, engagement metrics, insights dashboard",
+          "order": 39,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.271417447+01:00",
+          "updated_at": "2026-02-23T19:17:05.271417649+01:00"
+        },
+        {
+          "id": "milestone-4-40",
+          "name": "Milestone 3.5: Image Uploads",
+          "description": "Image upload, storage, optimization, gallery",
+          "order": 40,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.285071343+01:00",
+          "updated_at": "2026-02-23T19:17:05.285071504+01:00"
+        },
+        {
+          "id": "milestone-4-41",
+          "name": "Milestone 3.6: Messages",
+          "description": "Direct messaging, conversation history, notifications",
+          "order": 41,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.30041829+01:00",
+          "updated_at": "2026-02-23T19:17:05.300418529+01:00"
+        },
+        {
+          "id": "milestone-4-42",
+          "name": "Milestone 3.7: Realtime Service",
+          "description": "WebSocket server, real-time notifications, presence, typing",
+          "order": 42,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-38",
+              "title": "WebSocket Server Setup",
+              "description": "Set up WebSocket server with connection management",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.863803658+01:00",
+              "updated_at": "2026-02-23T19:17:36.863803903+01:00"
+            },
+            {
+              "id": "task-39",
+              "title": "Connection \u0026 Authentication",
+              "description": "Implement WebSocket authentication using JWT",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.880457093+01:00",
+              "updated_at": "2026-02-23T19:17:36.880457224+01:00"
+            },
+            {
+              "id": "task-40",
+              "title": "Real-time Notifications",
+              "description": "Implement notification system for likes, comments, follows",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.898391915+01:00",
+              "updated_at": "2026-02-23T19:17:36.898392096+01:00"
+            },
+            {
+              "id": "task-41",
+              "title": "Presence Tracking",
+              "description": "Track user presence (online/offline status)",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:36.914314453+01:00",
+              "updated_at": "2026-02-23T19:17:36.914314626+01:00"
+            },
+            {
+              "id": "task-42",
+              "title": "Typing Indicators",
+              "description": "Implement typing indicator for conversations",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.929155771+01:00",
+              "updated_at": "2026-02-23T19:17:36.929155996+01:00"
+            },
+            {
+              "id": "task-43",
+              "title": "Message Broadcasting",
+              "description": "Broadcast messages to subscribed clients",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.948053766+01:00",
+              "updated_at": "2026-02-23T19:17:36.948053974+01:00"
+            },
+            {
+              "id": "task-44",
+              "title": "Frontend WebSocket Service",
+              "description": "Create Angular service for WebSocket communication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.968338046+01:00",
+              "updated_at": "2026-02-23T19:17:36.968338197+01:00"
+            },
+            {
+              "id": "task-45",
+              "title": "Realtime Service Integration Tests",
+              "description": "Write integration tests for WebSocket functionality",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:36.987415861+01:00",
+              "updated_at": "2026-02-23T19:17:36.987416009+01:00"
+            },
+            {
+              "id": "task-91",
+              "title": "WebSocket Server Setup",
+              "description": "Set up WebSocket server with connection management",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.776023965+01:00",
+              "updated_at": "2026-02-23T19:17:40.776024262+01:00"
+            },
+            {
+              "id": "task-92",
+              "title": "Connection \u0026 Authentication",
+              "description": "Implement WebSocket authentication using JWT",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.802421586+01:00",
+              "updated_at": "2026-02-23T19:17:40.8024218+01:00"
+            },
+            {
+              "id": "task-93",
+              "title": "Real-time Notifications",
+              "description": "Implement notification system for likes, comments, follows",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.830013949+01:00",
+              "updated_at": "2026-02-23T19:17:40.830014846+01:00"
+            },
+            {
+              "id": "task-94",
+              "title": "Presence Tracking",
+              "description": "Track user presence (online/offline status)",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.853626106+01:00",
+              "updated_at": "2026-02-23T19:17:40.853626392+01:00"
+            },
+            {
+              "id": "task-95",
+              "title": "Typing Indicators",
+              "description": "Implement typing indicator for conversations",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.880411017+01:00",
+              "updated_at": "2026-02-23T19:17:40.880411262+01:00"
+            },
+            {
+              "id": "task-96",
+              "title": "Message Broadcasting",
+              "description": "Broadcast messages to subscribed clients",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.901962831+01:00",
+              "updated_at": "2026-02-23T19:17:40.901963385+01:00"
+            },
+            {
+              "id": "task-97",
+              "title": "Frontend WebSocket Service",
+              "description": "Create Angular service for WebSocket communication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.930325708+01:00",
+              "updated_at": "2026-02-23T19:17:40.930326097+01:00"
+            },
+            {
+              "id": "task-98",
+              "title": "Realtime Service Integration Tests",
+              "description": "Write integration tests for WebSocket functionality",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:40.952128858+01:00",
+              "updated_at": "2026-02-23T19:17:40.952129045+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:17:05.316544746+01:00",
+          "updated_at": "2026-02-23T19:17:05.316544939+01:00"
+        }
+      ],
+      "created_at": "2026-02-23T19:16:36.710170518+01:00",
+      "updated_at": "2026-02-23T19:16:36.710170676+01:00"
+    },
+    {
+      "id": "phase-5",
+      "name": "Phase 5: Testing",
+      "description": "Backend \u0026 Frontend Unit Tests, Integration Tests, E2E Tests",
+      "order": 5,
+      "status": "pending",
+      "milestones": [
+        {
+          "id": "milestone-5-20",
+          "name": "Milestone 4.1: Real-time Updates",
+          "description": "Socket.io integration, live feeds, real-time notifications",
+          "order": 20,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.0447629+01:00",
+          "updated_at": "2026-02-23T19:17:02.044763135+01:00"
+        },
+        {
+          "id": "milestone-5-21",
+          "name": "Milestone 4.2: PWA Features",
+          "description": "Progressive web app, offline support, install prompt",
+          "order": 21,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.066353212+01:00",
+          "updated_at": "2026-02-23T19:17:02.066353422+01:00"
+        },
+        {
+          "id": "milestone-5-22",
+          "name": "Milestone 4.3: Accessibility",
+          "description": "WCAG 2.1 compliance, keyboard navigation, screen readers",
+          "order": 22,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.123748312+01:00",
+          "updated_at": "2026-02-23T19:17:02.123748502+01:00"
+        },
+        {
+          "id": "milestone-5-23",
+          "name": "Milestone 4.4: Internationalization",
+          "description": "Multi-language support, locale switching",
+          "order": 23,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.154257763+01:00",
+          "updated_at": "2026-02-23T19:17:02.154257975+01:00"
+        },
+        {
+          "id": "milestone-5-24",
+          "name": "Milestone 4.5: Performance",
+          "description": "Code splitting, lazy loading, caching, optimization",
+          "order": 24,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.192871674+01:00",
+          "updated_at": "2026-02-23T19:17:02.19287188+01:00"
+        },
+        {
+          "id": "milestone-5-25",
+          "name": "Milestone 4.6: Admin Panel",
+          "description": "User management, content moderation, analytics",
+          "order": 25,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.225189734+01:00",
+          "updated_at": "2026-02-23T19:17:02.225189899+01:00"
+        },
+        {
+          "id": "milestone-5-26",
+          "name": "Milestone 4.7: Production Backend",
+          "description": "Redis caching, rate limiting, observability, scaling",
+          "order": 26,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:02.263252426+01:00",
+          "updated_at": "2026-02-23T19:17:02.263252624+01:00"
+        },
+        {
+          "id": "milestone-5-43",
+          "name": "Milestone 4.1: Real-time Updates",
+          "description": "Socket.io integration, live feeds, real-time notifications",
+          "order": 43,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.33427405+01:00",
+          "updated_at": "2026-02-23T19:17:05.334274353+01:00"
+        },
+        {
+          "id": "milestone-5-44",
+          "name": "Milestone 4.2: PWA Features",
+          "description": "Progressive web app, offline support, install prompt",
+          "order": 44,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.353519951+01:00",
+          "updated_at": "2026-02-23T19:17:05.353520183+01:00"
+        },
+        {
+          "id": "milestone-5-45",
+          "name": "Milestone 4.3: Accessibility",
+          "description": "WCAG 2.1 compliance, keyboard navigation, screen readers",
+          "order": 45,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.372916147+01:00",
+          "updated_at": "2026-02-23T19:17:05.37291639+01:00"
+        },
+        {
+          "id": "milestone-5-46",
+          "name": "Milestone 4.4: Internationalization",
+          "description": "Multi-language support, locale switching",
+          "order": 46,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.390277223+01:00",
+          "updated_at": "2026-02-23T19:17:05.390277435+01:00"
+        },
+        {
+          "id": "milestone-5-47",
+          "name": "Milestone 4.5: Performance",
+          "description": "Code splitting, lazy loading, caching, optimization",
+          "order": 47,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.409520728+01:00",
+          "updated_at": "2026-02-23T19:17:05.409521017+01:00"
+        },
+        {
+          "id": "milestone-5-48",
+          "name": "Milestone 4.6: Admin Panel",
+          "description": "User management, content moderation, analytics",
+          "order": 48,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:05.428501585+01:00",
+          "updated_at": "2026-02-23T19:17:05.428501827+01:00"
+        },
+        {
+          "id": "milestone-5-49",
+          "name": "Milestone 4.7: Production Backend",
+          "description": "Redis caching, rate limiting, observability, scaling",
+          "order": 49,
+          "status": "pending",
+          "tasks": [
+            {
+              "id": "task-46",
+              "title": "Redis Caching Layer",
+              "description": "Implement Redis caching for frequently accessed data",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:37.012836501+01:00",
+              "updated_at": "2026-02-23T19:17:37.012836967+01:00"
+            },
+            {
+              "id": "task-47",
+              "title": "Rate Limiting Middleware",
+              "description": "Add rate limiting to API endpoints",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:37.032413337+01:00",
+              "updated_at": "2026-02-23T19:17:37.032413575+01:00"
+            },
+            {
+              "id": "task-48",
+              "title": "Monitoring \u0026 Logging",
+              "description": "Add structured logging and monitoring",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:37.05256718+01:00",
+              "updated_at": "2026-02-23T19:17:37.052567503+01:00"
+            },
+            {
+              "id": "task-49",
+              "title": "Error Handling \u0026 Recovery",
+              "description": "Implement comprehensive error handling and recovery",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:37.076647037+01:00",
+              "updated_at": "2026-02-23T19:17:37.076647216+01:00"
+            },
+            {
+              "id": "task-50",
+              "title": "Performance Optimization",
+              "description": "Optimize queries, add indexes, cache frequently used data",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:37.095102838+01:00",
+              "updated_at": "2026-02-23T19:17:37.095103068+01:00"
+            },
+            {
+              "id": "task-51",
+              "title": "Database Backup Strategy",
+              "description": "Implement automated backups and recovery procedures",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:37.117187833+01:00",
+              "updated_at": "2026-02-23T19:17:37.117188047+01:00"
+            },
+            {
+              "id": "task-52",
+              "title": "Horizontal Scaling",
+              "description": "Implement load balancing and service replication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:37.137516436+01:00",
+              "updated_at": "2026-02-23T19:17:37.137516613+01:00"
+            },
+            {
+              "id": "task-53",
+              "title": "API Versioning",
+              "description": "Implement API versioning strategy for backward compatibility",
+              "status": "todo",
+              "priority": "low",
+              "created_at": "2026-02-23T19:17:37.160229814+01:00",
+              "updated_at": "2026-02-23T19:17:37.160230044+01:00"
+            },
+            {
+              "id": "task-99",
+              "title": "Redis Caching Layer",
+              "description": "Implement Redis caching for frequently accessed data",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:40.974995269+01:00",
+              "updated_at": "2026-02-23T19:17:40.974995476+01:00"
+            },
+            {
+              "id": "task-100",
+              "title": "Rate Limiting Middleware",
+              "description": "Add rate limiting to API endpoints",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:41.000664911+01:00",
+              "updated_at": "2026-02-23T19:17:41.000665395+01:00"
+            },
+            {
+              "id": "task-101",
+              "title": "Monitoring \u0026 Logging",
+              "description": "Add structured logging and monitoring",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:41.027580933+01:00",
+              "updated_at": "2026-02-23T19:17:41.027581109+01:00"
+            },
+            {
+              "id": "task-102",
+              "title": "Error Handling \u0026 Recovery",
+              "description": "Implement comprehensive error handling and recovery",
+              "status": "todo",
+              "priority": "high",
+              "created_at": "2026-02-23T19:17:41.054816456+01:00",
+              "updated_at": "2026-02-23T19:17:41.054817116+01:00"
+            },
+            {
+              "id": "task-103",
+              "title": "Performance Optimization",
+              "description": "Optimize queries, add indexes, cache frequently used data",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:41.080916945+01:00",
+              "updated_at": "2026-02-23T19:17:41.08091727+01:00"
+            },
+            {
+              "id": "task-104",
+              "title": "Database Backup Strategy",
+              "description": "Implement automated backups and recovery procedures",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:41.107827326+01:00",
+              "updated_at": "2026-02-23T19:17:41.107827462+01:00"
+            },
+            {
+              "id": "task-105",
+              "title": "Horizontal Scaling",
+              "description": "Implement load balancing and service replication",
+              "status": "todo",
+              "priority": "medium",
+              "created_at": "2026-02-23T19:17:41.134770286+01:00",
+              "updated_at": "2026-02-23T19:17:41.134770433+01:00"
+            },
+            {
+              "id": "task-106",
+              "title": "API Versioning",
+              "description": "Implement API versioning strategy for backward compatibility",
+              "status": "todo",
+              "priority": "low",
+              "created_at": "2026-02-23T19:17:41.160804202+01:00",
+              "updated_at": "2026-02-23T19:17:41.160804522+01:00"
+            }
+          ],
+          "created_at": "2026-02-23T19:17:05.443116743+01:00",
+          "updated_at": "2026-02-23T19:17:05.443116922+01:00"
+        },
+        {
+          "id": "milestone-5-50",
+          "name": "Milestone 5.1: Backend Unit Tests - Services",
+          "description": "Service layer unit tests with mocks",
+          "order": 50,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.83193713+01:00",
+          "updated_at": "2026-02-23T19:17:15.831937322+01:00"
+        },
+        {
+          "id": "milestone-5-51",
+          "name": "Milestone 5.2: Backend Unit Tests - Repositories",
+          "description": "Repository layer tests with test database",
+          "order": 51,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.848965926+01:00",
+          "updated_at": "2026-02-23T19:17:15.848966065+01:00"
+        },
+        {
+          "id": "milestone-5-52",
+          "name": "Milestone 5.3: Backend Unit Tests - Handlers",
+          "description": "HTTP handler tests with mock services",
+          "order": 52,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.863510816+01:00",
+          "updated_at": "2026-02-23T19:17:15.863511022+01:00"
+        },
+        {
+          "id": "milestone-5-53",
+          "name": "Milestone 5.4: Frontend Unit Tests - Services",
+          "description": "Angular service unit tests with HttpClientTestingModule",
+          "order": 53,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.875948377+01:00",
+          "updated_at": "2026-02-23T19:17:15.875948573+01:00"
+        },
+        {
+          "id": "milestone-5-54",
+          "name": "Milestone 5.5: Frontend Unit Tests - Components",
+          "description": "Angular component tests with TestBed",
+          "order": 54,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.890391344+01:00",
+          "updated_at": "2026-02-23T19:17:15.890391627+01:00"
+        },
+        {
+          "id": "milestone-5-55",
+          "name": "Milestone 5.6: API Integration Tests",
+          "description": "Backend API integration tests with test database",
+          "order": 55,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.908132394+01:00",
+          "updated_at": "2026-02-23T19:17:15.908132574+01:00"
+        },
+        {
+          "id": "milestone-5-56",
+          "name": "Milestone 5.7: Auth Integration Tests",
+          "description": "Authentication flow integration tests",
+          "order": 56,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.92333905+01:00",
+          "updated_at": "2026-02-23T19:17:15.923339316+01:00"
+        },
+        {
+          "id": "milestone-5-57",
+          "name": "Milestone 5.8: Database Integration Tests",
+          "description": "Database operations and migration tests",
+          "order": 57,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.937415118+01:00",
+          "updated_at": "2026-02-23T19:17:15.937415296+01:00"
+        },
+        {
+          "id": "milestone-5-58",
+          "name": "Milestone 5.9: E2E Tests - Core Flows",
+          "description": "End-to-end tests for login, feed, post creation",
+          "order": 58,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.953205207+01:00",
+          "updated_at": "2026-02-23T19:17:15.953205383+01:00"
+        },
+        {
+          "id": "milestone-5-59",
+          "name": "Milestone 5.10: E2E Tests - Social Features",
+          "description": "E2E tests for comments, reactions, follows",
+          "order": 59,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:15.970123525+01:00",
+          "updated_at": "2026-02-23T19:17:15.970123706+01:00"
+        },
+        {
+          "id": "milestone-5-60",
+          "name": "Milestone 5.1: Backend Unit Tests - Services",
+          "description": "Service layer unit tests with mocks",
+          "order": 60,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:18.924181959+01:00",
+          "updated_at": "2026-02-23T19:17:18.924182224+01:00"
+        },
+        {
+          "id": "milestone-5-61",
+          "name": "Milestone 5.2: Backend Unit Tests - Repositories",
+          "description": "Repository layer tests with test database",
+          "order": 61,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:18.962368202+01:00",
+          "updated_at": "2026-02-23T19:17:18.96236842+01:00"
+        },
+        {
+          "id": "milestone-5-62",
+          "name": "Milestone 5.3: Backend Unit Tests - Handlers",
+          "description": "HTTP handler tests with mock services",
+          "order": 62,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.020700772+01:00",
+          "updated_at": "2026-02-23T19:17:19.020702208+01:00"
+        },
+        {
+          "id": "milestone-5-63",
+          "name": "Milestone 5.4: Frontend Unit Tests - Services",
+          "description": "Angular service unit tests with HttpClientTestingModule",
+          "order": 63,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.050973772+01:00",
+          "updated_at": "2026-02-23T19:17:19.050973952+01:00"
+        },
+        {
+          "id": "milestone-5-64",
+          "name": "Milestone 5.5: Frontend Unit Tests - Components",
+          "description": "Angular component tests with TestBed",
+          "order": 64,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.070490899+01:00",
+          "updated_at": "2026-02-23T19:17:19.070491085+01:00"
+        },
+        {
+          "id": "milestone-5-65",
+          "name": "Milestone 5.6: API Integration Tests",
+          "description": "Backend API integration tests with test database",
+          "order": 65,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.100684773+01:00",
+          "updated_at": "2026-02-23T19:17:19.100684961+01:00"
+        },
+        {
+          "id": "milestone-5-66",
+          "name": "Milestone 5.7: Auth Integration Tests",
+          "description": "Authentication flow integration tests",
+          "order": 66,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.125339478+01:00",
+          "updated_at": "2026-02-23T19:17:19.125339682+01:00"
+        },
+        {
+          "id": "milestone-5-67",
+          "name": "Milestone 5.8: Database Integration Tests",
+          "description": "Database operations and migration tests",
+          "order": 67,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.154926887+01:00",
+          "updated_at": "2026-02-23T19:17:19.154927222+01:00"
+        },
+        {
+          "id": "milestone-5-68",
+          "name": "Milestone 5.9: E2E Tests - Core Flows",
+          "description": "End-to-end tests for login, feed, post creation",
+          "order": 68,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.178670074+01:00",
+          "updated_at": "2026-02-23T19:17:19.178670314+01:00"
+        },
+        {
+          "id": "milestone-5-69",
+          "name": "Milestone 5.10: E2E Tests - Social Features",
+          "description": "E2E tests for comments, reactions, follows",
+          "order": 69,
+          "status": "pending",
+          "tasks": [],
+          "created_at": "2026-02-23T19:17:19.199600659+01:00",
+          "updated_at": "2026-02-23T19:17:19.199600893+01:00"
+        }
+      ],
+      "created_at": "2026-02-23T19:16:39.829130544+01:00",
+      "updated_at": "2026-02-23T19:16:39.829130769+01:00"
+    }
+  ],
+  "metadata": {
+    "next_phase_id": 6,
+    "next_milestone_id": 70,
+    "next_task_id": 107,
+    "next_subtask_id": 1,
+    "next_log_id": 183
+  },
+  "activity_log": [
+    {
+      "id": "log-1",
+      "timestamp": "2026-02-23T19:16:15.721773278+01:00",
+      "entity_type": "workspace",
+      "entity_id": "ws-1771870575721759821",
+      "action": "created",
+      "details": "Path: /home/spanexx/Shared/Learn/go_tutorials"
+    },
+    {
+      "id": "log-2",
+      "timestamp": "2026-02-23T19:16:23.830772657+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-1",
+      "action": "created",
+      "details": "Name: Phase 0: Critic Backlog, Order: 1"
+    },
+    {
+      "id": "log-3",
+      "timestamp": "2026-02-23T19:16:26.885156789+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-1",
+      "action": "created",
+      "details": "Name: Phase 1: Foundation, Order: 1"
+    },
+    {
+      "id": "log-4",
+      "timestamp": "2026-02-23T19:16:29.992862664+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-2",
+      "action": "created",
+      "details": "Name: Phase 2: Social Interactions, Order: 2"
+    },
+    {
+      "id": "log-5",
+      "timestamp": "2026-02-23T19:16:33.14715894+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-3",
+      "action": "created",
+      "details": "Name: Phase 3: Advanced Features, Order: 3"
+    },
+    {
+      "id": "log-6",
+      "timestamp": "2026-02-23T19:16:36.710176467+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-4",
+      "action": "created",
+      "details": "Name: Phase 4: Polish \u0026 Scale, Order: 4"
+    },
+    {
+      "id": "log-7",
+      "timestamp": "2026-02-23T19:16:39.829136094+01:00",
+      "entity_type": "phase",
+      "entity_id": "phase-5",
+      "action": "created",
+      "details": "Name: Phase 5: Testing, Order: 5"
+    },
+    {
+      "id": "log-8",
+      "timestamp": "2026-02-23T19:16:43.714017219+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-1-1",
+      "action": "created",
+      "details": "Name: Milestone 0.1: Unmock Codebase, Phase: phase-1"
+    },
+    {
+      "id": "log-9",
+      "timestamp": "2026-02-23T19:16:47.335181129+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-2",
+      "action": "created",
+      "details": "Name: Milestone 1.1: Authentication System, Phase: phase-2"
+    },
+    {
+      "id": "log-10",
+      "timestamp": "2026-02-23T19:16:50.435230107+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-3",
+      "action": "created",
+      "details": "Name: Milestone 1.2: Core UI Components, Phase: phase-2"
+    },
+    {
+      "id": "log-11",
+      "timestamp": "2026-02-23T19:17:01.766401115+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-4",
+      "action": "created",
+      "details": "Name: Milestone 1.3: Feed Page, Phase: phase-2"
+    },
+    {
+      "id": "log-12",
+      "timestamp": "2026-02-23T19:17:01.780311921+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-5",
+      "action": "created",
+      "details": "Name: Milestone 1.5: Go Backend Foundation, Phase: phase-2"
+    },
+    {
+      "id": "log-13",
+      "timestamp": "2026-02-23T19:17:01.792490775+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-6",
+      "action": "created",
+      "details": "Name: Milestone 1.6: Email Service Integration, Phase: phase-2"
+    },
+    {
+      "id": "log-14",
+      "timestamp": "2026-02-23T19:17:01.814130281+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-7",
+      "action": "created",
+      "details": "Name: Milestone 2.1: Post Reactions, Phase: phase-3"
+    },
+    {
+      "id": "log-15",
+      "timestamp": "2026-02-23T19:17:01.830747569+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-8",
+      "action": "created",
+      "details": "Name: Milestone 2.2: Comments \u0026 Replies, Phase: phase-3"
+    },
+    {
+      "id": "log-16",
+      "timestamp": "2026-02-23T19:17:01.854180398+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-9",
+      "action": "created",
+      "details": "Name: Milestone 2.3: Hashtags \u0026 Mentions, Phase: phase-3"
+    },
+    {
+      "id": "log-17",
+      "timestamp": "2026-02-23T19:17:01.869230193+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-10",
+      "action": "created",
+      "details": "Name: Milestone 2.4: Sharing \u0026 Activity, Phase: phase-3"
+    },
+    {
+      "id": "log-18",
+      "timestamp": "2026-02-23T19:17:01.885256021+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-11",
+      "action": "created",
+      "details": "Name: Milestone 2.5: Social Graph, Phase: phase-3"
+    },
+    {
+      "id": "log-19",
+      "timestamp": "2026-02-23T19:17:01.901324366+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-12",
+      "action": "created",
+      "details": "Name: Milestone 2.6: Posts Service API, Phase: phase-3"
+    },
+    {
+      "id": "log-20",
+      "timestamp": "2026-02-23T19:17:01.918177892+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-13",
+      "action": "created",
+      "details": "Name: Milestone 3.1: Notifications, Phase: phase-4"
+    },
+    {
+      "id": "log-21",
+      "timestamp": "2026-02-23T19:17:01.938140455+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-14",
+      "action": "created",
+      "details": "Name: Milestone 3.2: Bookmarks, Phase: phase-4"
+    },
+    {
+      "id": "log-22",
+      "timestamp": "2026-02-23T19:17:01.955546472+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-15",
+      "action": "created",
+      "details": "Name: Milestone 3.3: Search \u0026 Explore, Phase: phase-4"
+    },
+    {
+      "id": "log-23",
+      "timestamp": "2026-02-23T19:17:01.968505962+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-16",
+      "action": "created",
+      "details": "Name: Milestone 3.4: Analytics, Phase: phase-4"
+    },
+    {
+      "id": "log-24",
+      "timestamp": "2026-02-23T19:17:01.981865535+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-17",
+      "action": "created",
+      "details": "Name: Milestone 3.5: Image Uploads, Phase: phase-4"
+    },
+    {
+      "id": "log-25",
+      "timestamp": "2026-02-23T19:17:01.997150882+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-18",
+      "action": "created",
+      "details": "Name: Milestone 3.6: Messages, Phase: phase-4"
+    },
+    {
+      "id": "log-26",
+      "timestamp": "2026-02-23T19:17:02.017494421+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-19",
+      "action": "created",
+      "details": "Name: Milestone 3.7: Realtime Service, Phase: phase-4"
+    },
+    {
+      "id": "log-27",
+      "timestamp": "2026-02-23T19:17:02.044767266+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-20",
+      "action": "created",
+      "details": "Name: Milestone 4.1: Real-time Updates, Phase: phase-5"
+    },
+    {
+      "id": "log-28",
+      "timestamp": "2026-02-23T19:17:02.066357282+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-21",
+      "action": "created",
+      "details": "Name: Milestone 4.2: PWA Features, Phase: phase-5"
+    },
+    {
+      "id": "log-29",
+      "timestamp": "2026-02-23T19:17:02.123752729+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-22",
+      "action": "created",
+      "details": "Name: Milestone 4.3: Accessibility, Phase: phase-5"
+    },
+    {
+      "id": "log-30",
+      "timestamp": "2026-02-23T19:17:02.154262616+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-23",
+      "action": "created",
+      "details": "Name: Milestone 4.4: Internationalization, Phase: phase-5"
+    },
+    {
+      "id": "log-31",
+      "timestamp": "2026-02-23T19:17:02.192877156+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-24",
+      "action": "created",
+      "details": "Name: Milestone 4.5: Performance, Phase: phase-5"
+    },
+    {
+      "id": "log-32",
+      "timestamp": "2026-02-23T19:17:02.225193496+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-25",
+      "action": "created",
+      "details": "Name: Milestone 4.6: Admin Panel, Phase: phase-5"
+    },
+    {
+      "id": "log-33",
+      "timestamp": "2026-02-23T19:17:02.263257064+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-26",
+      "action": "created",
+      "details": "Name: Milestone 4.7: Production Backend, Phase: phase-5"
+    },
+    {
+      "id": "log-34",
+      "timestamp": "2026-02-23T19:17:05.059730185+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-27",
+      "action": "created",
+      "details": "Name: Milestone 1.3: Feed Page, Phase: phase-2"
+    },
+    {
+      "id": "log-35",
+      "timestamp": "2026-02-23T19:17:05.076117161+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-28",
+      "action": "created",
+      "details": "Name: Milestone 1.5: Go Backend Foundation, Phase: phase-2"
+    },
+    {
+      "id": "log-36",
+      "timestamp": "2026-02-23T19:17:05.094865159+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-2-29",
+      "action": "created",
+      "details": "Name: Milestone 1.6: Email Service Integration, Phase: phase-2"
+    },
+    {
+      "id": "log-37",
+      "timestamp": "2026-02-23T19:17:05.116574029+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-30",
+      "action": "created",
+      "details": "Name: Milestone 2.1: Post Reactions, Phase: phase-3"
+    },
+    {
+      "id": "log-38",
+      "timestamp": "2026-02-23T19:17:05.13244639+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-31",
+      "action": "created",
+      "details": "Name: Milestone 2.2: Comments \u0026 Replies, Phase: phase-3"
+    },
+    {
+      "id": "log-39",
+      "timestamp": "2026-02-23T19:17:05.148095597+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-32",
+      "action": "created",
+      "details": "Name: Milestone 2.3: Hashtags \u0026 Mentions, Phase: phase-3"
+    },
+    {
+      "id": "log-40",
+      "timestamp": "2026-02-23T19:17:05.165455112+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-33",
+      "action": "created",
+      "details": "Name: Milestone 2.4: Sharing \u0026 Activity, Phase: phase-3"
+    },
+    {
+      "id": "log-41",
+      "timestamp": "2026-02-23T19:17:05.187958702+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-34",
+      "action": "created",
+      "details": "Name: Milestone 2.5: Social Graph, Phase: phase-3"
+    },
+    {
+      "id": "log-42",
+      "timestamp": "2026-02-23T19:17:05.208220466+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-3-35",
+      "action": "created",
+      "details": "Name: Milestone 2.6: Posts Service API, Phase: phase-3"
+    },
+    {
+      "id": "log-43",
+      "timestamp": "2026-02-23T19:17:05.223397534+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-36",
+      "action": "created",
+      "details": "Name: Milestone 3.1: Notifications, Phase: phase-4"
+    },
+    {
+      "id": "log-44",
+      "timestamp": "2026-02-23T19:17:05.236135098+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-37",
+      "action": "created",
+      "details": "Name: Milestone 3.2: Bookmarks, Phase: phase-4"
+    },
+    {
+      "id": "log-45",
+      "timestamp": "2026-02-23T19:17:05.253835444+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-38",
+      "action": "created",
+      "details": "Name: Milestone 3.3: Search \u0026 Explore, Phase: phase-4"
+    },
+    {
+      "id": "log-46",
+      "timestamp": "2026-02-23T19:17:05.271422174+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-39",
+      "action": "created",
+      "details": "Name: Milestone 3.4: Analytics, Phase: phase-4"
+    },
+    {
+      "id": "log-47",
+      "timestamp": "2026-02-23T19:17:05.285073784+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-40",
+      "action": "created",
+      "details": "Name: Milestone 3.5: Image Uploads, Phase: phase-4"
+    },
+    {
+      "id": "log-48",
+      "timestamp": "2026-02-23T19:17:05.300422839+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-41",
+      "action": "created",
+      "details": "Name: Milestone 3.6: Messages, Phase: phase-4"
+    },
+    {
+      "id": "log-49",
+      "timestamp": "2026-02-23T19:17:05.316548239+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-4-42",
+      "action": "created",
+      "details": "Name: Milestone 3.7: Realtime Service, Phase: phase-4"
+    },
+    {
+      "id": "log-50",
+      "timestamp": "2026-02-23T19:17:05.33427891+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-43",
+      "action": "created",
+      "details": "Name: Milestone 4.1: Real-time Updates, Phase: phase-5"
+    },
+    {
+      "id": "log-51",
+      "timestamp": "2026-02-23T19:17:05.353537419+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-44",
+      "action": "created",
+      "details": "Name: Milestone 4.2: PWA Features, Phase: phase-5"
+    },
+    {
+      "id": "log-52",
+      "timestamp": "2026-02-23T19:17:05.372921043+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-45",
+      "action": "created",
+      "details": "Name: Milestone 4.3: Accessibility, Phase: phase-5"
+    },
+    {
+      "id": "log-53",
+      "timestamp": "2026-02-23T19:17:05.390281183+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-46",
+      "action": "created",
+      "details": "Name: Milestone 4.4: Internationalization, Phase: phase-5"
+    },
+    {
+      "id": "log-54",
+      "timestamp": "2026-02-23T19:17:05.40952584+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-47",
+      "action": "created",
+      "details": "Name: Milestone 4.5: Performance, Phase: phase-5"
+    },
+    {
+      "id": "log-55",
+      "timestamp": "2026-02-23T19:17:05.428505028+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-48",
+      "action": "created",
+      "details": "Name: Milestone 4.6: Admin Panel, Phase: phase-5"
+    },
+    {
+      "id": "log-56",
+      "timestamp": "2026-02-23T19:17:05.443119464+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-49",
+      "action": "created",
+      "details": "Name: Milestone 4.7: Production Backend, Phase: phase-5"
+    },
+    {
+      "id": "log-57",
+      "timestamp": "2026-02-23T19:17:15.831939782+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-50",
+      "action": "created",
+      "details": "Name: Milestone 5.1: Backend Unit Tests - Services, Phase: phase-5"
+    },
+    {
+      "id": "log-58",
+      "timestamp": "2026-02-23T19:17:15.848968098+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-51",
+      "action": "created",
+      "details": "Name: Milestone 5.2: Backend Unit Tests - Repositories, Phase: phase-5"
+    },
+    {
+      "id": "log-59",
+      "timestamp": "2026-02-23T19:17:15.863513972+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-52",
+      "action": "created",
+      "details": "Name: Milestone 5.3: Backend Unit Tests - Handlers, Phase: phase-5"
+    },
+    {
+      "id": "log-60",
+      "timestamp": "2026-02-23T19:17:15.875952018+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-53",
+      "action": "created",
+      "details": "Name: Milestone 5.4: Frontend Unit Tests - Services, Phase: phase-5"
+    },
+    {
+      "id": "log-61",
+      "timestamp": "2026-02-23T19:17:15.890399744+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-54",
+      "action": "created",
+      "details": "Name: Milestone 5.5: Frontend Unit Tests - Components, Phase: phase-5"
+    },
+    {
+      "id": "log-62",
+      "timestamp": "2026-02-23T19:17:15.90814052+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-55",
+      "action": "created",
+      "details": "Name: Milestone 5.6: API Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-63",
+      "timestamp": "2026-02-23T19:17:15.923344047+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-56",
+      "action": "created",
+      "details": "Name: Milestone 5.7: Auth Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-64",
+      "timestamp": "2026-02-23T19:17:15.937420985+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-57",
+      "action": "created",
+      "details": "Name: Milestone 5.8: Database Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-65",
+      "timestamp": "2026-02-23T19:17:15.953208901+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-58",
+      "action": "created",
+      "details": "Name: Milestone 5.9: E2E Tests - Core Flows, Phase: phase-5"
+    },
+    {
+      "id": "log-66",
+      "timestamp": "2026-02-23T19:17:15.970126725+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-59",
+      "action": "created",
+      "details": "Name: Milestone 5.10: E2E Tests - Social Features, Phase: phase-5"
+    },
+    {
+      "id": "log-67",
+      "timestamp": "2026-02-23T19:17:18.924185744+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-60",
+      "action": "created",
+      "details": "Name: Milestone 5.1: Backend Unit Tests - Services, Phase: phase-5"
+    },
+    {
+      "id": "log-68",
+      "timestamp": "2026-02-23T19:17:18.962372513+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-61",
+      "action": "created",
+      "details": "Name: Milestone 5.2: Backend Unit Tests - Repositories, Phase: phase-5"
+    },
+    {
+      "id": "log-69",
+      "timestamp": "2026-02-23T19:17:19.020733188+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-62",
+      "action": "created",
+      "details": "Name: Milestone 5.3: Backend Unit Tests - Handlers, Phase: phase-5"
+    },
+    {
+      "id": "log-70",
+      "timestamp": "2026-02-23T19:17:19.050977286+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-63",
+      "action": "created",
+      "details": "Name: Milestone 5.4: Frontend Unit Tests - Services, Phase: phase-5"
+    },
+    {
+      "id": "log-71",
+      "timestamp": "2026-02-23T19:17:19.07049482+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-64",
+      "action": "created",
+      "details": "Name: Milestone 5.5: Frontend Unit Tests - Components, Phase: phase-5"
+    },
+    {
+      "id": "log-72",
+      "timestamp": "2026-02-23T19:17:19.100688986+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-65",
+      "action": "created",
+      "details": "Name: Milestone 5.6: API Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-73",
+      "timestamp": "2026-02-23T19:17:19.125343743+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-66",
+      "action": "created",
+      "details": "Name: Milestone 5.7: Auth Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-74",
+      "timestamp": "2026-02-23T19:17:19.154936064+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-67",
+      "action": "created",
+      "details": "Name: Milestone 5.8: Database Integration Tests, Phase: phase-5"
+    },
+    {
+      "id": "log-75",
+      "timestamp": "2026-02-23T19:17:19.17867516+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-68",
+      "action": "created",
+      "details": "Name: Milestone 5.9: E2E Tests - Core Flows, Phase: phase-5"
+    },
+    {
+      "id": "log-76",
+      "timestamp": "2026-02-23T19:17:19.199604363+01:00",
+      "entity_type": "milestone",
+      "entity_id": "milestone-5-69",
+      "action": "created",
+      "details": "Name: Milestone 5.10: E2E Tests - Social Features, Phase: phase-5"
+    },
+    {
+      "id": "log-77",
+      "timestamp": "2026-02-23T19:17:36.25439321+01:00",
+      "entity_type": "task",
+      "entity_id": "task-1",
+      "action": "created",
+      "details": "Title: Login Page Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-78",
+      "timestamp": "2026-02-23T19:17:36.279915784+01:00",
+      "entity_type": "task",
+      "entity_id": "task-2",
+      "action": "created",
+      "details": "Title: Registration Page Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-79",
+      "timestamp": "2026-02-23T19:17:36.300100022+01:00",
+      "entity_type": "task",
+      "entity_id": "task-3",
+      "action": "created",
+      "details": "Title: Authentication Service \u0026 State Management, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-80",
+      "timestamp": "2026-02-23T19:17:36.321397962+01:00",
+      "entity_type": "task",
+      "entity_id": "task-4",
+      "action": "created",
+      "details": "Title: Route Guards Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-81",
+      "timestamp": "2026-02-23T19:17:36.337429001+01:00",
+      "entity_type": "task",
+      "entity_id": "task-5",
+      "action": "created",
+      "details": "Title: User Menu \u0026 Logout Functionality, Priority: medium, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-82",
+      "timestamp": "2026-02-23T19:17:36.350953937+01:00",
+      "entity_type": "task",
+      "entity_id": "task-6",
+      "action": "created",
+      "details": "Title: Card Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-83",
+      "timestamp": "2026-02-23T19:17:36.364131666+01:00",
+      "entity_type": "task",
+      "entity_id": "task-7",
+      "action": "created",
+      "details": "Title: Button Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-84",
+      "timestamp": "2026-02-23T19:17:36.377899981+01:00",
+      "entity_type": "task",
+      "entity_id": "task-8",
+      "action": "created",
+      "details": "Title: Input Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-85",
+      "timestamp": "2026-02-23T19:17:36.393048765+01:00",
+      "entity_type": "task",
+      "entity_id": "task-9",
+      "action": "created",
+      "details": "Title: Modal Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-86",
+      "timestamp": "2026-02-23T19:17:36.407506128+01:00",
+      "entity_type": "task",
+      "entity_id": "task-10",
+      "action": "created",
+      "details": "Title: Sidebar Navigation, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-87",
+      "timestamp": "2026-02-23T19:17:36.42033877+01:00",
+      "entity_type": "task",
+      "entity_id": "task-11",
+      "action": "created",
+      "details": "Title: Navbar Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-88",
+      "timestamp": "2026-02-23T19:17:36.435252115+01:00",
+      "entity_type": "task",
+      "entity_id": "task-12",
+      "action": "created",
+      "details": "Title: Project Structure \u0026 Module Setup, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-89",
+      "timestamp": "2026-02-23T19:17:36.448457261+01:00",
+      "entity_type": "task",
+      "entity_id": "task-13",
+      "action": "created",
+      "details": "Title: Database Schema \u0026 Migrations, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-90",
+      "timestamp": "2026-02-23T19:17:36.463507994+01:00",
+      "entity_type": "task",
+      "entity_id": "task-14",
+      "action": "created",
+      "details": "Title: Configuration Management, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-91",
+      "timestamp": "2026-02-23T19:17:36.47767803+01:00",
+      "entity_type": "task",
+      "entity_id": "task-15",
+      "action": "created",
+      "details": "Title: HTTP Server \u0026 Router Setup, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-92",
+      "timestamp": "2026-02-23T19:17:36.492260317+01:00",
+      "entity_type": "task",
+      "entity_id": "task-16",
+      "action": "created",
+      "details": "Title: Repository Layer (sqlc), Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-93",
+      "timestamp": "2026-02-23T19:17:36.504575799+01:00",
+      "entity_type": "task",
+      "entity_id": "task-17",
+      "action": "created",
+      "details": "Title: Service Layer \u0026 Business Logic, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-94",
+      "timestamp": "2026-02-23T19:17:36.518125394+01:00",
+      "entity_type": "task",
+      "entity_id": "task-18",
+      "action": "created",
+      "details": "Title: JWT Authentication Middleware, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-95",
+      "timestamp": "2026-02-23T19:17:36.532289168+01:00",
+      "entity_type": "task",
+      "entity_id": "task-19",
+      "action": "created",
+      "details": "Title: HTTP Handlers \u0026 Routes, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-96",
+      "timestamp": "2026-02-23T19:17:36.547514109+01:00",
+      "entity_type": "task",
+      "entity_id": "task-20",
+      "action": "created",
+      "details": "Title: API Documentation (OpenAPI/Swagger), Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-97",
+      "timestamp": "2026-02-23T19:17:36.562503045+01:00",
+      "entity_type": "task",
+      "entity_id": "task-21",
+      "action": "created",
+      "details": "Title: Integration Tests, Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-98",
+      "timestamp": "2026-02-23T19:17:36.577613683+01:00",
+      "entity_type": "task",
+      "entity_id": "task-22",
+      "action": "created",
+      "details": "Title: Docker Setup, Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-99",
+      "timestamp": "2026-02-23T19:17:36.594852503+01:00",
+      "entity_type": "task",
+      "entity_id": "task-23",
+      "action": "created",
+      "details": "Title: Makefile \u0026 Build Scripts, Priority: low, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-100",
+      "timestamp": "2026-02-23T19:17:36.610222905+01:00",
+      "entity_type": "task",
+      "entity_id": "task-24",
+      "action": "created",
+      "details": "Title: Reaction Types \u0026 Data Model, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-101",
+      "timestamp": "2026-02-23T19:17:36.62585889+01:00",
+      "entity_type": "task",
+      "entity_id": "task-25",
+      "action": "created",
+      "details": "Title: Backend Reaction Service, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-102",
+      "timestamp": "2026-02-23T19:17:36.642345368+01:00",
+      "entity_type": "task",
+      "entity_id": "task-26",
+      "action": "created",
+      "details": "Title: Reaction API Endpoints, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-103",
+      "timestamp": "2026-02-23T19:17:36.658072389+01:00",
+      "entity_type": "task",
+      "entity_id": "task-27",
+      "action": "created",
+      "details": "Title: Frontend Reaction Component, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-104",
+      "timestamp": "2026-02-23T19:17:36.673938233+01:00",
+      "entity_type": "task",
+      "entity_id": "task-28",
+      "action": "created",
+      "details": "Title: Reaction Counts Display, Priority: medium, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-105",
+      "timestamp": "2026-02-23T19:17:36.692076173+01:00",
+      "entity_type": "task",
+      "entity_id": "task-29",
+      "action": "created",
+      "details": "Title: User Reaction History, Priority: medium, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-106",
+      "timestamp": "2026-02-23T19:17:36.710003538+01:00",
+      "entity_type": "task",
+      "entity_id": "task-30",
+      "action": "created",
+      "details": "Title: Posts CRUD Endpoints, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-107",
+      "timestamp": "2026-02-23T19:17:36.725140325+01:00",
+      "entity_type": "task",
+      "entity_id": "task-31",
+      "action": "created",
+      "details": "Title: Posts Database Schema, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-108",
+      "timestamp": "2026-02-23T19:17:36.740352427+01:00",
+      "entity_type": "task",
+      "entity_id": "task-32",
+      "action": "created",
+      "details": "Title: Feed Algorithm Implementation, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-109",
+      "timestamp": "2026-02-23T19:17:36.758645202+01:00",
+      "entity_type": "task",
+      "entity_id": "task-33",
+      "action": "created",
+      "details": "Title: Comments CRUD, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-110",
+      "timestamp": "2026-02-23T19:17:36.779272058+01:00",
+      "entity_type": "task",
+      "entity_id": "task-34",
+      "action": "created",
+      "details": "Title: Post Search \u0026 Filtering, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-111",
+      "timestamp": "2026-02-23T19:17:36.803448551+01:00",
+      "entity_type": "task",
+      "entity_id": "task-35",
+      "action": "created",
+      "details": "Title: Pagination \u0026 Limits, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-112",
+      "timestamp": "2026-02-23T19:17:36.825188035+01:00",
+      "entity_type": "task",
+      "entity_id": "task-36",
+      "action": "created",
+      "details": "Title: Posts Integration Tests, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-113",
+      "timestamp": "2026-02-23T19:17:36.843799396+01:00",
+      "entity_type": "task",
+      "entity_id": "task-37",
+      "action": "created",
+      "details": "Title: Frontend Posts Service, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-114",
+      "timestamp": "2026-02-23T19:17:36.863809149+01:00",
+      "entity_type": "task",
+      "entity_id": "task-38",
+      "action": "created",
+      "details": "Title: WebSocket Server Setup, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-115",
+      "timestamp": "2026-02-23T19:17:36.880460993+01:00",
+      "entity_type": "task",
+      "entity_id": "task-39",
+      "action": "created",
+      "details": "Title: Connection \u0026 Authentication, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-116",
+      "timestamp": "2026-02-23T19:17:36.898396152+01:00",
+      "entity_type": "task",
+      "entity_id": "task-40",
+      "action": "created",
+      "details": "Title: Real-time Notifications, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-117",
+      "timestamp": "2026-02-23T19:17:36.914317754+01:00",
+      "entity_type": "task",
+      "entity_id": "task-41",
+      "action": "created",
+      "details": "Title: Presence Tracking, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-118",
+      "timestamp": "2026-02-23T19:17:36.929162283+01:00",
+      "entity_type": "task",
+      "entity_id": "task-42",
+      "action": "created",
+      "details": "Title: Typing Indicators, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-119",
+      "timestamp": "2026-02-23T19:17:36.948057938+01:00",
+      "entity_type": "task",
+      "entity_id": "task-43",
+      "action": "created",
+      "details": "Title: Message Broadcasting, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-120",
+      "timestamp": "2026-02-23T19:17:36.968341541+01:00",
+      "entity_type": "task",
+      "entity_id": "task-44",
+      "action": "created",
+      "details": "Title: Frontend WebSocket Service, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-121",
+      "timestamp": "2026-02-23T19:17:36.987419565+01:00",
+      "entity_type": "task",
+      "entity_id": "task-45",
+      "action": "created",
+      "details": "Title: Realtime Service Integration Tests, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-122",
+      "timestamp": "2026-02-23T19:17:37.012870365+01:00",
+      "entity_type": "task",
+      "entity_id": "task-46",
+      "action": "created",
+      "details": "Title: Redis Caching Layer, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-123",
+      "timestamp": "2026-02-23T19:17:37.032420519+01:00",
+      "entity_type": "task",
+      "entity_id": "task-47",
+      "action": "created",
+      "details": "Title: Rate Limiting Middleware, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-124",
+      "timestamp": "2026-02-23T19:17:37.052573767+01:00",
+      "entity_type": "task",
+      "entity_id": "task-48",
+      "action": "created",
+      "details": "Title: Monitoring \u0026 Logging, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-125",
+      "timestamp": "2026-02-23T19:17:37.076664138+01:00",
+      "entity_type": "task",
+      "entity_id": "task-49",
+      "action": "created",
+      "details": "Title: Error Handling \u0026 Recovery, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-126",
+      "timestamp": "2026-02-23T19:17:37.095115317+01:00",
+      "entity_type": "task",
+      "entity_id": "task-50",
+      "action": "created",
+      "details": "Title: Performance Optimization, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-127",
+      "timestamp": "2026-02-23T19:17:37.117191122+01:00",
+      "entity_type": "task",
+      "entity_id": "task-51",
+      "action": "created",
+      "details": "Title: Database Backup Strategy, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-128",
+      "timestamp": "2026-02-23T19:17:37.13752123+01:00",
+      "entity_type": "task",
+      "entity_id": "task-52",
+      "action": "created",
+      "details": "Title: Horizontal Scaling, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-129",
+      "timestamp": "2026-02-23T19:17:37.16023453+01:00",
+      "entity_type": "task",
+      "entity_id": "task-53",
+      "action": "created",
+      "details": "Title: API Versioning, Priority: low, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-130",
+      "timestamp": "2026-02-23T19:17:39.977879849+01:00",
+      "entity_type": "task",
+      "entity_id": "task-54",
+      "action": "created",
+      "details": "Title: Login Page Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-131",
+      "timestamp": "2026-02-23T19:17:39.99804116+01:00",
+      "entity_type": "task",
+      "entity_id": "task-55",
+      "action": "created",
+      "details": "Title: Registration Page Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-132",
+      "timestamp": "2026-02-23T19:17:40.016898965+01:00",
+      "entity_type": "task",
+      "entity_id": "task-56",
+      "action": "created",
+      "details": "Title: Authentication Service \u0026 State Management, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-133",
+      "timestamp": "2026-02-23T19:17:40.03461163+01:00",
+      "entity_type": "task",
+      "entity_id": "task-57",
+      "action": "created",
+      "details": "Title: Route Guards Implementation, Priority: high, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-134",
+      "timestamp": "2026-02-23T19:17:40.057932471+01:00",
+      "entity_type": "task",
+      "entity_id": "task-58",
+      "action": "created",
+      "details": "Title: User Menu \u0026 Logout Functionality, Priority: medium, Milestone: milestone-2-2"
+    },
+    {
+      "id": "log-135",
+      "timestamp": "2026-02-23T19:17:40.080880491+01:00",
+      "entity_type": "task",
+      "entity_id": "task-59",
+      "action": "created",
+      "details": "Title: Card Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-136",
+      "timestamp": "2026-02-23T19:17:40.103051437+01:00",
+      "entity_type": "task",
+      "entity_id": "task-60",
+      "action": "created",
+      "details": "Title: Button Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-137",
+      "timestamp": "2026-02-23T19:17:40.128111893+01:00",
+      "entity_type": "task",
+      "entity_id": "task-61",
+      "action": "created",
+      "details": "Title: Input Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-138",
+      "timestamp": "2026-02-23T19:17:40.150770785+01:00",
+      "entity_type": "task",
+      "entity_id": "task-62",
+      "action": "created",
+      "details": "Title: Modal Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-139",
+      "timestamp": "2026-02-23T19:17:40.168632004+01:00",
+      "entity_type": "task",
+      "entity_id": "task-63",
+      "action": "created",
+      "details": "Title: Sidebar Navigation, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-140",
+      "timestamp": "2026-02-23T19:17:40.185927391+01:00",
+      "entity_type": "task",
+      "entity_id": "task-64",
+      "action": "created",
+      "details": "Title: Navbar Component, Priority: medium, Milestone: milestone-2-3"
+    },
+    {
+      "id": "log-141",
+      "timestamp": "2026-02-23T19:17:40.205754992+01:00",
+      "entity_type": "task",
+      "entity_id": "task-65",
+      "action": "created",
+      "details": "Title: Project Structure \u0026 Module Setup, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-142",
+      "timestamp": "2026-02-23T19:17:40.229800625+01:00",
+      "entity_type": "task",
+      "entity_id": "task-66",
+      "action": "created",
+      "details": "Title: Database Schema \u0026 Migrations, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-143",
+      "timestamp": "2026-02-23T19:17:40.249761882+01:00",
+      "entity_type": "task",
+      "entity_id": "task-67",
+      "action": "created",
+      "details": "Title: Configuration Management, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-144",
+      "timestamp": "2026-02-23T19:17:40.27398918+01:00",
+      "entity_type": "task",
+      "entity_id": "task-68",
+      "action": "created",
+      "details": "Title: HTTP Server \u0026 Router Setup, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-145",
+      "timestamp": "2026-02-23T19:17:40.290542186+01:00",
+      "entity_type": "task",
+      "entity_id": "task-69",
+      "action": "created",
+      "details": "Title: Repository Layer (sqlc), Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-146",
+      "timestamp": "2026-02-23T19:17:40.319176159+01:00",
+      "entity_type": "task",
+      "entity_id": "task-70",
+      "action": "created",
+      "details": "Title: Service Layer \u0026 Business Logic, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-147",
+      "timestamp": "2026-02-23T19:17:40.343801469+01:00",
+      "entity_type": "task",
+      "entity_id": "task-71",
+      "action": "created",
+      "details": "Title: JWT Authentication Middleware, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-148",
+      "timestamp": "2026-02-23T19:17:40.364008085+01:00",
+      "entity_type": "task",
+      "entity_id": "task-72",
+      "action": "created",
+      "details": "Title: HTTP Handlers \u0026 Routes, Priority: high, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-149",
+      "timestamp": "2026-02-23T19:17:40.382452701+01:00",
+      "entity_type": "task",
+      "entity_id": "task-73",
+      "action": "created",
+      "details": "Title: API Documentation (OpenAPI/Swagger), Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-150",
+      "timestamp": "2026-02-23T19:17:40.400306741+01:00",
+      "entity_type": "task",
+      "entity_id": "task-74",
+      "action": "created",
+      "details": "Title: Integration Tests, Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-151",
+      "timestamp": "2026-02-23T19:17:40.420100575+01:00",
+      "entity_type": "task",
+      "entity_id": "task-75",
+      "action": "created",
+      "details": "Title: Docker Setup, Priority: medium, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-152",
+      "timestamp": "2026-02-23T19:17:40.445124468+01:00",
+      "entity_type": "task",
+      "entity_id": "task-76",
+      "action": "created",
+      "details": "Title: Makefile \u0026 Build Scripts, Priority: low, Milestone: milestone-2-28"
+    },
+    {
+      "id": "log-153",
+      "timestamp": "2026-02-23T19:17:40.466188376+01:00",
+      "entity_type": "task",
+      "entity_id": "task-77",
+      "action": "created",
+      "details": "Title: Reaction Types \u0026 Data Model, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-154",
+      "timestamp": "2026-02-23T19:17:40.485852559+01:00",
+      "entity_type": "task",
+      "entity_id": "task-78",
+      "action": "created",
+      "details": "Title: Backend Reaction Service, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-155",
+      "timestamp": "2026-02-23T19:17:40.508564855+01:00",
+      "entity_type": "task",
+      "entity_id": "task-79",
+      "action": "created",
+      "details": "Title: Reaction API Endpoints, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-156",
+      "timestamp": "2026-02-23T19:17:40.531042264+01:00",
+      "entity_type": "task",
+      "entity_id": "task-80",
+      "action": "created",
+      "details": "Title: Frontend Reaction Component, Priority: high, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-157",
+      "timestamp": "2026-02-23T19:17:40.550300018+01:00",
+      "entity_type": "task",
+      "entity_id": "task-81",
+      "action": "created",
+      "details": "Title: Reaction Counts Display, Priority: medium, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-158",
+      "timestamp": "2026-02-23T19:17:40.577894678+01:00",
+      "entity_type": "task",
+      "entity_id": "task-82",
+      "action": "created",
+      "details": "Title: User Reaction History, Priority: medium, Milestone: milestone-3-30"
+    },
+    {
+      "id": "log-159",
+      "timestamp": "2026-02-23T19:17:40.598429652+01:00",
+      "entity_type": "task",
+      "entity_id": "task-83",
+      "action": "created",
+      "details": "Title: Posts CRUD Endpoints, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-160",
+      "timestamp": "2026-02-23T19:17:40.621523156+01:00",
+      "entity_type": "task",
+      "entity_id": "task-84",
+      "action": "created",
+      "details": "Title: Posts Database Schema, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-161",
+      "timestamp": "2026-02-23T19:17:40.644642006+01:00",
+      "entity_type": "task",
+      "entity_id": "task-85",
+      "action": "created",
+      "details": "Title: Feed Algorithm Implementation, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-162",
+      "timestamp": "2026-02-23T19:17:40.668541713+01:00",
+      "entity_type": "task",
+      "entity_id": "task-86",
+      "action": "created",
+      "details": "Title: Comments CRUD, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-163",
+      "timestamp": "2026-02-23T19:17:40.689609919+01:00",
+      "entity_type": "task",
+      "entity_id": "task-87",
+      "action": "created",
+      "details": "Title: Post Search \u0026 Filtering, Priority: high, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-164",
+      "timestamp": "2026-02-23T19:17:40.708696664+01:00",
+      "entity_type": "task",
+      "entity_id": "task-88",
+      "action": "created",
+      "details": "Title: Pagination \u0026 Limits, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-165",
+      "timestamp": "2026-02-23T19:17:40.724715139+01:00",
+      "entity_type": "task",
+      "entity_id": "task-89",
+      "action": "created",
+      "details": "Title: Posts Integration Tests, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-166",
+      "timestamp": "2026-02-23T19:17:40.749137985+01:00",
+      "entity_type": "task",
+      "entity_id": "task-90",
+      "action": "created",
+      "details": "Title: Frontend Posts Service, Priority: medium, Milestone: milestone-3-35"
+    },
+    {
+      "id": "log-167",
+      "timestamp": "2026-02-23T19:17:40.776040127+01:00",
+      "entity_type": "task",
+      "entity_id": "task-91",
+      "action": "created",
+      "details": "Title: WebSocket Server Setup, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-168",
+      "timestamp": "2026-02-23T19:17:40.80242601+01:00",
+      "entity_type": "task",
+      "entity_id": "task-92",
+      "action": "created",
+      "details": "Title: Connection \u0026 Authentication, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-169",
+      "timestamp": "2026-02-23T19:17:40.830030934+01:00",
+      "entity_type": "task",
+      "entity_id": "task-93",
+      "action": "created",
+      "details": "Title: Real-time Notifications, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-170",
+      "timestamp": "2026-02-23T19:17:40.853632579+01:00",
+      "entity_type": "task",
+      "entity_id": "task-94",
+      "action": "created",
+      "details": "Title: Presence Tracking, Priority: high, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-171",
+      "timestamp": "2026-02-23T19:17:40.880416526+01:00",
+      "entity_type": "task",
+      "entity_id": "task-95",
+      "action": "created",
+      "details": "Title: Typing Indicators, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-172",
+      "timestamp": "2026-02-23T19:17:40.90196977+01:00",
+      "entity_type": "task",
+      "entity_id": "task-96",
+      "action": "created",
+      "details": "Title: Message Broadcasting, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-173",
+      "timestamp": "2026-02-23T19:17:40.930356707+01:00",
+      "entity_type": "task",
+      "entity_id": "task-97",
+      "action": "created",
+      "details": "Title: Frontend WebSocket Service, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-174",
+      "timestamp": "2026-02-23T19:17:40.952132779+01:00",
+      "entity_type": "task",
+      "entity_id": "task-98",
+      "action": "created",
+      "details": "Title: Realtime Service Integration Tests, Priority: medium, Milestone: milestone-4-42"
+    },
+    {
+      "id": "log-175",
+      "timestamp": "2026-02-23T19:17:40.975007286+01:00",
+      "entity_type": "task",
+      "entity_id": "task-99",
+      "action": "created",
+      "details": "Title: Redis Caching Layer, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-176",
+      "timestamp": "2026-02-23T19:17:41.000673189+01:00",
+      "entity_type": "task",
+      "entity_id": "task-100",
+      "action": "created",
+      "details": "Title: Rate Limiting Middleware, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-177",
+      "timestamp": "2026-02-23T19:17:41.027585642+01:00",
+      "entity_type": "task",
+      "entity_id": "task-101",
+      "action": "created",
+      "details": "Title: Monitoring \u0026 Logging, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-178",
+      "timestamp": "2026-02-23T19:17:41.054829346+01:00",
+      "entity_type": "task",
+      "entity_id": "task-102",
+      "action": "created",
+      "details": "Title: Error Handling \u0026 Recovery, Priority: high, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-179",
+      "timestamp": "2026-02-23T19:17:41.080973487+01:00",
+      "entity_type": "task",
+      "entity_id": "task-103",
+      "action": "created",
+      "details": "Title: Performance Optimization, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-180",
+      "timestamp": "2026-02-23T19:17:41.107831775+01:00",
+      "entity_type": "task",
+      "entity_id": "task-104",
+      "action": "created",
+      "details": "Title: Database Backup Strategy, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-181",
+      "timestamp": "2026-02-23T19:17:41.134773054+01:00",
+      "entity_type": "task",
+      "entity_id": "task-105",
+      "action": "created",
+      "details": "Title: Horizontal Scaling, Priority: medium, Milestone: milestone-5-49"
+    },
+    {
+      "id": "log-182",
+      "timestamp": "2026-02-23T19:17:41.160809375+01:00",
+      "entity_type": "task",
+      "entity_id": "task-106",
+      "action": "created",
+      "details": "Title: API Versioning, Priority: low, Milestone: milestone-5-49"
+    }
+  ]
+}
